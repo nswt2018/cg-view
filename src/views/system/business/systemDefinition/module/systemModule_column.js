@@ -200,12 +200,12 @@ systemModule.codeGeneration = function(params) {
 	
 	util.ajax.post('/business/TK0004G.do', params, header).then((rres) => {  
 	
-		if(rres.data.code===SAV_SUC || rres.data.code===UPD_SUC) {
+		if(rres.data) {
 			this.spa.$Message.success('Success!');
 		}else{
 			this.spa.$Modal.error({
 				title: '错误信息',
-				content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
+				content:'文件生成失败！'
 			});
 		}
 	});
