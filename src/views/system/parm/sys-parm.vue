@@ -153,7 +153,28 @@ export default {
             currentPage: 1,
             totalPage: 0,
             totalCount: 0,
-        	buttonInfos:[],          
+        	buttonInfos:[
+        			  {title:'查看',
+        	           code:'100101',
+        	           icon:'info',
+        	           href:'view'
+        	           },
+        	           {title:'新增',
+        	           code:'100102',
+        	           icon:'primary',
+        	           href:'add'
+        	           },
+        	           {title:'修改',
+        	           code:'100103',
+        	           icon:'warning',
+        	           href:'upd'
+        	           },
+        	           {title:'删除',
+        	           code:'100104',
+        	           icon:'error',
+        	           href:'del'
+        	           }
+        	         ],          
         	columns:[],
         	deleteKey:[],
         	addRules:{
@@ -196,22 +217,22 @@ export default {
         init () {
        		parmFun.setPage(this);
        		parmFun.page(this.getSearch());
-       		parmFun.getButtons()
+       		//parmFun.getButtons()
         	this.columns = parmColumn.getColumns();
         },
         searching () {
     		parmFun.page(this.getSearch());
         },
         onClicking(type){
-         	if(type==='ADD') {
+         	if(type==='ADD'||type==='add') {
 	         	parmFun.add();
 	         	var sysdate=datetool.format(new Date());
 				this.addForm = {crtUserCode:'admin',crtOrgCode:'340321101',crtDate:sysdate};
-			}else if(type==='VIEW') {
+			}else if(type==='VIEW'||type==='view') {
 				parmFun.view();
-			}else if(type==='DEL'){ 
+			}else if(type==='DEL'||type==='del'){ 
          		parmFun.delete(this.deleteurl+"?paraCode="+this.deleteKey.join(','));
-         	}else if(type==='UPD') {
+         	}else if(type==='UPD'||type==='upd') {
          		parmFun.update();
          	}
         },

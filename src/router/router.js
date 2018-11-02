@@ -65,7 +65,20 @@ export const appRouter = [
         component: Main,
         children: [
 			{ path: 'userlist', title: '用户管理', name: 'user-info',icon: 'compose',component: () => import('@/views/system/user/user-manage.vue') },
-			{ path: 'orglist', title: '机构管理', name: 'org_info', icon: 'compose',component: () => import('@/views/system/org/sys-org.vue') }
+			{ path: 'orglist', title: '机构管理', name: 'org_info', icon: 'compose',component: () => import('@/views/system/org/sys-org.vue') },
+			{ path: 'parmlist', title: '系统参数', name: 'parm_info', access: '1002', icon: 'compose',component: () => import('@/views/system/parm/sys-parm.vue') },
+			{
+				path:'hardware',
+				icon: 'android-checkbox',
+		        name: 'hardwate',
+		        title: '硬件监控',
+		        component: hardWare,
+		        children:[
+		            { path: 'hardwarechart', title: '硬件图标展示', name: 'hardware-chart', access: '1002', icon: 'compose',component: () => import('@/views/system/hardware/hardware-chart.vue') },
+		            { path: 'ifstat', title: '网络流量信息', name: 'ifstat-info', access: '1002', icon: 'compose',component: () => import('@/views/system/hardware/ifstat/if-stat.vue') },
+		            { path: 'cpuperc', title: 'CPU总量', name: 'cpuperc-info', access: '1002', icon: 'compose',component: () => import('@/views/system/hardware/cpuperc/cpu-perc.vue') }
+		        ]
+			}
 		]
     },
     
