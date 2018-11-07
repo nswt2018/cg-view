@@ -85,10 +85,11 @@ pagepublictool.delete=function(delurl){
 };
 pagepublictool.save=function(refValue){
 	this.spa.$refs[refValue].validate((valid) => {
+		console.log(refValue);
 		if(valid){
 			let data;
 			let url;
-			if(refValue==='addRef'){
+			if(refValue==='addFormRef'){
 				data=this.spa.addForm
 				url=this.spa.saveurl;
 			}else{
@@ -121,12 +122,14 @@ pagepublictool.save=function(refValue){
 		}
 	})   
 };
-
+pagepublictool.reset=function(ref){
+	this.$refs[ref].resetFields();
+};
 pagepublictool.choice=function(selection,row){
 	this.spa.selectedLines=selection.length;
 	this.spa.viewForm=row;
 	this.spa.updForm=row;
-	this.spa.deleteKey.push(row.paraCode);
+	this.spa.deleteKey.push(row.testKey);
 };
 pagepublictool.cancel=function(selection,row){
 	this.spa.selectedLines=selection.length;
@@ -169,6 +172,16 @@ pagepublictool.doButtonExt = function(thisMenuButtons) {
 	}
 	this.spa.buttonInfos = thisMenuButtons;
 };
+pagepublictool.getSizeValue=function(){
+    //个性化设置，设置字体大小
+	const sizeValue=Cookies.get("sizeValue");
+	const size=this.$store.state.app.sizeFont;
+	if(!sizeValue){
+		return size;
+	}else{
+		return sizeValue;
+	}
+}
 pagepublictool.err=function(err){
 	this.spa.$Modal.error({
         title: '出错啦',
