@@ -129,7 +129,6 @@ pagepublictool.choice=function(selection,row){
 	this.spa.selectedLines=selection.length;
 	this.spa.viewForm=row;
 	this.spa.updForm=row;
-	this.spa.deleteKey.push(row.testKey);
 };
 pagepublictool.cancel=function(selection,row){
 	this.spa.selectedLines=selection.length;
