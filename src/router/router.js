@@ -66,7 +66,8 @@ export const appRouter = [
         children: [
 			{ path: 'userlist', title: '用户管理', name: 'user-info',icon: 'compose',component: () => import('@/views/system/user/user-manage.vue') },
 			{ path: 'orglist', title: '机构管理', name: 'org_info', icon: 'compose',component: () => import('@/views/system/org/sys-org.vue') },
-			{ path: 'parmlist', title: '系统参数', name: 'parm_info', access: '1002', icon: 'compose',component: () => import('@/views/system/parm/sys-parm.vue') },
+			{ path: 'parmlist', title: '系统参数', name: 'parm_info',icon: 'compose',component: () => import('@/views/system/parm/sys-parm.vue') },
+			{ path: 'testlist', title: '测试', name: 'test_info',icon: 'compose',component: () => import('@/views/system/test/test.vue') },
 			{
 				path:'hardware',
 				icon: 'android-checkbox',

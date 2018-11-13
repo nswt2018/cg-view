@@ -135,7 +135,6 @@ pagepublictool.cancel=function(selection,row){
 	if(this.spa.selectedLines>0){
 		this.spa.viewForm=selection[0];
 		this.spa.updForm=selection[0];
-		this.spa.deleteKey.splice(this.spa.deleteKey.indexOf(row.paraCode), 1);
 	}else{
 		this.spa.viewForm={};
 		this.spa.updForm={};
@@ -180,7 +179,7 @@ pagepublictool.getSizeValue=function(){
 	}else{
 		return sizeValue;
 	}
-}
+};
 pagepublictool.err=function(err){
 	this.spa.$Modal.error({
         title: '出错啦',
