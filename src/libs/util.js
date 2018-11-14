@@ -211,7 +211,6 @@ util.setCurrentPath = function (vm, name) {
             })[0];
 
            // let thirdLevelObj =
-           console.log(childObj)
 
            //二级页面
             if (childObj) {
