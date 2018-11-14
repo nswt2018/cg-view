@@ -49,14 +49,17 @@
 						 </FormItem>
 						 <FormItem label="所属模型" prop="moduModel">
 							 <Select v-model="addModel.moduModel">
-								<Option v-for="item in modList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-							</Select>
+								<Option v-for="item in modList" :value="item.value" :key="item.value">
+									{{ item.label }}
+								</Option>
+							 </Select>
 						 </FormItem>
-						 <FormItem label="创建日期" prop="crtDate">
-							<input type="date" v-model="addModel.crtDate"></input>
-						 </FormItem>
-						 <FormItem label="修改日期" prop="updDate">
-							<input type="date" v-model="addModel.updDate"></input>
+						 <FormItem label="关联表" prop="relTable">
+							 <Select v-model="addModel.relTable" filterable>
+								<Option v-for="item in tabList" :value="item.value" :key="item.value">
+									{{ item.label }}
+								</Option>
+							 </Select>
 						 </FormItem>
 					 </Form>    	
 				</Modal>
@@ -64,7 +67,7 @@
 				<!-- 修改页面 -->
 				<Modal width="700" v-model="viewModal" title="模块信息" ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
 					@on-ok="update('updFormRef')">
-					<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100">
+					<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100" :rules="modelUpdRules">
 						<FormItem label="模块代码" prop="moduCode">
 							 <Input v-model="viewOrUpdateModel.moduCode" disabled/>
 						 </FormItem>
@@ -79,11 +82,12 @@
 								<Option v-for="item in modList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 							</Select>
 						 </FormItem>
-						 <FormItem label="创建日期" prop="crtDate">
-							<input type="date" v-model="viewOrUpdateModel.crtDate" disabled></input>
-						 </FormItem>
-						 <FormItem label="修改日期" prop="updDate">
-							<input type="date" v-model="viewOrUpdateModel.updDate"></input>
+						 <FormItem label="关联表" prop="relTable">
+							 <Select v-model="viewOrUpdateModel.relTable" filterable>
+								<Option v-for="item in tabList" :value="item.value" :key="item.value">
+									{{ item.label }}
+								</Option>
+							 </Select>
 						 </FormItem>
 					</Form>    	
 				</Modal>
@@ -110,6 +114,7 @@ export default {
 			deleteurl: '/business/TK0004D.do',
 			updateurl: '/business/TK0004U.do',  
 			selecturl: '/business/TK0001T.do',  
+			gettaburl: '/business/TK0004L1.do', 
 			list_data: [],
 			pageSize: 10,
 			currentPage: 1,
@@ -126,14 +131,19 @@ export default {
 				moduCName : [{required: true}],
 				moduTC : [{required: true}],
 				moduModel : [{required: true}],
-				crtDate : [{required: true}]
+				relTable : [{required: true}]
             },
+			modelUpdRules: {
+				moduModel : [{required: true}],
+				relTable : [{required: true}]
+			},
 			viewOrUpdateModel: {},
             columns: [],
 			selectedLines: 0,
 			deletedPks: [],
 			viewModal: false,
-			modList: []
+			modList: [],
+			tabList: []
         };
     },
     methods: {  
@@ -147,7 +157,6 @@ export default {
         	pagetool.setPage(this);
         	systemModule.setPage(this);
         	pagetool.page(this.getSearchCond());
-        	//pagetool.getButtons();
         	this.columns = systemModule.getColumns();
         },        
         searching () {
@@ -178,11 +187,14 @@ export default {
 			this.addModal = true;
 			this.handleReset('addFormRef');
 			this.modList = [];
+			this.tabList = [];
 			systemModule.getModList(this.selecturl);
+			systemModule.getTabList(this.gettaburl);
 		},
 		
 		//新增保存
 		saving(name) {
+			this.addModel.crtDate = datetool.format(new Date());
         	pagetool.save(name);
         },
 		
@@ -191,8 +203,9 @@ export default {
         	pagetool.reset(name);
         },
 		
+		//对整个表单进行重置，将所有字段值重置为空并移除校验结果
 		handleReset (name) {
-			this.$refs[name].resetFields(); //对整个表单进行重置，将所有字段值重置为空并移除校验结果
+			this.$refs[name].resetFields();
 		},
 		
 		//删除操作
@@ -212,11 +225,13 @@ export default {
 			}
 			
 			systemModule.getModList(this.selecturl);
+			systemModule.getTabList(this.gettaburl);
 			this.viewModal = true;
 		},
 		
 		//修改保存
 		update (name) {
+			this.viewOrUpdateModel.updDate = datetool.format(new Date());
 			systemModule.update(name);
 		},
 		
@@ -239,7 +254,7 @@ export default {
     	this.init();
     },
     computed:{
-    //个性化设置，设置字体大小
+		//个性化设置，设置字体大小
     	getFont(){
     	    const sizeValue=Cookies.get("sizeValue");
     		const size=this.$store.state.app.sizeFont;

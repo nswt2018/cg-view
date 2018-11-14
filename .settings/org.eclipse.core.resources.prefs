@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//src/views/Main.vue=UTF-8
 encoding//src/views/login.vue=UTF-8
+encoding//src/views/system/business=UTF-8
 encoding//src/views/system/business/modelDefinition/model/modelDefinition-manage.vue=UTF-8
 encoding//src/views/system/user/user-manage.vue=UTF-8
 encoding/<project>=UTF-8

@@ -22,25 +22,23 @@
 						<p slot="title"> <Icon type="compose"></Icon>页面元素</p> 
 						<Row>
 							<p>
-								<Input v-model="sEleCode" placeholder="请输入元素编号搜索" icon="search" 
-									style="width: 200px" @on-change="searching"></Input>
 								<Input v-model="sEleCName" placeholder="请输入元素中文名称搜索" icon="search" 
 									style="width: 200px" @on-change="searching"></Input>
 								<Input v-model="sEleEName" placeholder="请输入元素英文名称搜索" icon="search" 
 									style="width: 200px" @on-change="searching"></Input>
 								&nbsp;
-								<Button type="success" @click="handleUpdate()">编辑</Button>
+								<Button type="success" @click="handleUpdate()">修改</Button>
 							</p>
 						</Row>						
 						<Row>
 							<Table highlight-row border ref="dataList" height="410" 
-								:columns="columns" :data="list_data" :stripe="true" 
+								:columns="columns" :data="list_data" :stripe="true" :size="getFont"
 								@on-select="choicing" @on-select-cancel="cancing" 
 								@on-sort-change="sorting">
 							</Table>
 							<div style="float: right;">
 								<Page :total="totalCount" :current="1" :page-size="pageSize" 
-								:transfer="true"
+								:transfer="true" :size="getFont"
 								@on-change="changePage" @on-page-size-change="changePageSize" 
 								show-total show-elevator show-sizer></Page>
 							</div>
@@ -52,37 +50,36 @@
 							@on-ok="update('updFormRef')">
 							<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100">
 								<FormItem label="英文名称" prop="eleEName">
-									<Input v-model="viewOrUpdateModel.eleEName" disabled/>
+									<Input v-model="viewOrUpdateModel.eleEName" disabled style="width: auto"/>
 								</FormItem>
 								<FormItem label="中文名称" prop="eleCName">
-									<Input v-model="viewOrUpdateModel.eleCName"/>
+									<Input v-model="viewOrUpdateModel.eleCName" style="width: auto"/>
 								</FormItem>
 								<FormItem label="标签信息" prop="tagInfo">
-									<Input v-model="viewOrUpdateModel.tagInfo" icon="ios-search" @on-click="editTags"/>
+									<Input v-model="viewOrUpdateModel.tagInfo" icon="ios-search" @on-click="editTags" style="width: auto"/>
 								</FormItem>
 								<FormItem label="创建日期" prop="crtDate">
-									<input type="date" v-model="viewOrUpdateModel.crtDate"></input>
-								</FormItem>
-								<FormItem label="修改日期" prop="updDate">
-									<input type="date" v-model="viewOrUpdateModel.updDate"></input>
+									<DatePicker type="date"v-model="viewOrUpdateModel.crtDate" disabled readonly/>
 								</FormItem>
 							</Form>    	
 						</Modal>
 						
 						<!-- 标签树 -->
-						<Modal v-model="treeModal" width="700" @on-ok="submitColumns">
-							<Col span="5">
-								<Tree :data="tagData" @on-select-change="selectTag" ref="tree"></Tree>
-							</Col>
-							<Col span="17">
-								<div v-show="tagInfo">
-									<Table highlight-row border height="410" 
-										:columns="tagColumns" :data="tagDatas" :stripe="true" 
-										@on-select="choicing" @on-select-cancel="cancing" 
-										@on-sort-change="sorting">
-									</Table>
-								</div>
-							</Col>	
+						<Modal v-model="treeModal" width="700" @on-ok="submitColumns" @on-cancel="cancelSub">
+							<div class="modaltyle">
+								<Col span="5">
+									<Tree :data="tagData" @on-select-change="selectTag" ref="tree"></Tree>
+								</Col>
+								<Col span="19">
+									<div v-show="tagInfo">
+										<Table highlight-row border 
+											:columns="tagColumns" :data="tagDatas" :stripe="true" 
+											@on-select="choicing" @on-select-cancel="cancing" 
+											@on-sort-change="sorting">
+										</Table>
+									</div>
+								</Col>
+							</div>
 						</Modal>
 					</Card>
 				</div>
@@ -95,6 +92,7 @@ import pageElement from './pageElement_column';
 import util from '@/libs/util.js';
 import datetool from '@/libs/datetool';
 import pagetool from '@/libs/pagetool';
+import Cookies from 'js-cookie';
 
 	 export default {
         data () {
@@ -114,7 +112,6 @@ import pagetool from '@/libs/pagetool';
 				currentPage: 1,
 				totalCount: 0,
 				totalPage: 0,
-				orderFileds: [],
 				sEleCode: '',
 				sUnitCode: '',
 				sEleCName: '',
@@ -130,6 +127,7 @@ import pagetool from '@/libs/pagetool';
 				tagInfo: false,
 				tagDatas: [],
 				tagColumns: [],
+				crtdate: ''
 			};
 			
 		},
@@ -173,6 +171,7 @@ import pagetool from '@/libs/pagetool';
 					pagetool.page(this.getSearchCond());
 					this.columns = pageElement.getColumns();
 					this.detailedInfo = true;
+					this.selectedLines = 0;
 				});
 			},
 			sorting(data) {
@@ -198,11 +197,13 @@ import pagetool from '@/libs/pagetool';
 					
 					return;
 				};
+				this.viewOrUpdateModel.crtDate = this.crtdate;
 				this.viewModal = true;
 			},
 			
 			//修改保存
 			update (name) {
+				this.viewOrUpdateModel.updDate = datetool.format(new Date());
 				pageElement.update(name);
 			},
 			
@@ -249,10 +250,26 @@ import pagetool from '@/libs/pagetool';
 				var params = new URLSearchParams();
 				params.append('eleCode', this.viewOrUpdateModel.eleCode);
 				pageElement.assembleJson(params);
+			},
+			
+			cancelSub () {
+				this.tagInfo = false;
 			}
 		},
 		created () {
 			this.init();
-		}
+		},
+		computed:{
+			//个性化设置，设置字体大小
+			getFont(){
+				const sizeValue=Cookies.get("sizeValue");
+				const size=this.$store.state.app.sizeFont;
+				if(!sizeValue){
+					return size;
+				}else{
+					return sizeValue;
+				}
+			}
+		} 
 	};
 </script>

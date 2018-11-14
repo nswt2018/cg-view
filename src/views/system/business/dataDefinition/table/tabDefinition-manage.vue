@@ -6,17 +6,18 @@
     <div>
         <Row>
             <Card>
-                <p slot="title"> <Icon type="compose"></Icon>模型定义</p>
+                <p slot="title"> <Icon type="compose"></Icon>表定义</p>
                 <Row>
                 	<p>
-                		<Input v-model="sModelCode" placeholder="请输入模型代码搜索" icon="search" 
+                		<Input v-model="sTabCode" placeholder="请输入表中文名称搜索" icon="search" 
                 			style="width: 200px" @on-change="searching"></Input>
-                		<Input v-model="sModelName" placeholder="请输入模型名称搜索" icon="search" 
-                    			style="width: 200px" @on-change="searching"></Input>
+                		<Input v-model="sTabName" placeholder="请输入表英文名称搜索" icon="search" 
+							style="width: 200px" @on-change="searching"></Input>
 						&nbsp;
                 		<Button type="primary" @click="handleInsert()">新增</Button>
                 		<Button type="success" @click="handleUpdate()">修改</Button>
 						<Button type="warning" @click="handleDelete()">删除</Button>
+						<Button type="info" @click="tabFactory()">表创建</Button>
         	    	</p>
         	    </Row>        	    
         	    <Row>
@@ -34,39 +35,33 @@
                 </Row> 
 				
 				<!-- 新增页面 -->
-				<Modal width="700" v-model="addModal" title="模型信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
+				<Modal width="700" v-model="addModal" title="表信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
 					@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
 					<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100">
-						<FormItem label="模型代码" prop="modCode">
-							 <Input v-model="addModel.modCode" placeholder="请输入4位模型代码" />
+						 <FormItem label="表名" prop="tabCode">
+							 <Input v-model="addModel.tabCode" placeholder="请输入表英文名称" />
 						 </FormItem>
-						 <FormItem label="模型名称" prop="modName">
-							 <Input v-model="addModel.modName" placeholder="请输入模型中文名称" />
+						 <FormItem label="中文名称" prop="tabName">
+							 <Input v-model="addModel.tabName" placeholder="请输入表中文名称" />
 						 </FormItem>
-						 <FormItem label="版本" prop="modVersion">
-							 <Input v-model="addModel.modVersion" placeholder="请输入版本" />
-						 </FormItem>
-						 <FormItem label="备注" prop="remarks">
-							 <Input v-model="addModel.remarks"/>
+						 <FormItem label="备注" prop="tabComm">
+							 <Input v-model="addModel.tabComm" />
 						 </FormItem>
 					 </Form>    	
 				</Modal>
 				
 				<!-- 修改页面 -->
-				<Modal width="700" v-model="viewModal" title="模型信息" ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
+				<Modal width="700" v-model="viewModal" title="模块信息" ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
 					@on-ok="update('updFormRef')">
-					<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100" :rules="modelUpdRules">
-						<FormItem label="模型代码" prop="modCode">
-							 <Input v-model="viewOrUpdateModel.modCode" disabled/>
+					<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100">
+						<FormItem label="表名" prop="tabCode">
+							 <Input v-model="viewOrUpdateModel.tabCode" disabled/>
 						 </FormItem>
-						 <FormItem label="模型名称" prop="modName">
-							 <Input v-model="viewOrUpdateModel.modName"/>
+						 <FormItem label="中文名称" prop="tabName">
+							 <Input v-model="viewOrUpdateModel.tabName"/>
 						 </FormItem>
-						 <FormItem label="版本" prop="modVersion">
-							 <Input v-model="viewOrUpdateModel.modVersion"/>
-						 </FormItem>
-						 <FormItem label="备注" prop="remarks">
-							 <Input v-model="viewOrUpdateModel.remarks"/>
+						 <FormItem label="备注" prop="tabComm">
+							 <Input v-model="viewOrUpdateModel.tabComm" />
 						 </FormItem>
 					</Form>    	
 				</Modal>
@@ -79,38 +74,33 @@
 <script>
 import datetool from '@/libs/datetool';
 import pagetool from '@/libs/pagetool';
-import modelcolumn from './model_column';
+import tabDefinition from './tabDefinition_column';
 import Cookies from 'js-cookie';
 
 
 export default {
-    name: 'model-info',
+    name: 'module-info',
     data () {
         return {
         	headers: {'Content-Type': 'application/json;charset=UTF-8'},
-        	listurl: '/business/TK0001L.do', 
-			saveurl: '/business/TK0001I.do',
-			deleteurl: '/business/TK0001D.do',
-			updateurl: '/business/TK0001U.do',  			
+        	listurl: '/business/TK0007L.do', 
+			saveurl: '/business/TK0007I.do',
+			deleteurl: '/business/TK0007D.do',
+			updateurl: '/business/TK0007U.do', 
+			createTaburl: '/business/TK0007G.do',
 			list_data: [],
 			pageSize: 10,
 			currentPage: 1,
 			totalCount: 0,
 			totalPage: 0,
-			sModelCode: '',
-			sModelName: '',
-			sOrgCode: '',
-			orderFileds: [],
+			sTabCode: '',
+			sTabName: '',
 			addModal: false,
 			addModel: {},
 			loading: true,
 			modelAddRules: {
-            	modCode : [{required: true}],
-				modName : [{required: true}],
-				modVersion : [{required: true}]
-            },
-			modelUpdRules: {
-				modVersion : [{required: true}]
+            	tabCode : [{required: true}],
+				tabName : [{required: true}]
             },
 			viewOrUpdateModel: {},
             columns: [],
@@ -123,15 +113,14 @@ export default {
 		getSearchCond() {
     		//let menuCode = Cookies.get('menucode');
         	return {'menuCode': '', 'pageSize': this.pageSize, 'currentPage': this.currentPage, 
-        		'valObj': {'modCode': this.sModelCode, 'modName': this.sModelName, 'orgCode': this.sOrgCode}
+        		'valObj': {'tabCode': this.sTabCode, 'tabName': this.sTabName}
         	};
         },
         init () {
         	pagetool.setPage(this);
-        	modelcolumn.setPage(this);
+        	tabDefinition.setPage(this);
         	pagetool.page(this.getSearchCond());
-        	//pagetool.getButtons();
-        	this.columns = modelcolumn.getColumns();
+        	this.columns = tabDefinition.getColumns();
         },        
         searching () {
     		pagetool.page(this.getSearchCond());
@@ -150,15 +139,16 @@ export default {
         	pagetool.sort(data, this.getSearchCond());
         },
 		choicing(selection, row) {
-        	modelcolumn.choice(selection, row);
+        	tabDefinition.choice(selection, row);
         },
         cancing(selection, row) {
-        	modelcolumn.cancel(selection, row);        	
+        	tabDefinition.cancel(selection, row);        	
         },
 		
 		//新增页面
 		handleInsert(){
 			this.addModal = true;
+			this.handleReset('addFormRef');
 		},
 		
 		//新增保存
@@ -172,9 +162,14 @@ export default {
         	pagetool.reset(name);
         },
 		
+		//对整个表单进行重置，将所有字段值重置为空并移除校验结果
+		handleReset (name) {
+			this.$refs[name].resetFields();
+		},
+		
 		//删除操作
         handleDelete () {
-        	modelcolumn.delete(this.deleteurl+"?modCode="+this.deletedPks.join(','));
+        	tabDefinition.delete(this.deleteurl+"?tabCode="+this.deletedPks.join(','));
         },
 		
 		//修改操作
@@ -187,13 +182,19 @@ export default {
 				
 				return;
 			}
+			
 			this.viewModal = true;
 		},
 		
 		//修改保存
 		update (name) {
 			this.viewOrUpdateModel.updDate = datetool.format(new Date());
-			modelcolumn.update(name);
+			tabDefinition.update(name);
+		},
+		
+		//生成表
+		tabFactory () {
+			tabDefinition.tabFactory(this.createTaburl+"?tabCode="+this.deletedPks.join(','));
 		}
     },
     created() {

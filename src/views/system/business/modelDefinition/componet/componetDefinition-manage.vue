@@ -65,12 +65,6 @@
 								<FormItem label="所属模型" prop="modCode">
 									<Input v-model="sModCode" disabled/>
 								</FormItem>
-								<FormItem label="创建日期" prop="crtDate">
-									<input type="date" v-model="addModel.crtDate"></input>
-								</FormItem>
-								<FormItem label="修改日期" prop="updDate">
-									<input type="date" v-model="addModel.updDate"></input>
-								</FormItem>
 							</Form>    	
 						</Modal>
 						
@@ -93,12 +87,6 @@
 								<FormItem label="所属模型" prop="modCode">
 									<Input v-model="viewOrUpdateModel.modCode" disabled/>
 								</FormItem>
-								<FormItem label="创建日期" prop="crtDate">
-									<input type="date" v-model="viewOrUpdateModel.crtDate" disabled></input>
-								</FormItem>
-								<FormItem label="修改日期" prop="updDate">
-									<input type="date" v-model="viewOrUpdateModel.updDate"></input>
-								</FormItem>
 							</Form>    	
 						</Modal>
 					</Card>
@@ -112,6 +100,7 @@ import componet from './componet_column';
 import util from '@/libs/util.js';
 import datetool from '@/libs/datetool';
 import pagetool from '@/libs/pagetool';
+import Cookies from 'js-cookie';
 
 	 export default {
         data () {
@@ -138,10 +127,7 @@ import pagetool from '@/libs/pagetool';
 				classificationFinalSelected: [],
 				modelAddRules: {
 					comCode : [{required: true}],
-					comName : [{required: true}],
-					template : [{required: true}],
-					relTag : [{required: true}],
-					crtDate : [{required: true}],
+					comName : [{required: true}]
 				},
 				deletedPks: [],
 				selectedLines: 0,
@@ -188,6 +174,7 @@ import pagetool from '@/libs/pagetool';
 					pagetool.page(this.getSearchCond());
 					this.columns = componet.getColumns();
 					this.detailedInfo = true;
+					this.selectedLines = 0;
 				});
 			},
 			sorting(data) {
@@ -212,6 +199,7 @@ import pagetool from '@/libs/pagetool';
 			//新增保存
 			saving(name) {
 				this.addModel.modCode = this.sModCode;
+				this.addModel.crtDate = datetool.format(new Date());
 				componet.save(name);
 			},
 			
@@ -240,15 +228,30 @@ import pagetool from '@/libs/pagetool';
 			
 			//修改保存
 			update (name) {
+				this.viewOrUpdateModel.updDate = datetool.format(new Date());
 				componet.update(name);
 			},
 			
+			//对整个表单进行重置，将所有字段值重置为空并移除校验结果
 			handleReset (name) {
-                this.$refs[name].resetFields(); //对整个表单进行重置，将所有字段值重置为空并移除校验结果
+                this.$refs[name].resetFields();
             },
 		},
 		created () {
 			this.init();
-		}
+		},
+		
+		computed:{
+			//个性化设置，设置字体大小
+			getFont(){
+				const sizeValue=Cookies.get("sizeValue");
+				const size=this.$store.state.app.sizeFont;
+				if(!sizeValue){
+					return size;
+				}else{
+					return sizeValue;
+				}
+			}
+		}    
 	};
 </script>

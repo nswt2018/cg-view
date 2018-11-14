@@ -57,7 +57,7 @@ export const otherRouter = {
 
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
-   {
+   /*{
         path: '/system',
         icon: 'android-checkbox',
         name: 'system',
@@ -80,7 +80,7 @@ export const appRouter = [
 		        ]
 			}
 		]
-    },
+    },*/
     
     //业务平台
 	{
@@ -105,21 +105,16 @@ export const appRouter = [
 					{ path: 'businessUnit', title: '业务单元', name: 'businessUnit', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/unit/businessUnit-manage.vue') },
 					{ path: 'pageElement', title: '页面元素', name: 'pageElement', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/element/pageElement-manage.vue') }
 				]
+			},
+			{ 
+				path: 'dataDefinition', title: '数据定义', name: 'data_definition', icon: 'navicon-round',component: () => import('@/views/system/business/artical-publish-center.vue'),
+				children: [
+					{ path: 'tabDefinition', title: '表定义', name: 'tabDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/dataDefinition/table/tabDefinition-manage.vue') },
+					{ path: 'colDefinition', title: '字段定义', name: 'colDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/dataDefinition/columns/colDefinition-manage.vue') }
+				]
 			}
         ]
-    },
-
-	//模块定义
-	{
-        path: '/definition-modules',
-        icon: 'android-checkbox',
-        name: 'definitionmodules',
-        title: '模块定义',
-        component: Main,
-        children: [
-			{ path: 'index', title: '模块定义', name: 'definitionmodules_index', icon: 'navicon-round', component: () => import('@/views/demo/definition-modules.vue') }
-        ]
-    },
+    }/*,
     
     {
         path: '/auxdev',
@@ -131,7 +126,7 @@ export const appRouter = [
 			{ path: 'coder', title: '代码生成', name: 'coder-info', icon: 'arrow-swap',component: () => import('@/views/system/user/user-manage.vue') },
 			{ path: 'coder2', title: '报表生成', name: 'report-info', icon: 'arrow-swap',component: () => import('@/views/system/user/user-manage.vue') }
         ]
-    }
+    }*/
 ];
 
 // 所有上面定义的路由都要写在下面的routers里,定义路由

@@ -11,7 +11,7 @@ util.title = function (title) {
     window.document.title = title;
 };
 
-const ajaxUrl = (env === 'development' ? '/api' : (env === 'production' ? '/api' : '/api'));
+const ajaxUrl = (env === 'development' ? '/api' : (env === 'production' ? '' : '/api'));
 
 util.ajax = axios.create({
     baseURL: ajaxUrl,

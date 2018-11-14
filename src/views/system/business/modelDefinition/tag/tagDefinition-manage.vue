@@ -23,10 +23,14 @@
 						<p slot="title"> <Icon type="compose"></Icon>标签定义</p> 
 						<Row>
 							<p>
-								<Input v-model="sTagCode" placeholder="请输入标签编号搜索" icon="search" 
-									style="width: 200px" @on-change="searching"></Input>
-								<Input v-model="sTagName" placeholder="请输入标签名称搜索" icon="search" 
-										style="width: 200px" @on-change="searching"></Input>
+								<Input v-model="sTagProp" placeholder="请输入属性搜索" icon="search" 
+									style="width: 200px" @on-change="searching" clearable></Input>
+								<Select v-model="sPropType" placeholder="请选择属性类型" clearable
+									style="width: 200px" @on-change="searching">
+									<Option v-for="item in propTypeList" :value="item.value" :key="item.value">
+										{{ item.label }}
+									</Option>
+								</Select>
 								&nbsp;
 								<Button type="primary" @click="handleInsert()">新增</Button>
 								<Button type="success" @click="handleUpdate()">修改</Button>
@@ -59,9 +63,9 @@
 								</FormItem>
 								<FormItem label="属性类别" prop="propType">
 									 <Select v-model="addModel.propType">
-										<Option value="1">静态标签</Option>
-										<Option value="2">动态标签</Option>
-										<Option value="3">方法</Option>
+										<Option v-for="item in propTypeList" :value="item.value" :key="item.value">
+											{{ item.label }}
+										</Option>
 									</Select>
 								</FormItem>
 								<FormItem label="属性值" prop="propVal">
@@ -72,12 +76,6 @@
 								</FormItem>
 								<FormItem label="默认值" prop="defaultValue">
 									<Input v-model="addModel.defaultValue"/>
-								</FormItem>
-								<FormItem label="创建日期" prop="crtDate">
-									<input type="date" v-model="addModel.crtDate"></input>
-								</FormItem>
-								<FormItem label="修改日期" prop="updDate">
-									<input type="date" v-model="addModel.updDate"></input>
 								</FormItem>
 							</Form>    	
 						</Modal>
@@ -94,9 +92,9 @@
 								</FormItem>
 								<FormItem label="属性类别" prop="propType">
 									<Select v-model="viewOrUpdateModel.propType">
-										<Option value="1">静态标签</Option>
-										<Option value="2">动态标签</Option>
-										<Option value="3">方法</Option>
+										<Option v-for="item in propTypeList" :value="item.value" :key="item.value">
+											{{ item.label }}
+										</Option>
 									</Select>
 								</FormItem>
 								<FormItem label="属性值" prop="propVal">
@@ -107,12 +105,6 @@
 								</FormItem>
 								<FormItem label="默认值" prop="defaultValue">
 									<Input v-model="viewOrUpdateModel.defaultValue"/>
-								</FormItem>
-								<FormItem label="创建日期" prop="crtDate">
-									<input type="date" v-model="viewOrUpdateModel.crtDate" disabled></input>
-								</FormItem>
-								<FormItem label="修改日期" prop="updDate">
-									<input type="date" v-model="viewOrUpdateModel.updDate"></input>
 								</FormItem>
 							</Form>    	
 						</Modal>
@@ -139,7 +131,8 @@ export default {
 			baseData: {},
 			detailedInfo: false,
 			classificationFinalSelected: [],
-			sTagCode: '',
+			sTagProp: '',
+			sPropType: '',
 			sTagId: '',
 			sTagTitle: '',
 			list_data: [],
@@ -151,8 +144,7 @@ export default {
 			addModel: {},
 			modelAddRules: {
 				tagProp : [{required: true}],
-				propType : [{required: true}],
-				crtDate : [{required: true}]
+				propType : [{required: true}]
 			},
 			modelUpdRules: {
 				tagProp : [{required: true}],
@@ -162,13 +154,27 @@ export default {
 			viewOrUpdateModel: {},
 			viewModal: false,
 			selectedLines: 0,
-			deletedPks: []
+			deletedPks: [],
+			propTypeList: [
+				{
+					value: '1',
+					label: '静态标签'
+				},
+				{
+					value: '2',
+					label: '动态标签'
+				},
+				{
+					value: '3',
+					label: '方法'
+				}
+			]
 		};
 	},
 	methods: {  
 		getSearchCond() {
 			return {'menuCode': '', 'pageSize': this.pageSize, 'currentPage': this.currentPage, 
-        		'valObj': {'tagCode': this.sTagId}
+        		'valObj': {'tagCode': this.sTagId, 'propType': this.sPropType, 'tagProp': this.sTagProp}
         	};
         },
 		
@@ -200,9 +206,11 @@ export default {
 				pagetool.setPage(this);
 				this.sTagId = item.tagId;
 				this.sTagTitle = item.title;
+				this.sPropType = '';
 				pagetool.page(this.getSearchCond());
 				this.columns = tag.getColumns();
 				this.detailedInfo = true;
+				this.selectedLines = 0;
 			});
 		},
 		
@@ -229,6 +237,7 @@ export default {
 		saving(name) {
 			this.addModel.tagCode = this.sTagId;
 			this.addModel.tagName = this.sTagTitle;
+			this.addModel.crtDate = datetool.format(new Date());
 			tag.save(name);
 		},
 		
@@ -237,8 +246,9 @@ export default {
 			pagetool.reset(name);
 		},
 		
+		//对整个表单进行重置，将所有字段值重置为空并移除校验结果
 		handleReset (name) {
-			this.$refs[name].resetFields(); //对整个表单进行重置，将所有字段值重置为空并移除校验结果
+			this.$refs[name].resetFields();
 		},
 		
 		//删除操作
@@ -261,15 +271,16 @@ export default {
 		
 		//修改保存
 		update (name) {
+			this.viewOrUpdateModel.updDate = datetool.format(new Date());
 			tag.update(name);
 		},
-	
     },
     created() {
     	this.init();
     },
+	
     computed:{
-    //个性化设置，设置字体大小
+		//个性化设置，设置字体大小
     	getFont(){
     	    const sizeValue=Cookies.get("sizeValue");
     		const size=this.$store.state.app.sizeFont;

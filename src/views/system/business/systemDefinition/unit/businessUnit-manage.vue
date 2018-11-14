@@ -22,12 +22,10 @@
 						<p slot="title"> <Icon type="compose"></Icon>业务单元</p> 
 						<Row>
 							<p>
-								<Input v-model="sUnitCode" placeholder="请输入组件代码搜索" icon="search" 
+								<Input v-model="sUnitName" placeholder="请输入单元名称搜索" icon="search" 
 									style="width: 200px" @on-change="searching"></Input>
-								<Input v-model="sUnitName" placeholder="请输入组件名称搜索" icon="search" 
-										style="width: 200px" @on-change="searching"></Input>
 								&nbsp;
-								<Button type="primary" @click="handleInsert()">新增</Button>
+								<!-- <Button type="primary" @click="handleInsert()">新增</Button> -->
 								<Button type="success" @click="handleUpdate()">修改</Button>
 								<Button type="warning" @click="handleDelete()">删除</Button>
 							</p>
@@ -73,12 +71,6 @@
 								<FormItem label="其他信息" prop="relInfo">
 									<Input v-model="addModel.relInfo" />
 								</FormItem>
-								<FormItem label="创建日期" prop="crtDate">
-									<input type="date" v-model="addModel.crtDate"></input>
-								</FormItem>
-								<FormItem label="修改日期" prop="updDate">
-									<input type="date" v-model="addModel.updDate"></input>
-								</FormItem>
 							</Form>    	
 						</Modal>
 						
@@ -101,19 +93,17 @@
 									</Select>
 								</FormItem>
 								<FormItem label="关联表" prop="relTable">
-									<Input v-model="viewOrUpdateModel.relTable" />
+									<Input v-model="viewOrUpdateModel.relTable" disabled/>
 								</FormItem>
 								<FormItem label="关联字段" prop="relColumn">
-									<Input v-model="viewOrUpdateModel.relColumn" />
+									<Select v-model="viewOrUpdateModel.relColumn" multiple>
+										<Option v-for="item in colList" :value="item.value" :key="item.value">
+											{{ item.label }}
+										</Option>
+									</Select>
 								</FormItem>
 								<FormItem label="其他信息" prop="relInfo">
 									<Input v-model="viewOrUpdateModel.relInfo" />
-								</FormItem>
-								<FormItem label="创建日期" prop="crtDate">
-									<input type="date" v-model="viewOrUpdateModel.crtDate" disabled></input>
-								</FormItem>
-								<FormItem label="修改日期" prop="updDate">
-									<input type="date" v-model="viewOrUpdateModel.updDate"></input>
 								</FormItem>
 							</Form>    	
 						</Modal>
@@ -128,6 +118,7 @@ import businessUnit from './businessUnit_column';
 import util from '@/libs/util.js';
 import datetool from '@/libs/datetool';
 import pagetool from '@/libs/pagetool';
+import Cookies from 'js-cookie';
 
 	 export default {
         data () {
@@ -141,6 +132,7 @@ import pagetool from '@/libs/pagetool';
 				deleteurl: '/business/TK0005D.do',
 				updateurl: '/business/TK0005U.do',
 				selecturl: '/business/TK0005S.do', 	
+				collisturl: '/business/TK0005S1.do',
 				list_data: [],
 				pageSize: 10,
 				currentPage: 1,
@@ -157,14 +149,14 @@ import pagetool from '@/libs/pagetool';
 					unitCode : [{required: true}],
 					unitName : [{required: true}],
 					relTable : [{required: true}],
-					relColumn : [{required: true}],
-					crtDate : [{required: true}]
+					relColumn : [{required: true}]
 				},
 				deletedPks: [],
 				selectedLines: 0,
 				viewOrUpdateModel: {},
 				viewModal: false,
 				modList: [],
+				colList: [],
 				columns: []
 			};
 			
@@ -207,6 +199,7 @@ import pagetool from '@/libs/pagetool';
 					pagetool.page(this.getSearchCond());
 					this.columns = businessUnit.getColumns();
 					this.detailedInfo = true;
+					this.selectedLines = 0;
 				});
 			},
 			sorting(data) {
@@ -259,10 +252,21 @@ import pagetool from '@/libs/pagetool';
 				};
 				this.viewModal = true;
 				businessUnit.getModList(this.selecturl);
+				
+				var params = new URLSearchParams();
+				params.append('relTable', this.viewOrUpdateModel.relTable);
+				businessUnit.getColList(params);
+				
+				//将字符串转为数组
+				this.viewOrUpdateModel.relColumn = this.viewOrUpdateModel.relColumn.split(',');
 			},
 			
 			//修改保存
 			update (name) {
+				this.viewOrUpdateModel.updDate = datetool.format(new Date());
+				
+				//将Array数组转换为","隔开的字符串
+				this.viewOrUpdateModel.relColumn = this.viewOrUpdateModel.relColumn.join(',');
 				businessUnit.update(name);
 			},
 			
@@ -272,6 +276,18 @@ import pagetool from '@/libs/pagetool';
 		},
 		created () {
 			this.init();
-		}
+		},
+		computed:{
+			//个性化设置，设置字体大小
+			getFont(){
+				const sizeValue=Cookies.get("sizeValue");
+				const size=this.$store.state.app.sizeFont;
+				if(!sizeValue){
+					return size;
+				}else{
+					return sizeValue;
+				}
+			}
+		} 
 	};
 </script>

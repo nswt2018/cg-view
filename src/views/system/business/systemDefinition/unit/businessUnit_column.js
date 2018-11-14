@@ -19,23 +19,12 @@ businessUnit.getColumns = function() {
 	return [
 				{ 
 					type: 'selection',
-			        width: 60,
-			        align: 'center'
-			    },
-				{
-					title: '单元编号',
-			        key: 'unitCode',
-			        sortable: 'custom',
 			        align: 'center'
 			    },
 			    {
 					title: '单元名称',
 			        key: 'unitName',
-			        align: 'center'
-			    },
-			    {
-			        title: '模块代码',
-			        key: 'moduCode',
+					width: 150,
 			        align: 'center'
 			    },
 				{
@@ -52,6 +41,7 @@ businessUnit.getColumns = function() {
 			        title: '关联字段',
 			        key: 'relColumn',
 			        align: 'center',
+					width: 150,
 					render: (h, params) => {
 					  return h('div', [
 						 h('span', {
@@ -276,6 +266,22 @@ businessUnit.getModList = function (selecturl) {
 		});
 		
 		this.spa.modList = result;
+	});
+};
+
+businessUnit.getColList = function (params) {
+	util.ajax.post(this.spa.collisturl, params, header).then((rres) => {   	
+		const result = [];
+		rres.data.forEach(d => {
+			let item = {
+				value: d,
+				label: d
+			};
+			
+			result.push(item);
+		});
+		
+		this.spa.colList = result;
 	});
 };
 

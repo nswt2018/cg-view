@@ -33,21 +33,6 @@ pageElement.getColumns = function() {
 			        align: 'center'
 			    },
 				{
-			        title: '单元编号',
-			        key: 'unitCode',
-			        align: 'center'
-			    },
-				{
-			        title: '模块编号',
-			        key: 'moduCode',
-			        align: 'center'
-			    },
-				{
-			        title: '组件类型',
-			        key: 'comName',
-			        align: 'center'
-			    },
-				{
 			        title: '标签信息',
 			        key: 'tagInfo',
 			        align: 'center',
@@ -67,24 +52,6 @@ pageElement.getColumns = function() {
 						 }, params.row.tagInfo)
 					 ]);
 					}
-			    },
-			    {
-			        title: '创建日期',
-			        key: 'crtDate',
-			        sortable: 'custom',
-			        align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.crtDate));
-			        }
-			    },
-			    {
-			        title: '修改日期',
-			        key: 'updDate',
-					sortable: 'custom',
-					align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.updDate));
-			        }
 			    }
     ];
 };
@@ -207,6 +174,7 @@ pageElement.page = function (data) {
 pageElement.choice = function(selection, row) {
 	this.spa.selectedLines = selection.length;
 	this.spa.viewOrUpdateModel = row;
+	this.spa.crtdate = row.crtDate;
 	this.spa.deletedPks.push(row.unitCode);
 };
 
@@ -295,28 +263,7 @@ pageElement.getTagColumns = function() {
 					  texts = "方法"
 				  }
 				  return h('div',texts);
-				 },
-			},
-			{
-				title: '可选值',
-				key: 'propVal',
-				align: 'center',
-				render: (h, params) => {
-				  return h('div', [
-					 h('span', {
-						 style: {
-							 display: 'inline-block',
-							 width: '100%',
-							 overflow: 'hidden',
-							 textOverflow: 'ellipsis',
-							 whiteSpace: 'nowrap'
-						 },
-						 domProps: {
-							 title: params.row.propVal
-						 }
-					 }, params.row.propVal)
-				 ]);
-				}
+				 }
 			},
 			{
 				title: '使用规则',
@@ -343,21 +290,41 @@ pageElement.getTagColumns = function() {
 				title: '属性值',
 				key: 'tagValue',
 				align: 'center',
+				width: 120,
 				render: (h, params) => {
  
 					if (params.row.$isEdit) {
 					
-					  return h('input', {
+					  if(params.row.propVal != null){
+						return h('Select', {
+							props:{
+								value: params.row.tagValue,
+							},
+							on: {
+								'on-change':(value) => {
+									params.row.tagValue = value;
+								}
+							},
+						  },
+						  params.row.propVal.split(',').map(function(type){
+							return h('Option', {
+								props: {value: type}
+							}, type);
+						  })
+						);
+					  }else{
+						return h('input', {
 
-						domProps: {
-						  value: params.row.tagValue
-						},
-						on: {
-						  input: function (event) {
-							params.row.tagValue = event.target.value
-						  }
-						}
-					  });
+							domProps: {
+							  value: params.row.tagValue
+							},
+							on: {
+							  input: function (event) {
+								params.row.tagValue = event.target.value
+							  }
+							}
+						 });
+					  }
 					} else  {
 					  return h('div', params.row.tagValue);
 					}
@@ -412,6 +379,7 @@ pageElement.assembleJson = function (params) {
 			var params = new URLSearchParams();
 			params.append('eleCode', this.spa.viewOrUpdateModel.eleCode);
 			pageElement.setTagValue(params);
+			this.spa.tagInfo = false;
 		}else{
 			this.spa.$Modal.error({
 				title: '错误信息',

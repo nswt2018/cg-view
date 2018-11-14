@@ -4,18 +4,19 @@ import datetool from '@/libs/datetool';
 import util from '@/libs/util.js'
 //import util from '../../util';
 
-let systemModule = {};
+let tabDefinition = {};
 let spa ;
 const header = {'Content-Type': 'application/json;charset=UTF-8'};
 const DEL_SUC='000002';
+const SAV_SUC='000001';
 const UPD_SUC='000003';
 const DUR_TIME=30;
 
-systemModule.setPage = function(obj) {
+tabDefinition.setPage = function(obj) {
 	this.spa = obj;
 };
 
-systemModule.getColumns = function() {
+tabDefinition.getColumns = function() {
 	return [
 				{ 
 					type: 'selection',
@@ -23,25 +24,20 @@ systemModule.getColumns = function() {
 			        align: 'center'
 			    },
 				{
-					title: '模块代码',
-			        key: 'moduCode',
+					title: '表名',
+			        key: 'tabCode',
 			        sortable: 'custom',
 			        align: 'center'
 			    },
 			    {
-					title: '中文名称',
-			        key: 'moduCName',
+					title: '中文名',
+			        key: 'tabName',
 			        align: 'center'
 			    },
 			    {
-			        title: '模块交易号',
-			        key: 'moduTC',
+			        title: '备注',
+			        key: 'tabComm',
 			        align: 'center',
-			    },
-				{
-					title: '所属模型',
-			        key: 'modName',
-			        align: 'center'
 			    },
 			    {
 			        title: '创建日期',
@@ -64,18 +60,20 @@ systemModule.getColumns = function() {
     ];
 };
 
-systemModule.choice = function(selection, row) {
+tabDefinition.choice = function(selection, row) {
 	this.spa.selectedLines = selection.length;
 	this.spa.viewOrUpdateModel = row;
-	this.spa.deletedPks.push(row.moduCode);
+	this.spa.deletedPks.push(row.tabCode);
+	this.spa.sTabCode = row.tabCode;
 };
 
-systemModule.cancel = function(selection, row) {
+tabDefinition.cancel = function(selection, row) {
 	this.spa.selectedLines = selection.length;
+	this.spa.sTabCode = '';
 	
 	if(this.spa.selectedLines>0) {
 		this.spa.viewOrUpdateModel = selection[0];
-		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.moduCode), 1);
+		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.tabCode), 1);
 	}
 	else {
 		this.spa.viewOrUpdateModel = {};
@@ -85,7 +83,7 @@ systemModule.cancel = function(selection, row) {
 	
 };
 
-systemModule.update = function(name) {
+tabDefinition.update = function(name) {
 	this.spa.$refs[name].validate((valid) => {
         if (valid) {
 			this.spa.viewOrUpdateModel.crtDate = datetool.format(this.spa.viewOrUpdateModel.crtDate);
@@ -113,7 +111,7 @@ systemModule.update = function(name) {
     })
 };
 
-systemModule.delete = function(delurl) {
+tabDefinition.delete = function(delurl) {
 	if(this.spa.selectedLines < 1) {
 		this.spa.$Modal.warning({
             title: '提示信息',
@@ -146,7 +144,7 @@ systemModule.delete = function(delurl) {
 	}
 };
 
-systemModule.page = function (data) {   
+tabDefinition.page = function (data) {   
 	//console.log(this.spa);
     util.ajax.post(this.spa.listurl, data, header).then((rres) => { 
     	if(rres && rres.data && !rres.data.pageSize) {
@@ -173,59 +171,38 @@ systemModule.page = function (data) {
 	});
 };
 
-systemModule.err = function (data) {   
+tabDefinition.err = function (data) {   
 	this.spa.$Message.error({
 		content: data.code+'\r\n'+data.msg+'\r\n'+data.excetion,
 		duration: DUR_TIME
 	});
 };
 
-systemModule.getModList = function (selecturl) {
-	util.ajax.post(selecturl,header).then((rres) => {   	
-		const result = [];
-		rres.data.forEach(d => {
-			let item = {
-				value: d.modCode,
-				label: d.modName
-			};
+tabDefinition.tabFactory = function (cturl) {  
+	if(this.spa.selectedLines < 1) {
+		this.spa.$Modal.warning({
+            title: '提示信息',
+            content: '必须选中一条记录！'
+        });
+	}else{
+		util.ajax.post(cturl, header).then((rres) => { 
+			if(rres.data.code === '100001' ) {
+				this.spa.$Modal.error({
+					title: '提示',
+					content: rres.data.msg
+				});
+				return;
+			}else{
+				this.spa.$Message.success(this.spa.sTabCode + '表创建成功!');
+			}
 			
-			result.push(item);
-		});
-		
-		this.spa.modList = result;
-	});
-};
-
-systemModule.getTabList = function (gettaburl) {
-	util.ajax.post(gettaburl,header).then((rres) => {   	
-		const result = [];
-		rres.data.forEach(d => {
-			let tab = {
-				value: d,
-				label: d
-			};
-			
-			result.push(tab);
-		});
-		
-		this.spa.tabList = result;
-	});
-};
-
-systemModule.codeGeneration = function(params) {
-	
-	util.ajax.post('/business/TK0004G.do', params, header).then((rres) => {  
-	
-		if(rres.data) {
-			this.spa.$Message.success('Success!');
-		}else{
+		}).catch((err) => {                   		
 			this.spa.$Modal.error({
-				title: '错误信息',
-				content:'文件生成失败！'
+				title: '出错啦',
+				content: err
 			});
-		}
-	});
+		});
+	}
 };
 
-
-export default systemModule;
+export default tabDefinition;

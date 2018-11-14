@@ -3,7 +3,7 @@ import iView from 'iview';
 import util from '@/libs/util.js'
 import datetool from '@/libs/datetool';
 
-let componet = {};
+let colDefinition = {};
 const header = {'Content-Type': 'application/json;charset=UTF-8'};
 const DEL_SUC='000002';
 const SAV_SUC='000001';
@@ -11,11 +11,11 @@ const UPD_SUC='000003';
 let spa;
 //let nodeInfo = {};
 
-componet.setPage = function(obj) {
+colDefinition.setPage = function(obj) {
 	this.spa = obj;
 };
 
-componet.getColumns = function() {
+colDefinition.getColumns = function() {
 	return [
 				{ 
 					type: 'selection',
@@ -23,21 +23,41 @@ componet.getColumns = function() {
 			        align: 'center'
 			    },
 				{
-					title: '组件代码',
-			        key: 'comCode',
+					title: '字段名',
+			        key: 'colCode',
 			        sortable: 'custom',
 			        align: 'center'
 			    },
 			    {
-					title: '组件名称',
-			        key: 'comName',
+					title: '中文名',
+			        key: 'colName',
 			        align: 'center'
 			    },
 			    {
-			        title: '模板文件',
-			        key: 'template',
+			        title: '字段类型',
+			        key: 'dataType',
 			        align: 'center',
 			    },
+				{
+			        title: '字段长度',
+			        key: 'dataLen',
+			        align: 'center',
+			    },
+				{
+			        title: '主键策略',
+			        key: 'pkGen',
+			        align: 'center',
+					render: (h, params) => {
+					  let _this = this;
+					  let texts = '';
+					  if(params.row.pkGen == 0){
+						  texts = "0-手动录入"
+					  }else if(params.row.pkGen == 1){
+						  texts = "1-自动生成"
+					  }
+					  return h('div',texts);
+					}
+				},
 			    {
 			        title: '创建日期',
 			        key: 'crtDate',
@@ -59,15 +79,14 @@ componet.getColumns = function() {
     ];
 };
 
-componet.getBaseData = function(data) {
+colDefinition.getBaseData = function(data) {
 	
-	util.ajax.post(this.spa.treeurl, data, header).then((rres) => {
-		debugger;    	
+	util.ajax.post(this.spa.treeurl, data, header).then((rres) => {  	
 		const result = [];
 		rres.data.forEach(d => {
 			let item = {
-				modCode: d.modCode,
-				title: d.modName,
+				tabCode: d.tabCode,
+				title: d.tabCode,
 				expand: true
 			};
 			
@@ -78,7 +97,7 @@ componet.getBaseData = function(data) {
 	});
 };
 
-componet.delete = function(delurl) {
+colDefinition.delete = function(delurl) {
 	if(this.spa.selectedLines < 1) {
 		this.spa.$Modal.warning({
             title: '提示信息',
@@ -111,7 +130,7 @@ componet.delete = function(delurl) {
 	}
 };
 
-componet.update = function(name) {
+colDefinition.update = function(name) {
 	this.spa.$refs[name].validate((valid) => {
         if (valid) {
 			this.spa.viewOrUpdateModel.crtDate = datetool.format(this.spa.viewOrUpdateModel.crtDate);
@@ -139,7 +158,7 @@ componet.update = function(name) {
     })
 };
 
-componet.page = function (data) {   
+colDefinition.page = function (data) {   
     util.ajax.post(this.spa.listurl, data, header).then((rres) => { 
     	if(rres && rres.data && !rres.data.pageSize) {
     		this.spa.$Modal.error({
@@ -165,7 +184,26 @@ componet.page = function (data) {
 	});
 };
 
-componet.save = function(name) {
+colDefinition.choice = function(selection, row) {
+	this.spa.selectedLines = selection.length;
+	this.spa.viewOrUpdateModel = row;
+	this.spa.deletedPks.push(row.colCode + "/" +this.spa.sTabCode);
+};
+
+colDefinition.cancel = function(selection, row) {
+	this.spa.selectedLines = selection.length;
+	
+	if(this.spa.selectedLines>0) {
+		this.spa.viewOrUpdateModel = selection[0];
+		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.colCode + "/" +this.spa.sTabCode), 1);
+	}
+	else {
+		this.spa.viewOrUpdateModel = {};
+		this.spa.deletedPks = [];
+	}
+};
+
+colDefinition.save = function(name) {
 	this.spa.$refs[name].validate((valid) => {
         if (valid) {
         	//console.log(valid);
@@ -173,13 +211,13 @@ componet.save = function(name) {
         		if(rres.data.code===SAV_SUC || rres.data.code===UPD_SUC) {
         			this.spa.$Message.success('Success!');
         			this.spa.addModal=false;
-					this.page(this.spa.getSearchCond());
+                    this.page(this.spa.getSearchCond());
         		}else{
         			this.spa.$Modal.error({
                         title: '错误信息',
                         content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
                     });
-        		}
+        		}k
 			});
             
         } else {
@@ -192,23 +230,14 @@ componet.save = function(name) {
     })
 };
 
-componet.choice = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	this.spa.viewOrUpdateModel = row;
-	this.spa.deletedPks.push(row.comCode);
+colDefinition.findTable = function(params) {
+	util.ajax.put('/business/TK0008L1.do', params, header).then((rres) => {        		
+		if(rres.data.code===SAV_SUC || rres.data.code===UPD_SUC) {
+			this.spa.exist = false;
+		}else{
+			this.spa.exist = true;
+		}
+	});
 };
 
-componet.cancel = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	
-	if(this.spa.selectedLines>0) {
-		this.spa.viewOrUpdateModel = selection[0];
-		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.comCode), 1);
-	}
-	else {
-		this.spa.viewOrUpdateModel = {};
-		this.spa.deletedPks = [];
-	}
-};
-
-export default componet;
+export default colDefinition;
