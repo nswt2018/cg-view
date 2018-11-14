@@ -57,7 +57,7 @@ export const otherRouter = {
 
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
-   /*{
+   {
         path: '/system',
         icon: 'android-checkbox',
         name: 'system',
@@ -80,7 +80,7 @@ export const appRouter = [
 		        ]
 			}
 		]
-    },*/
+    },
     
     //业务平台
 	{
