@@ -57,14 +57,14 @@
 									 <Input v-model="addModel.colName" placeholder="请输入字段中文名称" style="width: auto"/>
 								 </FormItem>
 								 <FormItem label="字段类型" prop="dataType">
-									 <Select v-model="addModel.dataType" style="width:170px" clearable ref="select1">
+									 <Select v-model="addModel.dataType" style="width:170px" clearable ref="select1" @on-change="selectChange()">
 										<Option v-for="item in dtList" :value="item.value" :key="item.value">
 											{{ item.label }}
 										</Option>
 									 </Select>
 								 </FormItem>
 								 <FormItem label="字段长度" prop="dataLen">
-									 <Input v-model="addModel.dataLen" style="width: auto"/>
+									 <Input v-model="addModel.dataLen" style="width: auto" ref="input4"/>
 								 </FormItem>
 								 <FormItem label="主键策略" prop="pkGen">
 									 <Select v-model="addModel.pkGen" style="width:170px" clearable ref="select2">
@@ -80,7 +80,7 @@
 						<!-- 编辑页面 -->
 						<Modal width="700" v-model="viewModal" title="字段信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false"
 							@on-ok="update('updFormRef')">
-							<Form ref="updFormRef" :model="viewOrUpdateModel" :rules="modelUpdRules" :label-width="100" inline="true">
+							<Form ref="updFormRef" :model="viewOrUpdateModel" :rules="modelAddRules" :label-width="100" inline="true">
 								 <FormItem label="字段名" prop="colCode">
 									 <Input v-model="viewOrUpdateModel.colCode" placeholder="请输入字段英文名称" style="width: auto" ref="input1"/>
 								 </FormItem>
@@ -88,7 +88,7 @@
 									 <Input v-model="viewOrUpdateModel.colName" placeholder="请输入字段中文名称" style="width: auto" ref="input2"/>
 								 </FormItem>
 								 <FormItem label="字段类型" prop="dataType">
-									 <Select v-model="viewOrUpdateModel.dataType" style="width:170px" ref="select3">
+									 <Select v-model="viewOrUpdateModel.dataType" style="width:170px" ref="select3" @on-change="selectChange()">
 										<Option v-for="item in dtList" :value="item.value" :key="item.value">
 											{{ item.label }}
 										</Option>
@@ -150,14 +150,7 @@ import Cookies from 'js-cookie';
 				modelAddRules: {
 					colCode : [{required: true}],
 					colName : [{required: true}],
-					dataType : [{required: true}],
-					dataLen : [{required: true}]
-				},
-				modelUpdRules: {
-					colCode : [{required: true}],
-					colName : [{required: true}],
-					dataType : [{required: true}],
-					dataLen : [{required: true}]
+					dataType : [{required: true}]
 				},
 				exist: false,
 				dtList: [
@@ -266,13 +259,22 @@ import Cookies from 'js-cookie';
 					return;
 				};
 				
+				if(this.selectedLines > 1) {
+					this.$Modal.warning({
+						title: '提示信息',
+						content: '只能选中一条记录！'
+					});
+					
+					return;
+				};
+				
 				if(this.exist){
-					//如果表在数据库存在,则只能修改主键策略字段
-					this.$refs.input1.disabled = true;
-					this.$refs.input2.disabled = true;
-					this.$refs.input3.disabled = true;
-					this.$refs.select3.disabled = true;
-					this.$refs.select3.clearable = false;
+					//如果表在数据库存在,不允许修改字段
+					this.$Modal.warning({
+						title: '提示信息',
+						content: '该表在数据库中已经存在,不能修改字段！'
+					});
+					return;
 				}else{
 					//如果不存在,所有字段都可以修改
 					this.$refs.input1.disabled = false;
@@ -286,36 +288,65 @@ import Cookies from 'js-cookie';
 			
 			//修改保存
 			update (name) {
+				let dataType = this.viewOrUpdateModel.dataType;
+				if(!(dataType === 'int' || dataType === 'date' || dataType === 'datetime')){
+					this.$Modal.warning({
+						title: '提示信息',
+						content: '字段长度不能为空！'
+					});
+					return;
+				}
+				
 				this.viewOrUpdateModel.updDate = datetool.format(new Date());
 				colDefinition.update(name);
 			},
 			
-			handleReset (name) {
-                this.$refs[name].resetFields(); //对整个表单进行重置，将所有字段值重置为空并移除校验结果
-            },
-			
 			//删除操作
 			handleDelete () {
+				if(this.exist){
+					this.$Modal.warning({
+						title: '错误信息',
+						content: '该表在数据库中已经存在,不能删除字段！'
+					});
+					return;
+				}
 				colDefinition.delete(this.deleteurl+"?codes="+this.deletedPks.join(','));
 			},
 			
 			//新增页面
 			handleInsert(){
 				if(this.exist){
-					this.$Modal.error({
+					this.$Modal.warning({
 						title: '错误信息',
-						content: '该表在数据库中已存在,不能新增字段！'
+						content: '该表在数据库中已经存在,不能新增字段！'
 					});
 					return;
 				}
 				this.addModal = true;
-				this.handleReset('addFormRef');
+				pagetool.reset('addFormRef');
 				this.$refs.select1.clearSingleSelect();
 				this.$refs.select2.clearSingleSelect();
 			},
 			
 			//新增保存
 			saving(name) {
+			
+				let dataType = this.addModel.dataType;
+				let dataLen = this.addModel.dataLen != null? this.addModel.dataLen.trim():'';
+				
+				//其他数据类型长度不能为空
+				if(!(dataType === 'int' || dataType === 'date' || dataType === 'datetime') && (dataLen.length == 0 || dataLen == '')){
+					this.$Modal.warning({
+						title: '提示信息',
+						content: '字段长度不能为空！'
+					});
+					this.loading = false;
+					this.$nextTick(() => {
+						this.loading = true;
+					});
+					return;
+				}
+			
 				this.addModel.tabCode = this.sTabCode;
 				this.addModel.crtDate = datetool.format(new Date());
 				colDefinition.save(name);
@@ -323,8 +354,23 @@ import Cookies from 'js-cookie';
 			
 			//新增/修改取消
 			reseting (name) {
-				pagetool.reset(name);
+				//pagetool.reset(name);
+				this.addModal = false;
 			},
+			
+			//数据类型变化时
+			selectChange () {
+				let dataType = this.viewOrUpdateModel.dataType != null? this.viewOrUpdateModel.dataType:this.addModel.dataType;
+				if(dataType === 'int' || dataType === 'date' || dataType === 'datetime'){
+					this.viewOrUpdateModel.dataLen = '';
+					this.$refs.input3.disabled = true;
+					this.$refs.input4.disabled = true;
+				}else{
+					this.viewOrUpdateModel.dataLen = '';
+					this.$refs.input3.disabled = false;
+					this.$refs.input4.disabled = false;
+				}
+			}
 		},
 		created () {
 			this.init();

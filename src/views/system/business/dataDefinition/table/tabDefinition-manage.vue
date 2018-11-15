@@ -88,6 +88,7 @@ export default {
 			deleteurl: '/business/TK0007D.do',
 			updateurl: '/business/TK0007U.do', 
 			createTaburl: '/business/TK0007G.do',
+			findtaburl: '/business/TK0007F.do',
 			list_data: [],
 			pageSize: 10,
 			currentPage: 1,
@@ -106,7 +107,8 @@ export default {
             columns: [],
 			selectedLines: 0,
 			deletedPks: [],
-			viewModal: false
+			viewModal: false,
+			exist: false
         };
     },
     methods: {  
@@ -148,7 +150,7 @@ export default {
 		//新增页面
 		handleInsert(){
 			this.addModal = true;
-			this.handleReset('addFormRef');
+			pagetool.reset('addFormRef');
 		},
 		
 		//新增保存
@@ -159,13 +161,9 @@ export default {
 		
 		//新增/修改取消
         reseting (name) {
-        	pagetool.reset(name);
+        	//pagetool.reset(name);
+			this.addModal = false;
         },
-		
-		//对整个表单进行重置，将所有字段值重置为空并移除校验结果
-		handleReset (name) {
-			this.$refs[name].resetFields();
-		},
 		
 		//删除操作
         handleDelete () {
@@ -183,7 +181,17 @@ export default {
 				return;
 			}
 			
-			this.viewModal = true;
+			if(this.selectedLines > 1) {
+				this.$Modal.warning({
+					title: '提示信息',
+					content: '只能选中一条记录！'
+				});
+				
+				return;
+			};
+			
+			//表存在则不能修改
+			tabDefinition.findTab(this.findtaburl+"?tabCode="+this.deletedPks[0]);
 		},
 		
 		//修改保存

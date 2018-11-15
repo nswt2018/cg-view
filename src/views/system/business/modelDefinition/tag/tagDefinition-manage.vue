@@ -230,7 +230,7 @@ export default {
 		//新增页面
 		handleInsert(){
 			this.addModal = true;
-			this.handleReset('addFormRef');
+			pagetool.reset('addFormRef');
 		},
 		
 		//新增保存
@@ -243,12 +243,8 @@ export default {
 		
 		//新增/修改取消
 		reseting (name) {
-			pagetool.reset(name);
-		},
-		
-		//对整个表单进行重置，将所有字段值重置为空并移除校验结果
-		handleReset (name) {
-			this.$refs[name].resetFields();
+			this.addModal = true;
+			//pagetool.reset(name);
 		},
 		
 		//删除操作
@@ -262,6 +258,15 @@ export default {
 				this.$Modal.warning({
 					title: '提示信息',
 					content: '必须选中一条记录！'
+				});
+				
+				return;
+			};
+			
+			if(this.selectedLines > 1) {
+				this.$Modal.warning({
+					title: '提示信息',
+					content: '只能选中一条记录！'
 				});
 				
 				return;

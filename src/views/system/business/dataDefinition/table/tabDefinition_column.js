@@ -64,12 +64,26 @@ tabDefinition.choice = function(selection, row) {
 	this.spa.selectedLines = selection.length;
 	this.spa.viewOrUpdateModel = row;
 	this.spa.deletedPks.push(row.tabCode);
-	this.spa.sTabCode = row.tabCode;
+};
+
+//查询数据库表是否存在
+tabDefinition.findTab = function(url) {
+	
+	util.ajax.post(url, header).then((rres) => {
+		if(rres.data.code=== '000001') {
+			this.spa.$Modal.warning({
+				title: '提示信息',
+				content: '该表在数据库中已经存在,不能修改信息！'
+			});
+		}else{
+			this.spa.viewModal = true;
+		}
+	});
+	
 };
 
 tabDefinition.cancel = function(selection, row) {
 	this.spa.selectedLines = selection.length;
-	this.spa.sTabCode = '';
 	
 	if(this.spa.selectedLines>0) {
 		this.spa.viewOrUpdateModel = selection[0];
@@ -186,14 +200,20 @@ tabDefinition.tabFactory = function (cturl) {
         });
 	}else{
 		util.ajax.post(cturl, header).then((rres) => { 
-			if(rres.data.code === '100001' ) {
+			if(rres.data.code === '100002' ) {
+				this.spa.$Modal.warning({
+					title: '提示',
+					content: rres.data.msg
+				});
+				return;
+			}else if((rres.data.code === '000001' )){
+				this.spa.$Message.success(this.spa.sTabCode + '表创建成功!');
+			}else {
 				this.spa.$Modal.error({
 					title: '提示',
 					content: rres.data.msg
 				});
 				return;
-			}else{
-				this.spa.$Message.success(this.spa.sTabCode + '表创建成功!');
 			}
 			
 		}).catch((err) => {                   		

@@ -185,7 +185,7 @@ export default {
 		//新增页面
 		handleInsert(){
 			this.addModal = true;
-			this.handleReset('addFormRef');
+			pagetool.reset('addFormRef');
 			this.modList = [];
 			this.tabList = [];
 			systemModule.getModList(this.selecturl);
@@ -200,13 +200,9 @@ export default {
 		
 		//新增/修改取消
         reseting (name) {
-        	pagetool.reset(name);
+			this.addModal = false;
+        	//pagetool.reset(name);
         },
-		
-		//对整个表单进行重置，将所有字段值重置为空并移除校验结果
-		handleReset (name) {
-			this.$refs[name].resetFields();
-		},
 		
 		//删除操作
         handleDelete () {
@@ -223,6 +219,15 @@ export default {
 				
 				return;
 			}
+			
+			if(this.selectedLines > 1) {
+				this.$Modal.warning({
+					title: '提示信息',
+					content: '只能选中一条记录！'
+				});
+				
+				return;
+			};
 			
 			systemModule.getModList(this.selecturl);
 			systemModule.getTabList(this.gettaburl);

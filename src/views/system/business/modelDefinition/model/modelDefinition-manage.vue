@@ -158,8 +158,10 @@ export default {
 		
 		//新增页面
 		handleInsert(){
+			pagetool.reset('addFormRef');
 			this.addModal = true;
 		},
+		
 		
 		//新增保存
 		saving(name) {
@@ -169,7 +171,8 @@ export default {
 		
 		//新增/修改取消
         reseting (name) {
-        	pagetool.reset(name);
+        	//pagetool.reset(name);
+			this.addModal = false;
         },
 		
 		//删除操作
@@ -187,6 +190,14 @@ export default {
 				
 				return;
 			}
+			if(this.selectedLines > 1) {
+				this.$Modal.warning({
+					title: '提示信息',
+					content: '只能选中一条记录！'
+				});
+				
+				return;
+			};
 			this.viewModal = true;
 		},
 		

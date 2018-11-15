@@ -197,6 +197,14 @@ import Cookies from 'js-cookie';
 					
 					return;
 				};
+				if(this.selectedLines > 1) {
+					this.$Modal.warning({
+						title: '提示信息',
+						content: '只能选中一条记录！'
+					});
+					
+					return;
+				};
 				this.viewOrUpdateModel.crtDate = this.crtdate;
 				this.viewModal = true;
 			},
@@ -206,10 +214,6 @@ import Cookies from 'js-cookie';
 				this.viewOrUpdateModel.updDate = datetool.format(new Date());
 				pageElement.update(name);
 			},
-			
-			handleReset (name) {
-                this.$refs[name].resetFields(); //对整个表单进行重置，将所有字段值重置为空并移除校验结果
-            },
 			
 			editTags () {
 				pageElement.getTagData('');
