@@ -23,13 +23,13 @@ pageElement.getColumns = function() {
 			        align: 'center'
 			    },
 			    {
-					title: '中文名称',
-			        key: 'eleCName',
-			        align: 'center'
-			    },
-			    {
 			        title: '英文名称',
 			        key: 'eleEName',
+			        align: 'center'
+			    },
+				{
+					title: '中文名称',
+			        key: 'eleCName',
 			        align: 'center'
 			    },
 				{

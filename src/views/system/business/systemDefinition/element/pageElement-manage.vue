@@ -59,7 +59,7 @@
 									<Input v-model="viewOrUpdateModel.tagInfo" icon="ios-search" @on-click="editTags" style="width: auto"/>
 								</FormItem>
 								<FormItem label="创建日期" prop="crtDate">
-									<DatePicker type="date"v-model="viewOrUpdateModel.crtDate" disabled readonly/>
+									<DatePicker type="date" v-model="viewOrUpdateModel.crtDate" disabled readonly/>
 								</FormItem>
 							</Form>    	
 						</Modal>

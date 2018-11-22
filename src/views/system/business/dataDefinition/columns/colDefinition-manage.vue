@@ -73,13 +73,12 @@
 										</Option>
 									 </Select>
 								 </FormItem>
-								 </FormItem>
 							 </Form>    	
 						</Modal>
 						
 						<!-- 编辑页面 -->
 						<Modal width="700" v-model="viewModal" title="字段信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false"
-							@on-ok="update('updFormRef')">
+							@on-ok="update('updFormRef')" :loading="loading">
 							<Form ref="updFormRef" :model="viewOrUpdateModel" :rules="modelAddRules" :label-width="100" inline="true">
 								 <FormItem label="字段名" prop="colCode">
 									 <Input v-model="viewOrUpdateModel.colCode" placeholder="请输入字段英文名称" style="width: auto" ref="input1"/>
@@ -289,10 +288,15 @@ import Cookies from 'js-cookie';
 			//修改保存
 			update (name) {
 				let dataType = this.viewOrUpdateModel.dataType;
-				if(!(dataType === 'int' || dataType === 'date' || dataType === 'datetime')){
+				let dataLen = this.viewOrUpdateModel.dataLen != null? this.viewOrUpdateModel.dataLen.trim():'';
+				if(!(dataType === 'int' || dataType === 'date' || dataType === 'datetime') && (dataLen.length == 0 || dataLen == '')){
 					this.$Modal.warning({
 						title: '提示信息',
 						content: '字段长度不能为空！'
+					});
+					this.loading = false;
+					this.$nextTick(() => {
+						this.loading = true;
 					});
 					return;
 				}
