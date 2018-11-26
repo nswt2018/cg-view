@@ -3,39 +3,42 @@
 </style>
 
 <template>
-    <Menu ref="sideMenu" :active-name="$route.name" :open-names="openNames" :theme="menuTheme" width="auto"z @on-select="changeMenu">
-        <template v-for="item in menuList">
-            <MenuItem v-if="item.children.length<=1" :name="item.children[0].name" :key="'menuitem' + item.name">
-                <Icon :type="item.children[0].icon || item.icon" :size="iconSize" :key="'menuicon' + item.name"></Icon>
-                <span class="layout-text" :key="'title' + item.name">{{ itemTitle(item.children[0]) }}</span>
-            </MenuItem>
-
-            <Submenu v-if="item.children.length > 1" :name="item.name" :key="item.name">
-                <template slot="title">
-                    <Icon :type="item.icon" :size="iconSize"></Icon>
-                    <span class="layout-text">{{ itemTitle(item) }}</span>
-                </template>
-                <template v-for="child in item.children">
-                    <MenuItem v-if="!child.children" :name="child.name" :key="'menuitem' + child.name">
-                        <Icon :type="child.icon" :size="iconSize" :key="'icon' + child.name"></Icon>
-                        <span class="layout-text" :key="'title' + child.name">{{ itemTitle(child) }}</span>
-                    </MenuItem>
-                    <Submenu v-if="child.children && child.children.length > 0" :name="child.name" :key="child.name">
-	                    <template slot="title">
-	                        <Icon :type="child.icon" :size="iconSize"></Icon>
-	                        <span class="layout-text">{{ itemTitle(child) }}</span>
-	                    </template>
-	                    <template v-for="cc in child.children">
-	                        <MenuItem :name="cc.name" :key="'menuitem' + cc.name">
-	                            <Icon :type="cc.icon" :size="iconSize" :key="'icon' + cc.name"></Icon>
-	                            <span class="layout-text" :key="'title' + cc.name">{{ itemTitle(cc) }}</span>
-	                        </MenuItem>
-	                    </template>
-	                </Submenu>                    
-                </template>
-            </Submenu>
-        </template>
-    </Menu>
+ <Menu ref="sideMenu" :active-name="$route.name" :open-names="openNames" :theme="menuTheme" width="auto" @on-select="changeMenu">
+  <template v-for="item in menuList">
+   <MenuItem v-if="item.children.length<=1" :name="item.children[0].name" :key="'menuitem' + item.name">
+    <Icon :type="item.children[0].icon || item.icon" :size="iconSize" :key="'menuicon' + item.name"></Icon>
+    <span class="layout-text" :key="'title' + item.name">{{ itemTitle(item.children[0]) }}</span>
+   </MenuItem>
+ 
+   <Submenu v-if="item.children.length > 1" :name="item.name" :key="item.name">
+    <template slot="title">
+     <Icon :type="item.icon" :size="iconSize"></Icon>
+     <span class="layout-text">{{ itemTitle(item) }}</span>
+    </template>
+    <template v-for="child in item.children">
+     <!-- 添加条件判断是否还有三级菜单 v-if="child.children.length<=1" -->
+     <MenuItem v-if="isThirdLeveMenu(child)==false" :name="child.name" :key="'menuitem' + child.name">
+      <Icon :type="child.icon" :size="iconSize" :key="'icon' + child.name"></Icon>
+      <span class="layout-text" :key="'title' + child.name">{{ itemTitle(child) }}</span>
+     </MenuItem>
+     <!-- 以下为新增 添加条件判断如果有三级菜单 则增加三级菜单 -->
+     <Submenu v-if="isThirdLeveMenu(child)==true" :name="child.name" :key="'menuitem' + child.name">
+       <template slot="title">
+        <Icon :type="child.icon" :size="iconSize" :key="'icon' + child.name"></Icon>
+        <span class="layout-text" :key="'title' + child.name">{{ itemTitle(child) }}</span>
+       </template>
+       <template v-for="son in child.children">
+        <MenuItem :name="son.name" :key="'menuitem' + son.name">
+         <Icon :type="son.icon" :size="iconSize" :key="'icon' + son.name"></Icon>
+         <span class="layout-text" :key="'title' + son.name">{{ itemTitle(son) }}</span>
+        </MenuItem>
+       </template>
+     </Submenu>
+     <!-- 以上为新增 -->
+    </template>
+   </Submenu>
+  </template>
+ </Menu>
 </template>
 
 <script>
@@ -62,7 +65,15 @@ export default {
             } else {
                 return item.title;
             }
-        }
+        },
+		isThirdLeveMenu(child){
+			if(child.children){
+			   if(child.children.length>0)	return true;
+			   else return false;
+			}else {
+			return false;
+		 }
+		}
     },
     updated () {
         this.$nextTick(() => {
