@@ -9,7 +9,7 @@
 				<Card>
 					<p slot="title">
 						<Icon type="ios-pricetags-outline"></Icon>
-						系统定义
+						系统
 					</p>
 					<div class="treestyle">
 						<Tree :data="baseData" @on-select-change="selectNode" ref="tree"></Tree>
@@ -34,7 +34,7 @@
 							<div class="buttonstyle1">
 								<br/>
 								<Button type="primary" size="small" @click="xxx()">代码生成</Button>
-								<Button type="success" size="small" @click="xxx()">系统部署</Button>
+								<Button type="success" size="small" @click="sysDeployment()">系统部署</Button>
 								<Button type="info" size="small" @click="xxx()">系统查看</Button>
 								<hr/>
 								<br/>
@@ -64,13 +64,13 @@
 										 </Select>
 									</FormItem>
 									<FormItem label="视图组件路径" prop="vuePath">
-										<Input v-model="addModel.vuePath" style="width: auto"/>
+										<Input v-model="addModel.vuePath" style="width: auto" ref="i1"/>
 									</FormItem>
 									<FormItem label="业务逻辑组件路径" prop="javaPath">
-										<Input v-model="addModel.javaPath" style="width: auto"/>
+										<Input v-model="addModel.javaPath" style="width: auto" ref="i2"/>
 									</FormItem>
 									<FormItem label="包名" prop="packName">
-										<Input v-model="addModel.packName" style="width: auto"/>
+										<Input v-model="addModel.packName" style="width: auto" ref="i3"/>
 									</FormItem>
 									<FormItem label="备注" prop="sysComm">
 										<Input v-model="addModel.sysComm" style="width: auto"/>
@@ -89,28 +89,28 @@
 							<div>
 								<Form ref="checkFormRef" :model="checkModel" :label-width="200" inline="true">
 									<FormItem label="系统二位简码" prop="sysCode">
-										<Input v-model="checkModel.sysCode" placeholder="请输入系统二位简码" style="width: auto" readonly/>
+										<Input v-model="checkModel.sysCode" placeholder="请输入系统二位简码" style="width: auto" readonly disabled/>
 									</FormItem>
 									<FormItem label="系统名称" prop="sysName">
-										<Input v-model="checkModel.sysName" placeholder="请输入系统名称" style="width: auto" readonly/>
+										<Input v-model="checkModel.sysName" placeholder="请输入系统名称" style="width: auto" readonly disabled/>
 									</FormItem>
 									<FormItem label="上级系统名称" prop="upperName">
-										<Input v-model="checkModel.upperName" style="width: auto" readonly/>
+										<Input v-model="checkModel.upperName" style="width: auto" readonly disabled/>
 									</FormItem>
 									<FormItem label="挂接模块" prop="modCode">
-										<Input v-model="checkModel.modCode" style="width: auto" readonly/>
+										<Input v-model="checkModel.modCode" style="width: auto" readonly disabled/>
 									</FormItem>
 									<FormItem label="视图组件路径" prop="vuePath">
-										<Cascader :data="data" trigger="hover" style="width: auto"/>
+										<Input v-model="checkModel.vuePath" style="width: auto" readonly disabled/>
 									</FormItem>
 									<FormItem label="业务逻辑组件路径" prop="javaPath">
-										<Input v-model="checkModel.javaPath" style="width: auto" readonly/>
+										<Input v-model="checkModel.javaPath" style="width: auto" readonly disabled/>
 									</FormItem>
 									<FormItem label="包名" prop="packName">
-										<Input v-model="checkModel.packName" style="width: auto" readonly/>
+										<Input v-model="checkModel.packName" style="width: auto" readonly disabled/>
 									</FormItem>
 									<FormItem label="备注" prop="sysComm">
-										<Input v-model="checkModel.sysComm" style="width: auto" readonly/>
+										<Input v-model="checkModel.sysComm" style="width: auto" readonly disabled/>
 									</FormItem>
 								</Form>
 							</div>
@@ -139,13 +139,13 @@
 										 </Select>
 									</FormItem>
 									<FormItem label="视图组件路径" prop="vuePath">
-										<Input v-model="updModel.vuePath" style="width: auto"/>
+										<Input v-model="updModel.vuePath" style="width: auto" ref="i4"/>
 									</FormItem>
 									<FormItem label="业务逻辑组件路径" prop="javaPath">
-										<Input v-model="updModel.javaPath" style="width: auto"/>
+										<Input v-model="updModel.javaPath" style="width: auto" ref="i5"/>
 									</FormItem>
 									<FormItem label="包名" prop="packName">
-										<Input v-model="updModel.packName" style="width: auto"/>
+										<Input v-model="updModel.packName" style="width: auto" ref="i6"/>
 									</FormItem>
 									<FormItem label="备注" prop="sysComm">
 										<Input v-model="updModel.sysComm" style="width: auto"/>
@@ -164,7 +164,7 @@
 	</div>
 </template>
 <script>
-import appFactory from './appFactory_column';
+import sysDefinition from './sysDefinition_column';
 import util from '@/libs/util.js';
 import datetool from '@/libs/datetool';
 import pagetool from '@/libs/pagetool';
@@ -180,6 +180,7 @@ import Cookies from 'js-cookie';
 				updateurl: '/factory/AF0001U.do',
 				deleteurl: '/factory/AF0001D.do',
 				selecturl: '/business/TK0004T.do',
+				deploymenturl: '/business/TK0004G2.do',
 				buttonInfo: false,
 				addForm: false,
 				checkForm: false,
@@ -199,6 +200,7 @@ import Cookies from 'js-cookie';
 				updModel: {},
 				systemKey: '',
 				systemName: '',
+				isRoot: '',
 				modelRules: {
 					sysCode : [{required: true}],
 					sysName : [{required: true}]
@@ -211,8 +213,8 @@ import Cookies from 'js-cookie';
 			//获取系统树数据
 			init() {
 				pagetool.setPage(this);
-				appFactory.setPage(this);
-				appFactory.getBaseData(this.treeurl);
+				sysDefinition.setPage(this);
+				sysDefinition.getBaseData(this.treeurl);
 			},
 			
 			//选择节点
@@ -222,12 +224,13 @@ import Cookies from 'js-cookie';
 				
 					this.systemKey = item.sysKey;
 					this.systemName = item.title;
+					this.isRoot = item.isRoot;
 					
 					var params = new URLSearchParams();
 					params.append('sysKey', this.systemKey);
 					
 					//获取节点详细信息
-					appFactory.getNodeInfo(params);
+					sysDefinition.getNodeInfo(params);
 					
 					//显示查看界面
 					this.checkForm = true;
@@ -257,23 +260,19 @@ import Cookies from 'js-cookie';
 				
 				//获取模块代码
 				this.modList = [];
-				appFactory.getModuList(this.selecturl);
+				sysDefinition.getModuList(this.selecturl);
+				
+				//设置相关字段只读
+				sysDefinition.setAddField();
 			},
 			
 			//新增取消
 			addCansel() {
 			
-				//隐藏新增页面
-				this.addForm = false;
-				
-				//显示查看界面
-				this.checkForm = true;
-				
-				//显示操作按钮
-				this.buttonInfo = true;
-				
-				//刷新树
-				appFactory.getBaseData(this.treeurl);
+				this.hideForm();
+				this.systemName = '';
+				this.systemKey = '';
+				this.isRoot = '';
 			},
 			
 			//重置字段
@@ -285,7 +284,8 @@ import Cookies from 'js-cookie';
 			addSubmit () {
 				this.addModel.crtDate = datetool.format(new Date());
 				this.addModel.upperSys = this.systemKey;
-				appFactory.save('addFormRef', this.saveurl, this.addModel);
+				this.addModel.upperName = this.systemName;
+				sysDefinition.save('addFormRef', this.saveurl, this.addModel);
 				
 				this.addCansel();
 			},
@@ -311,7 +311,9 @@ import Cookies from 'js-cookie';
 				this.addForm = false;
 				
 				//获取模块代码
-				appFactory.getModuList(this.selecturl);
+				sysDefinition.getModuList(this.selecturl);
+				
+				sysDefinition.setUpdField();
 			},
 			
 			//修改取消
@@ -327,8 +329,7 @@ import Cookies from 'js-cookie';
 			//修改提交
 			updSubmit () {
 				this.updModel.updDate = datetool.format(new Date());
-				this.updModel.upperSys = this.systemKey;
-				appFactory.save('updFormRef', this.updateurl, this.updModel);
+				sysDefinition.save('updFormRef', this.updateurl, this.updModel);
 			},
 			
 			//删除操作
@@ -341,11 +342,20 @@ import Cookies from 'js-cookie';
 					
 					return;
 				}
-				appFactory.delete(this.deleteurl + "?sysKey=" + this.systemKey);
-				
-				//刷新树
-				appFactory.getBaseData(this.treeurl);
-				this.addModel = {};
+				sysDefinition.delete(this.deleteurl + "?sysKey=" + this.systemKey);
+				this.hideForm();
+			},
+			
+			//隐藏界面
+			hideForm (){
+				this.addForm = false;
+				this.checkForm = false;
+				this.updForm = false;
+				this.buttonInfo = false;
+			},
+			
+			sysDeployment () {
+				sysDefinition.sysDeployment(this.checkModel);
 			}
 		},
 		created () {

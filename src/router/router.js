@@ -100,8 +100,7 @@ export const appRouter = [
 			{ 
 				path: 'modelDefinition', title: '模型定义', name: 'model_definition', icon: 'navicon-round',component: () => import('@/views/system/business/artical-publish-center.vue'),
 				children: [
-					{ path: 'modelDefinition', title
-					: '模型定义', name: 'modelDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/modelDefinition/model/modelDefinition-manage.vue') },
+					{ path: 'modelDefinition', title: '模型定义', name: 'modelDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/modelDefinition/model/modelDefinition-manage.vue') },
 					{ path: 'componetDefinition', title: '组件定义', name: 'componetDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/modelDefinition/componet/componetDefinition-manage.vue') },
 					{ path: 'tagDefinition', title: '标签定义', name: 'tagDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/modelDefinition/tag/tagDefinition-manage.vue') }
 				]
@@ -127,11 +126,18 @@ export const appRouter = [
 		component: Main,
 		children: [
             { 
-				path: 'appFactory', 
-				title: '应用工厂', 
-				name: 'appFactory', 
+				path: 'sysDefinition', 
+				title: '系统定义', 
+				name: 'sysDefinition', 
 				icon: 'navicon-round',
-				component: () => import('@/views/system/factory/app-Factory.vue') 
+				component: () => import('@/views/system/factory/sysDefinition-manage.vue')
+			},
+			{ 
+				path: 'sysDefinition', 
+				title: '系统定义', 
+				name: 'sysDefinition', 
+				icon: 'navicon-round',
+				component: () => import('@/views/system/factory/sysDefinition-manage.vue')
 			}
         ]
     }
