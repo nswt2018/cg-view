@@ -85,7 +85,6 @@ pagepublictool.delete=function(delurl){
 };
 pagepublictool.save=function(refValue){
 	this.spa.$refs[refValue].validate((valid) => {
-		console.log(refValue);
 		if(valid){
 			let data;
 			let url;
