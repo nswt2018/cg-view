@@ -127,11 +127,11 @@ export const appRouter = [
 		component: Main,
 		children: [
             { 
-				path: 'appFactory', 
+				path: 'sysDefinition', 
 				title: '应用工厂', 
-				name: 'appFactory', 
-				icon: 'navicon-round',
-				component: () => import('@/views/system/factory/app-Factory.vue') 
+				name: 'sysDefinition', 
+				icon: 'android-checkbox',
+				component: () => import('@/views/system/factory/sysDefinition-manage.vue') 
 			}
         ]
     }
