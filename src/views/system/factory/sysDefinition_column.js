@@ -142,7 +142,7 @@ sysDefinition.sysDeployment = function(model) {
 		}else{
 			this.spa.$Modal.error({
 				title: '错误信息',
-				content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
+				content: '系统部署失败!'
 			});
 		}
 	});
