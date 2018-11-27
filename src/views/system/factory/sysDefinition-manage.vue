@@ -33,7 +33,7 @@
 						<Row v-show="buttonInfo">
 							<div class="buttonstyle1">
 								<br/>
-								<Button type="primary" size="small" @click="xxx()">代码生成</Button>
+								<Button  type="primary" size="small" @click="codeGeneration()">代码生成</Button>
 								<Button type="success" size="small" @click="sysDeployment()">系统部署</Button>
 								<Button type="info" size="small" @click="xxx()">系统查看</Button>
 								<hr/>
@@ -353,7 +353,19 @@ import Cookies from 'js-cookie';
 				this.updForm = false;
 				this.buttonInfo = false;
 			},
-			
+			codeGeneration () {
+				if(this.systemKey == '' || this.systemKey.length == 0){
+					this.$Modal.warning({
+						title: '提示信息',
+						content: '请选择任意节点！'
+					});
+					
+					return;
+				}
+				var params = new URLSearchParams();
+				params.append('sysKey', this.systemKey);
+				sysDefinition.codeGeneration(params);
+			},
 			//系统部署
 			sysDeployment () {
 				sysDefinition.sysDeployment(this.checkModel);
