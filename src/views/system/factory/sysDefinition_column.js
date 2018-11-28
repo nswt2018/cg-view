@@ -134,6 +134,20 @@ sysDefinition.setAddField = function(){
 		this.spa.$refs.i3.disabled = true;
 	}
 };
+//代码生成
+sysDefinition.codeGeneration = function(params) {
+	
+	util.ajax.post('/business/TK0004G.do', params, header).then((rres) => {  
+		if(rres.data) {
+			this.spa.$Message.success('Success!');
+		}else{
+			this.spa.$Modal.error({
+				title: '错误信息',
+				content:'文件生成失败！'
+			});
+		}
+	});
+};
 
 sysDefinition.sysDeployment = function() {
 	util.ajax.post(this.spa.deploymenturl, header).then((rres) => {   	

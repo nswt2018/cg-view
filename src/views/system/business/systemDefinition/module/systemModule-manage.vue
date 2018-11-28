@@ -17,7 +17,6 @@
                 		<Button type="primary" @click="handleInsert()">新增</Button>
                 		<Button type="success" @click="handleUpdate()">修改</Button>
 						<Button type="warning" @click="handleDelete()">删除</Button>
-						<Button type="info" @click="codeGeneration()">代码生成</Button>
         	    	</p>
         	    </Row>        	    
         	    <Row>
@@ -238,21 +237,6 @@ export default {
 		update (name) {
 			this.viewOrUpdateModel.updDate = datetool.format(new Date());
 			systemModule.update(name);
-		},
-		
-		codeGeneration () {
-			if(this.selectedLines < 1) {
-				this.$Modal.warning({
-					title: '提示信息',
-					content: '必须选中一条记录！'
-				});
-				
-				return;
-			}
-			
-			var params = new URLSearchParams();
-			params.append('moduCode', this.viewOrUpdateModel.moduCode);
-			systemModule.codeGeneration(params);
 		}
     },
     created() {

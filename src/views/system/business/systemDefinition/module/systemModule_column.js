@@ -212,20 +212,4 @@ systemModule.getTabList = function (gettaburl) {
 	});
 };
 
-systemModule.codeGeneration = function(params) {
-	
-	util.ajax.post('/business/TK0004G.do', params, header).then((rres) => {  
-	
-		if(rres.data) {
-			this.spa.$Message.success('Success!');
-		}else{
-			this.spa.$Modal.error({
-				title: '错误信息',
-				content:'文件生成失败！'
-			});
-		}
-	});
-};
-
-
 export default systemModule;
