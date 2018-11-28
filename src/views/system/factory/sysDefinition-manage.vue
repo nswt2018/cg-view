@@ -180,7 +180,7 @@ import Cookies from 'js-cookie';
 				updateurl: '/factory/AF0001U.do',
 				deleteurl: '/factory/AF0001D.do',
 				selecturl: '/business/TK0004T.do',
-				deploymenturl: '/business/AF0004G2.do',
+				deploymenturl: '/factory/AF0004G2.do',
 				buttonInfo: false,
 				addForm: false,
 				checkForm: false,
@@ -356,7 +356,7 @@ import Cookies from 'js-cookie';
 			
 			//系统部署
 			sysDeployment () {
-				sysDefinition.sysDeployment(this.checkModel);
+				sysDefinition.sysDeployment();
 			}
 		},
 		created () {

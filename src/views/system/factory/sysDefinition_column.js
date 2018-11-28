@@ -135,8 +135,8 @@ sysDefinition.setAddField = function(){
 	}
 };
 
-sysDefinition.sysDeployment = function(model) {
-	util.ajax.post(this.spa.deploymenturl, model, header).then((rres) => {   	
+sysDefinition.sysDeployment = function() {
+	util.ajax.post(this.spa.deploymenturl, header).then((rres) => {   	
 		if(rres.data.code==='000001') {
 			this.spa.$Message.success('系统部署成功!');
 		}else{
