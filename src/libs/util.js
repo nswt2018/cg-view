@@ -144,142 +144,138 @@ util.setCurrentPath = function (vm, name) {
         ];
     } 
 
-    //去导航菜单二级页面或三级页面
+    //去导航菜单二级页面或三级页面或四级页面
     else {
         let currentPathObj = vm.$store.state.app.routers.filter(item => {
             var hasMenu;
-            if (item.children.length <= 1) {
-                hasMenu = item.children[0].name === name;
-                return hasMenu;
-            } else {
-                let i = 0;
-                let childArr = item.children;
-                let len = childArr.length;
-                while (i < len) {
-                    //如果是三级页面按钮，则在二级按钮数组中找不到这个按钮名称
-                    //需要二级页面下可能出现三级子菜单的情况逻辑加入
-                    if (childArr[i].name === name) {
-                        hasMenu = true;
-                        return hasMenu;
-                    }
-                    i++;
-                }
-
-                //如果一级，二级菜单下都没有此按钮名称，则遍历三级菜单
-                if(!hasMenu){
-                    for(let m=0;m<childArr.length;m++){
-                        if(!childArr[m].children) continue;
-                        let sonArr = childArr[m].children;
-                        for(let n=0;n<sonArr.length;n++){
-                            if(sonArr[n].name === name){
-                                hasMenu = true;
-                                return hasMenu;
-                            }
-                        }
-                    }
-                }
-                return false;
-            }
+			let cArr2 = item.children;
+			for(let i=0;i<cArr2.length;i++){
+				if(cArr2[i].children){
+					let cArr3 = cArr2[i].children;
+					for(let j=0;j<cArr3.length;j++){
+						if(cArr3[j].children){
+							let cArr4 = cArr3[j].children;
+							for(let k=0;k<cArr4.length;k++){
+								if(cArr4[k].name === name){ //四级菜单
+									hasMenu = true;
+									return hasMenu;
+								}
+							}
+						}else{ //三级菜单
+							if(cArr3[j].name === name){
+								hasMenu = true;
+								return hasMenu;
+							}
+						}
+					}
+					
+				}else{ //二级菜单
+					if(cArr2[i].name === name){
+						hasMenu = true;
+						return hasMenu;
+					}
+				}
+			}
+			
+			return false;
+			
         })[0];
         
-        if (currentPathObj.children.length <= 1 && currentPathObj.name === 'home') {
-            currentPathArr = [
-                {
-                    title: '首页',
-                    path: '',
-                    name: 'home_index'
-                }
-            ];
-        } else if (currentPathObj.children.length <= 1 && currentPathObj.name !== 'home') {
-            currentPathArr = [
-                {
-                    title: '首页',
-                    path: '/home',
-                    name: 'home_index'
-                },
-                {
-                    title: currentPathObj.title,
-                    path: '',
-                    name: name
-                }
-            ];
-        } else {
-             //如果是三级页面按钮，则在二级按钮数组中找不到这个按钮名称
-             //需要二级页面下可能出现三级子菜单的情况逻辑加入
-            let childObj = currentPathObj.children.filter((child) => {
-                return  child.name === name;
-            })[0];
-
-           // let thirdLevelObj =
-
-           //二级页面
-            if (childObj) {
-                currentPathArr = [
-                    {
-                        title: '首页',
-                        path: '/home',
-                        name: 'home_index'
-                    },
-                    {
-                        title: currentPathObj.title,
-                        path: '',
-                        name: currentPathObj.name
-                    },
-                    {
-                        title: childObj.title,
-                        path: currentPathObj.path + '/' + childObj.path,
-                        name: name
-                    }
-                ];
-            }
-
-            //childobj为undefined，再从三级页面中遍历
-            else {
-                let thirdObj;
-                let childObj = currentPathObj.children.filter((child) => {
-                    let hasChildren;
-                    hasChildren = child.name === name;
-                    if (hasChildren) return hasChildren
-
-                    if (child.children) {
-                        let sonArr = child.children;
-                        for (let n = 0; n < sonArr.length; n++) {
-                            if (sonArr[n].name === name) {
-                                thirdObj = sonArr[n];
-                                hasChildren = true;
-                                return hasChildren;
-                            }
-                        }
-                    }
-                    return hasChildren
-                })[0];
- 
-                if(thirdObj && childObj){
-                    currentPathArr = [
-                        {
-                            title: '首页',
-                            path: '/home',
-                            name: 'home_index'
-                        },
-                        {
-                            title: currentPathObj.title,
-                            path: '',
-                            name: currentPathObj.name
-                        },
-                        {
-                            title: childObj.title,
-                            path: '',               //设为空是因为此二级菜单没有实际页面且用于面包屑组件显示，path为空的将不可单击
-                            name: childObj.name
-                        },
-                        {
-                            title: thirdObj.title,
-                            path: currentPathObj.path + '/' + childObj.path + '/' + thirdObj.path,
-                            name: thirdObj.name
-                        }
-                    ];
-                }
-            }
-        }
+		let cArr2 = currentPathObj.children;
+		for(let i=0;i<cArr2.length;i++){
+			if(cArr2[i].children){
+				let cArr3 = cArr2[i].children;
+				for(let j=0;j<cArr3.length;j++){
+					if(cArr3[j].children){
+						let cArr4 = cArr3[j].children;
+						for(let k=0;k<cArr4.length;k++){
+							if(cArr4[k].name === name){ //四级菜单
+								currentPathArr = [
+									{
+										title: '首页',
+										path: '',
+										name: 'home_index'
+									},
+									{
+										title: currentPathObj.title,
+										path: '',
+										name: currentPathObj.name
+									},
+									{
+										title: cArr2[i].title,
+										path: '',
+										name: name
+									},
+									{
+										title: cArr3[j].title,
+										path: '',
+										name: name
+									},
+									{
+										title: cArr4[k].title,
+										path: '',
+										name: name
+									}
+								];
+							}
+						}
+					}else{ //三级菜单
+						if(cArr3[j].name === name){
+							currentPathArr = [
+								{
+									title: '首页',
+									path: '',
+									name: 'home_index'
+								},
+								{
+									title: currentPathObj.title,
+									path: '',
+									name: currentPathObj.name
+								},
+								{
+									title: cArr2[i].title,
+									path: '',
+									name: name
+								},
+								{
+									title: cArr3[j].title,
+									path: '',
+									name: name
+								}
+							];
+						}
+					}
+				}
+			}else{ //二级菜单
+				if(currentPathObj.name === 'home'){
+					currentPathArr = [
+						{
+							title: '首页',
+							path: '',
+							name: 'home_index'
+						}
+					];
+				}else{
+					currentPathArr = [
+						{
+							title: '首页',
+							path: '',
+							name: 'home_index'
+						},
+						{
+							title: currentPathObj.title,
+							path: '',
+							name: name
+						},
+						{
+							title: cArr2[i].title,
+							path: '',
+							name: name
+						}
+					];
+				}
+			}
+		}
     }
     vm.$store.commit('setCurrentPath', currentPathArr);
     return currentPathArr;
@@ -305,14 +301,47 @@ util.openNewPage = function (vm, name, argu, query) {
     if (!tagHasOpened) {
         let tag = vm.$store.state.app.tagsList.filter((item) => {
             if (item.children) {
-                return name === item.children[0].name;
+				let cArr = item.children;
+				for (let i = 0; i < cArr.length; i++) {
+					if(cArr[i].children){
+						let cArr2 = cArr[i].children;
+						for(let j=0;j<cArr2.length;j++){
+							if(name === cArr2[j].name){
+								return true;
+							}
+						}
+					}else{
+						if(name === cArr[i].name){
+							return true;
+						}
+					}
+				}
             } else {
                 return name === item.name;
             }
         });
         tag = tag[0];
         if (tag) {
-            tag = tag.children ? tag.children[0] : tag;
+			if(tag.children){
+				let cArr = tag.children;
+				for (let i = 0; i < cArr.length; i++) {
+					if(cArr[i].children){
+						let cArr2 = cArr[i].children;
+						for(let j=0;j<cArr2.length;j++){
+							if(name === cArr2[j].name){
+								tag = cArr2[j];
+								break;
+							}
+						}
+					}else{
+						if(name === cArr[i].name){
+							tag = cArr[i];
+							break;
+						}
+					}
+				}
+			}
+			
             if (argu) {
                 tag.argu = argu;
             }

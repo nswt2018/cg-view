@@ -30,7 +30,8 @@ sysDefinition.convertTree = function(tree) {
             sysKey: d.sysKey,
             title: d.sysName,
 			children: d.children,
-			isRoot: d.isRoot
+			isRoot: d.isRoot,
+			sysModCode: d.modCode
         };
 		
 		// 如果有子节点，递归
@@ -64,6 +65,11 @@ sysDefinition.save = function(name,url,model) {
 					this.spa.systemName = '';
 					this.spa.systemKey = '';
 					this.spa.isRoot = '';
+					this.spa.sysModCode = '';
+					
+					if(url == this.spa.saveurl){
+						this.spa.addCansel();
+					}
         		}else{
         			this.spa.$Modal.error({
                         title: '错误信息',
@@ -86,6 +92,7 @@ sysDefinition.delete = function(url) {
 			this.spa.systemName = '';
 			this.spa.systemKey = '';
 			this.spa.isRoot = '';
+			this.spa.sysModCode = '';
 			this.getBaseData(this.spa.treeurl);
 		}else{
 			pagetool.err(rres.data);
