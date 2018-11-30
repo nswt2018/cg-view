@@ -114,9 +114,11 @@ pagepublictool.save=function(refValue){
 			});
 		}else{
 			this.spa.$Message.error('Fail!');
-        	this.spa.loading = false;
+        	this.spa.addloading = false;
+        	this.spa.updloading = false;
         	this.spa.$nextTick(() => {
-        		this.spa.loading = true;
+        		this.spa.addloading = true;
+        		this.spa.updloading = true;
             });
 		}
 	})   
