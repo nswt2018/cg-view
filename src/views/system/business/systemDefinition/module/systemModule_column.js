@@ -212,4 +212,29 @@ systemModule.getTabList = function (gettaburl) {
 	});
 };
 
+
+systemModule.getColList = function (tabCode) {
+	var params = new URLSearchParams();
+	params.append('tabCode', tabCode);
+	util.ajax.post(this.spa.getcolurl, params, header).then((rres) => {
+		
+		const result = [];
+		rres.data.forEach(d => {
+			let tab = {
+				value: d,
+				label: d
+			};
+			
+			result.push(tab);
+		});
+		
+		let tab = {
+			code: tabCode,
+			list: result,
+		};
+		
+		this.spa.selectList.push(tab);
+	});
+};
+
 export default systemModule;

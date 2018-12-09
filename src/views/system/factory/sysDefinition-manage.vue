@@ -35,7 +35,7 @@
 								<br/>
 								<Button  type="primary" size="small" @click="codeGeneration()">代码生成</Button>
 								<Button type="success" size="small" @click="sysDeployment()">系统部署</Button>
-								<Button type="info" size="small" @click="xxx()">系统查看</Button>
+								<Button type="info" size="small" @click="look()">系统查看</Button>
 								<hr/>
 								<br/>
 							</div>
@@ -410,6 +410,11 @@ import Cookies from 'js-cookie';
 			//系统部署
 			sysDeployment () {
 				sysDefinition.sysDeployment();
+			},
+			
+			//系统查看
+			look () {
+				window.open('http://123.125.34.39:8082','_blank');
 			}
 		},
 		created () {
