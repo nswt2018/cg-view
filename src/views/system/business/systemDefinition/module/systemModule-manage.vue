@@ -242,7 +242,7 @@ export default {
 		//新增保存
 		saving(name) {
 			//所属模型为多表模型时,将Array数组转换为","隔开的字符串
-			if(this.addModel.moduModel == 'm002'){
+			if(this.addModel.moduModel == 'm002' || this.addModel.moduModel == 'm004'){
 				this.addModel.relTable = this.addModel.relTable.join(',');
 			}
 			this.addModel.crtDate = datetool.format(new Date());
@@ -287,7 +287,7 @@ export default {
 			this.addModel = {};
 		
 			//所属模型为多表模型时,设置关联表字段为多选,并将字符串转为数组
-			if(this.viewOrUpdateModel.moduModel == 'm002'){
+			if(this.viewOrUpdateModel.moduModel == 'm002' || this.viewOrUpdateModel.moduModel == 'm004'){
 				this.$refs.updSelect.multiple = true;
 				this.viewOrUpdateModel.relTable = this.viewOrUpdateModel.relTable.split(',');
 			}else{
