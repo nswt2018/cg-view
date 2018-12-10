@@ -113,7 +113,6 @@ export const appRouter = [
 					{ path: 'pageElement', title: '页面元素', name: 'pageElement', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/element/pageElement-manage.vue') },
 				]
 			},
-			
         ]
     },
 	
@@ -127,13 +126,13 @@ export const appRouter = [
 		children: [
             { 
 				path: 'sysDefinition', 
-				title: '应用工厂', 
+				title: '系统定义', 
 				name: 'sysDefinition', 
-				icon: 'android-checkbox',
+				icon: 'navicon-round',
 				component: () => import('@/views/system/factory/sysDefinition-manage.vue') 
 			}
         ]
-    }
+    },
 	
 	/*,
     
