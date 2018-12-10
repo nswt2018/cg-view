@@ -35,7 +35,7 @@
 								<br/>
 								<Button  type="primary" size="small" @click="codeGeneration()">代码生成</Button>
 								<Button type="success" size="small" @click="sysDeployment()">系统部署</Button>
-								<Button type="info" size="small" @click="xxx()">系统查看</Button>
+								<Button type="info" size="small" @click="look()">系统查看</Button>
 								<hr/>
 								<br/>
 							</div>
@@ -46,7 +46,7 @@
 							<br/>
 							<br/>
 							<div>
-								<Form ref="addFormRef" :model="addModel" :rules="modelRules" :label-width="200" inline="true">
+								<Form ref="addFormRef" :model="addModel" :rules="addRules" :label-width="200" inline="true">
 									<FormItem label="系统二位简码" prop="sysCode">
 										<Input v-model="addModel.sysCode" placeholder="请输入系统二位简码" style="width: auto"/>
 									</FormItem>
@@ -57,7 +57,7 @@
 										<Input v-model="systemName" style="width: auto" disabled/>
 									</FormItem>
 									<FormItem label="挂接模块" prop="modCode">
-										<Select v-model="addModel.modCode" style="width: 170px" readonly>
+										<Select v-model="addModel.modCode" style="width: 170px" clearable>
 											<Option v-for="item in modList" :value="item.value" :key="item.value">
 												{{ item.label }}
 											</Option>
@@ -121,7 +121,7 @@
 							<br/>
 							<br/>
 							<div>
-								<Form ref="updFormRef" :model="updModel" :rules="modelRules" :label-width="200" inline="true">
+								<Form ref="updFormRef" :model="updModel" :rules="updRules" :label-width="200" inline="true">
 									<FormItem label="系统二位简码" prop="sysCode">
 										<Input v-model="updModel.sysCode" placeholder="请输入系统二位简码" style="width: auto"/>
 									</FormItem>
@@ -132,7 +132,7 @@
 										<Input v-model="updModel.upperName" style="width: auto" readonly disabled/>
 									</FormItem>
 									<FormItem label="挂接模块" prop="modCode">
-										<Select v-model="updModel.modCode" style="width: 170px" readonly>
+										<Select v-model="updModel.modCode" style="width: 170px" clearable>
 											<Option v-for="item in modList" :value="item.value" :key="item.value">
 												{{ item.label }}
 											</Option>
@@ -172,6 +172,26 @@ import Cookies from 'js-cookie';
 
 	 export default {
         data () {
+			var validateAddData = (rule, value, callback) =>{
+				var self = this;
+				var upperSys = self.addModel.upperSys;
+				if (!upperSys && !value) {
+					return callback(new Error(rule.message));
+				}else {
+					callback();
+				}
+			};
+			
+			var validateUpdData = (rule, value, callback) =>{
+				var self = this;
+				var upperSys = self.updModel.upperSys;
+				if (!upperSys && !value) {
+					return callback(new Error(rule.message));
+				}else {
+					callback();
+				}
+			};
+			
             return {
 				baseData: [],
 				treeurl: '/factory/AF0001T.do',
@@ -201,9 +221,20 @@ import Cookies from 'js-cookie';
 				systemKey: '',
 				systemName: '',
 				isRoot: '',
-				modelRules: {
-					sysCode : [{required: true}],
-					sysName : [{required: true}]
+				sysModCode: '',
+				addRules: {
+					sysCode : [{required: true, message: '系统二位简码不能为空！'}],
+					sysName : [{required: true, message: '系统名称不能为空！'}],
+					vuePath : [{validator: validateAddData, message: '视图组件路径不能为空！'}],
+					javaPath : [{validator: validateAddData, message: '业务逻辑组件路径不能为空！'}],
+					packName : [{validator: validateAddData, message: '包名不能为空！'}]
+				},
+				updRules: {
+					sysCode : [{required: true, message: '系统二位简码不能为空！'}],
+					sysName : [{required: true, message: '系统名称+不能为空！'}],
+					vuePath : [{validator: validateUpdData, message: '视图组件路径不能为空！'}],
+					javaPath : [{validator: validateUpdData, message: '业务逻辑组件路径不能为空！'}],
+					packName : [{validator: validateUpdData, message: '包名不能为空！'}]
 				},
 				modList: []
 			};
@@ -225,6 +256,7 @@ import Cookies from 'js-cookie';
 					this.systemKey = item.sysKey;
 					this.systemName = item.title;
 					this.isRoot = item.isRoot;
+					this.sysModCode = item.sysModCode;
 					
 					var params = new URLSearchParams();
 					params.append('sysKey', this.systemKey);
@@ -246,7 +278,17 @@ import Cookies from 'js-cookie';
 			
 			//新增操作
 			handleInsert() {
-			
+				if(this.sysModCode != '' && this.sysModCode != null){
+					this.$Modal.warning({
+						title: '提示信息',
+						content: '该系统已经挂接模块,不允许新增子系统！'
+					});
+					this.systemName = '';
+					this.systemKey = '';
+					this.isRoot = '';
+					this.sysModCode = '';
+					return;
+				}
 				//显示新增界面
 				this.addForm = true;
 				
@@ -268,11 +310,11 @@ import Cookies from 'js-cookie';
 			
 			//新增取消
 			addCansel() {
-			
 				this.hideForm();
 				this.systemName = '';
 				this.systemKey = '';
 				this.isRoot = '';
+				this.sysModCode = '';
 			},
 			
 			//重置字段
@@ -287,7 +329,6 @@ import Cookies from 'js-cookie';
 				this.addModel.upperName = this.systemName;
 				sysDefinition.save('addFormRef', this.saveurl, this.addModel);
 				
-				this.addCansel();
 			},
 			
 			//修改操作
@@ -369,6 +410,11 @@ import Cookies from 'js-cookie';
 			//系统部署
 			sysDeployment () {
 				sysDefinition.sysDeployment();
+			},
+			
+			//系统查看
+			look () {
+				window.open('http://123.125.34.39:8082','_blank');
 			}
 		},
 		created () {

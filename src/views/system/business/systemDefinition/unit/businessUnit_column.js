@@ -35,7 +35,24 @@ businessUnit.getColumns = function() {
 				{
 			        title: '关联表',
 			        key: 'relTable',
-			        align: 'center'
+			        align: 'center',
+					width: 150,
+					render: (h, params) => {
+					  return h('div', [
+						 h('span', {
+							 style: {
+								 display: 'inline-block',
+								 width: '100%',
+								 overflow: 'hidden',
+								 textOverflow: 'ellipsis',
+								 whiteSpace: 'nowrap'
+							 },
+							 domProps: {
+								 title: params.row.relTable
+							 }
+						 }, params.row.relTable)
+					 ]);
+					}
 			    },
 				{
 			        title: '关联字段',
