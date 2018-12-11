@@ -130,7 +130,15 @@ export const appRouter = [
 				name: 'sysDefinition', 
 				icon: 'navicon-round',
 				component: () => import('@/views/system/factory/sysDefinition-manage.vue') 
-			}
+			},
+			
+			{ 
+				path: 'demo', 
+				title: '树预览演示', 
+				name: 'demo', 
+				icon: 'navicon-round',
+				component: () => import('@/views/system/demo/demo.vue') 
+			},
         ]
     },
 	
