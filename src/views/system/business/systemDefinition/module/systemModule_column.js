@@ -7,6 +7,7 @@ import util from '@/libs/util.js'
 let systemModule = {};
 let spa ;
 const header = {'Content-Type': 'application/json;charset=UTF-8'};
+const SAV_SUC='000001';
 const DEL_SUC='000002';
 const UPD_SUC='000003';
 const DUR_TIME=30;
@@ -212,7 +213,7 @@ systemModule.getTabList = function (gettaburl) {
 	});
 };
 
-
+//获取表字段
 systemModule.getColList = function (tabCode) {
 	var params = new URLSearchParams();
 	params.append('tabCode', tabCode);
@@ -236,5 +237,125 @@ systemModule.getColList = function (tabCode) {
 		this.spa.selectList.push(tab);
 	});
 };
+
+//获取树数据
+systemModule.getTreeData = function(relInfo) {
+	var params = new URLSearchParams();
+	params.append('relInfo', relInfo);
+	util.ajax.post(this.spa.treeurl, params, header).then((rres) => {  	
+		this.spa.treeData = systemModule.eidtTree(rres.data);
+	});
+};
+
+//处理后台返回的树形数据
+systemModule.eidtTree = function(tree) {
+	const result = [];
+    tree.forEach(d=>{
+		let item = {
+            nodCode: d.nodCode,
+            title: d.nodName,
+			children: d.children,
+			tranCode: d.tranCode,
+            expand: true
+        };
+		
+		// 如果有子节点，递归
+        if (item.children) {
+            item.children = systemModule.eidtTree(item.children);
+        }
+
+        result.push(item);
+	});
+	
+	return result;
+}
+
+//获取节点详细信息
+systemModule.getNodeInfo = function (params){
+	
+	util.ajax.post(this.spa.scanurl, params, header).then((rres) => {
+		this.spa.scanModel = rres.data;
+		this.spa.updModel = rres.data;
+		
+		//回显交易号字段
+		if(rres.data.tranCode){
+			let tranCode = rres.data.tranCode;
+			if(tranCode.indexOf('r') == 0 && tranCode.length == 3){
+				this.spa.scanModel.tranCode = '根节点编号 / ' + tranCode;
+			}else{
+				this.spa.scanModel.tranCode = '模块交易号 / ' + tranCode;
+			}
+		}
+	});
+};
+
+//获取根节点编号及模块交易号
+systemModule.getTranCodeList = function (nodCode, moduTC){
+	var params = new URLSearchParams();
+	params.append('nodCode', nodCode);
+	params.append('moduTC', moduTC);
+	util.ajax.post(this.spa.trancodeurl, params, header).then((rres) => {
+		
+		this.spa.tCodeData = rres.data;
+	});
+};
+
+//树模型新增、修改提交
+systemModule.save = function(name,url,model) {
+	
+	this.spa.$refs[name].validate((valid) => {
+        if (valid) {
+        	util.ajax.put(url, model, header).then((rres) => {   
+				let relInfo = this.spa.addModel.relInfo ? this.spa.addModel.relInfo : this.spa.viewOrUpdateModel.relInfo;
+        		if(rres.data.code===UPD_SUC) {
+        			this.spa.$Message.success('修改成功!');
+					//清空相关字段
+					this.spa.clearCol();
+					//刷新树
+					systemModule.getTreeData(relInfo);
+        		}else if(rres.data.code===SAV_SUC){
+					this.spa.$Message.success('添加成功!');
+					//设置关联关系字段
+					if(rres.data.nodCode){
+						this.spa.addModel.relInfo = rres.data.nodCode;
+						relInfo = rres.data.nodCode;
+					}
+					
+					//清空相关字段
+					this.spa.clearCol();
+					//隐藏所有界面
+					this.spa.hideForm();
+					//刷新树
+					systemModule.getTreeData(relInfo);
+				}else{
+        			this.spa.$Modal.error({
+                        title: '错误信息',
+                        content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
+                    });
+        		}
+			});
+            
+        } else {
+        	this.spa.$Message.error('修改失败!');
+        }
+    })
+};
+
+systemModule.delTrans = function(url) {
+	let relInfo = this.spa.addModel.relInfo ? this.spa.addModel.relInfo : this.spa.viewOrUpdateModel.relInfo;
+	util.ajax.delete(url, header).then((rres) => {
+		if(rres.data.code===DEL_SUC) {
+			this.spa.$Message.success('删除成功!');
+			//清空相关字段
+			this.spa.clearCol();
+			//隐藏所有界面
+			this.spa.hideForm();
+			//刷新树
+			systemModule.getTreeData(relInfo);
+		}else{
+			pagetool.err(rres.data);
+		}
+	});
+}
 
 export default systemModule;

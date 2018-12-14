@@ -27,10 +27,11 @@
                 		@on-sort-change="sorting">
 					</Table>
                 	<div style="float: right;">
-                	<Page :total="totalCount" :current="1" :page-size="pageSize" 
-                		:transfer="true" :size="getFont"
-                		@on-change="changePage" @on-page-size-change="changePageSize" 
-                		show-total show-elevator show-sizer></Page>
+						<Page :total="totalCount" :current="1" :page-size="pageSize" 
+							:transfer="true" :size="getFont"
+							@on-change="changePage" @on-page-size-change="changePageSize" 
+							show-total show-elevator show-sizer>
+						</Page>
                 	</div>
                 </Row> 
 				

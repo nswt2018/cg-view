@@ -54,8 +54,8 @@
 								</Option>
 							 </Select>
 						 </FormItem>
-						 <FormItem label="关联表" prop="relTable">
-							 <Select v-model="addModel.relTable" ref="addSelect">
+						 <FormItem label="关联表" prop="relTables">
+							 <Select v-model="addModel.relTables" ref="addSelect">
 								<Option v-for="item in tabList" :value="item.value" :key="item.value">
 									{{ item.label }}
 								</Option>
@@ -69,7 +69,7 @@
 				
 				<!-- 修改页面 -->
 				<Modal width="700" v-model="viewModal" title="模块信息" ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
-					@on-ok="update('updFormRef')">
+					@on-ok="update('updFormRef')" @on-cancel="reseting('updFormRef')">
 					<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100" :rules="modelUpdRules">
 						<FormItem label="模块代码" prop="moduCode">
 							 <Input v-model="viewOrUpdateModel.moduCode" disabled/>
@@ -85,8 +85,8 @@
 								<Option v-for="item in modList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 							</Select>
 						 </FormItem>
-						 <FormItem label="关联表" prop="relTable">
-							 <Select v-model="viewOrUpdateModel.relTable" ref="updSelect">
+						 <FormItem label="关联表" prop="relTables">
+							 <Select v-model="viewOrUpdateModel.relTables" ref="updSelect">
 								<Option v-for="item in tabList" :value="item.value" :key="item.value">
 									{{ item.label }}
 								</Option>
@@ -115,17 +115,100 @@
 				
 				<!-- 关联信息 树模型-->
 				<Modal v-model="treeModal" width="700">
-					<div class="modaltyle">
-						<Col span="5">
-							<Tree :data="tagData" @on-select-change="selectTag" ref="tree"></Tree>
+					<div class="modaltyle1">
+						<Col span="8">
+							<div class="treestyle1">
+								<Tree :data="treeData" @on-select-change="selectNode" ref="tree"></Tree>
+							</div>
+							<div class="buttonstyle">
+								<Button type="primary" size="small" @click="nodeInsert()">新增</Button>
+								<Button type="success" size="small" @click="nodeUpdate()">修改</Button>
+								<Button type="info" size="small" @click="nodeDelete()">删除</Button>
+							</div>
 						</Col>
-						<Col span="19">
-							<div v-show="tagInfo">
-								<Table highlight-row border 
-									:columns="tagColumns" :data="tagDatas" :stripe="true" 
-									@on-select="choicing" @on-select-cancel="cancing" 
-									@on-sort-change="sorting">
-								</Table>
+						<Col span="16">
+							<!-- 新增 -->
+							<div v-show="insertInfo">
+								<div>
+									<br/>
+									<Form ref="addRef" :model="insertModel" :rules="addRules" :label-width="200" inline="true">
+										<FormItem label="节点名称" prop="nodName">
+											<Input v-model="insertModel.nodName" placeholder="请输入节点名称" style="width: auto"/>
+										</FormItem>
+										<FormItem label="上级节点名称" prop="upNodName">
+											<Input v-model="nodName" style="width: auto" disabled/>
+										</FormItem>
+										<FormItem label="交易号(根节点编号)" prop="tranCode">
+											<Cascader :data="tCodeData" v-model="insertModel.tranCode" style="width: auto"/>
+										</FormItem>
+										<FormItem label="显示条件" prop="showCond">
+											<Input v-model="insertModel.showCond" style="width: auto"/>
+										</FormItem>
+										<FormItem label="传递参数" prop="showParam">
+											<Input v-model="insertModel.showParam" style="width: auto"/>
+										</FormItem>
+									</Form>
+								</div>
+								<div class="buttonstyle2">
+									<br/>
+									<br/>
+									<br/>
+									<Button type="primary" size="small" @click="addCansel()">取消</Button>
+									<Button type="info" size="small" @click="addSubmit()">提交</Button>
+								</div>
+							</div>
+							
+							<!-- 浏览 -->
+							<div v-show="scanInfo">
+								<br/>
+								<Form ref="scanRef" :model="scanModel" :label-width="200" inline="true">
+									<FormItem label="节点名称" prop="nodName">
+										<Input v-model="scanModel.nodName" placeholder="请输入节点名称" style="width: auto" readonly/>
+									</FormItem>
+									<FormItem label="上级节点名称" prop="upNodName">
+										<Input v-model="scanModel.upNodName" style="width: auto" readonly/>
+									</FormItem>
+									<FormItem label="交易号(根节点编号)" prop="tranCode">
+										<Input v-model="scanModel.tranCode" style="width: auto" readonly/>
+									</FormItem>
+									<FormItem label="显示条件" prop="showCond">
+										<Input v-model="scanModel.showCond" style="width: auto" readonly/>
+									</FormItem>
+									<FormItem label="传递参数" prop="showParam">
+										<Input v-model="scanModel.showParam" style="width: auto" readonly/>
+									</FormItem>
+								</Form>
+							</div>
+							
+							<!-- 修改 -->
+							<div v-show="updInfo">
+								<div>
+									<br/>
+									<Form ref="updRef" :model="updModel" :rules="addRules" :label-width="200" inline="true">
+										<FormItem label="节点名称" prop="nodName">
+											<Input v-model="updModel.nodName" placeholder="请输入节点名称" style="width: auto" disabled/>
+										</FormItem>
+										<FormItem label="上级节点名称" prop="upNodName">
+											<Input v-model="updModel.upNodName" style="width: auto" disabled/>
+										</FormItem>
+										<FormItem label="交易号(根节点编号)" prop="tranCode">
+											<Cascader :data="tCodeData" v-model="updModel.tranCode" style="width: auto"/>
+										</FormItem>
+										<FormItem label="显示条件" prop="showCond">
+											<Input v-model="updModel.showCond" style="width: auto"/>
+										</FormItem>
+										<FormItem label="传递参数" prop="showParam">
+											<Input v-model="updModel.showParam" style="width: auto"/>
+										</FormItem>
+									</Form>
+								</div>
+								<div class="buttonstyle2">
+									<br/>
+									<br/>
+									<br/>
+									<Button type="primary" size="small" @click="updCansel()">取消</Button>
+									<Button type="info" size="small" @click="updSubmit()">提交</Button>
+								</div>
 							</div>
 						</Col>
 					</div>
@@ -146,6 +229,14 @@ import Cookies from 'js-cookie';
 export default {
     name: 'module-info',
     data () {
+		var validateUpdData = (rule, value, callback) =>{
+			var self = this;
+			if (!value) {
+				return callback(new Error(rule.message));
+			}else {
+				callback();
+			}
+		};
         return {
         	headers: {'Content-Type': 'application/json;charset=UTF-8'},
         	listurl: '/business/TK0004L.do', 
@@ -155,6 +246,12 @@ export default {
 			selecturl: '/business/TK0001T.do',  
 			gettaburl: '/business/TK0004L1.do',
 			getcolurl: '/business/TK0004L2.do',
+			treeurl: '/business/TK0004L3.do',
+			scanurl: '/business/TK0004L4.do',
+			trancodeurl: '/business/TK0004L5.do',
+			updurl: '/business/TK0004U1.do',
+			addurl: '/business/TK0004I1.do',
+			delurl: '/business/TK0004D1.do',
 			list_data: [],
 			pageSize: 10,
 			currentPage: 1,
@@ -171,11 +268,11 @@ export default {
 				moduCName : [{required: true}],
 				moduTC : [{required: true}],
 				moduModel : [{required: true}],
-				relTable : [{required: true}]
+				relTables : [{required: true}]
             },
 			modelUpdRules: {
-				moduModel : [{required: true}],
-				relTable : [{required: true}]
+				moduModel : [{validator: validateUpdData, message: '所属模型不能为空！'}],
+				relTables : [{validator: validateUpdData, message: '关联表不能为空！'}],
 			},
 			viewOrUpdateModel: {},
             columns: [],
@@ -188,7 +285,22 @@ export default {
 			selectList: [],
 			relModel: [],
 			treeModal: false,
-			tagData: [],
+			treeData: [],
+			insertIsnfo: false,
+			scanInfo: false,
+			updInfo: false,
+			insertModel: {},
+			scanModel: {},
+			updModel: {},
+			nodCode: '',
+			nodName: '',
+			tranCode: '',
+			tCodeData: [],
+			addRules: {
+				nodName : [{required: true}],
+				showCond : [{required: true}],
+				showParam : [{required: true}],
+			}
         };
     },
     methods: {  
@@ -243,7 +355,7 @@ export default {
 		saving(name) {
 			//所属模型为多表模型时,将Array数组转换为","隔开的字符串
 			if(this.addModel.moduModel == 'm002' || this.addModel.moduModel == 'm004'){
-				this.addModel.relTable = this.addModel.relTable.join(',');
+				this.addModel.relTable = this.addModels.relTables.join(',');
 			}
 			this.addModel.crtDate = datetool.format(new Date());
         	pagetool.save(name);
@@ -251,8 +363,11 @@ export default {
 		
 		//新增/修改取消
         reseting (name) {
-			this.addModal = false;
-        	//pagetool.reset(name);
+			if(name == 'addFormRef'){
+				this.addModal = false;
+			}else{	
+				this.viewModal = false;
+			}
         },
 		
 		//删除操作
@@ -289,9 +404,10 @@ export default {
 			//所属模型为多表模型时,设置关联表字段为多选,并将字符串转为数组
 			if(this.viewOrUpdateModel.moduModel == 'm002' || this.viewOrUpdateModel.moduModel == 'm004'){
 				this.$refs.updSelect.multiple = true;
-				this.viewOrUpdateModel.relTable = this.viewOrUpdateModel.relTable.split(',');
+				this.viewOrUpdateModel.relTables = this.viewOrUpdateModel.relTable.split(',');
 			}else{
 				this.$refs.updSelect.multiple = false;
+				this.viewOrUpdateModel.relTables = this.viewOrUpdateModel.relTable;
 			}
 		},
 		
@@ -300,13 +416,17 @@ export default {
 			this.viewOrUpdateModel.updDate = datetool.format(new Date());
 			
 			//所属模型为多表模型时,将Array数组转换为","隔开的字符串
-			this.viewOrUpdateModel.relTable = this.viewOrUpdateModel.relTable.join(',');
+			if(this.addModel.moduModel == 'm002' || this.addModel.moduModel == 'm004'){
+				this.viewOrUpdateModel.relTable = this.viewOrUpdateModel.relTables.join(',');
+			}else{
+				this.viewOrUpdateModel.relTable = this.viewOrUpdateModel.relTables;
+			}
+			
 			systemModule.update(name);
 		},
 		
 		//所属模型变化时
 		moduModelChange(){
-		
 			//清空关联表和关联关系字段
 			this.addModel.relInfo = '';
 			this.viewOrUpdateModel.relInfo = '';
@@ -339,6 +459,20 @@ export default {
 				return;
 			}else if(this.addModel.moduModel == 'm003' || this.viewOrUpdateModel.moduModel == 'm003'){
 				this.treeModal = true;
+				this.hideForm();
+				this.clearCol();
+				
+				this.insertModel = {};
+				this.scanModel = {};
+				this.updModel = {};
+				
+				if(flag == 'U'){
+					//获取树数据
+					systemModule.getTreeData(this.viewOrUpdateModel.relInfo);
+				}else{
+					systemModule.getTreeData(this.addModel.relInfo);
+				}
+				
 			}else{
 				//主从模型只能选两张表
 				let data = '';
@@ -414,13 +548,150 @@ export default {
 		},
 		
 		//选择标签，显示该标签下所有属性
-		selectTag(selectedArray) { 
+		selectNode(selectedArray) { 
 			
 			selectedArray.map(item => {
 				
+				//获取当前节点编号、名称、交易号
+				this.nodCode = item.nodCode;
+				this.nodName = item.title;
+				this.tranCode = item.tranCode;
+				
+				//获取当前节点详细信息
+				var params = new URLSearchParams();
+				params.append('nodCode', this.nodCode);
+				systemModule.getNodeInfo(params);
+				
+				//显示浏览界面
+				this.scanInfo = true;
+				
+				//隐藏其他界面
+				this.insertInfo = false;
+				this.updInfo = false;
 			});
 			
 		},
+		
+		//修改节点
+		nodeUpdate () {
+			if(this.nodCode == '' || this.nodCode.length == 0){
+				this.$Modal.warning({
+					title: '提示信息',
+					content: '请选择任意节点！'
+				});
+				
+				return;
+			}
+				
+			//显示修改界面
+			this.updInfo = true;
+			
+			//隐藏其他界面
+			this.insertInfo = false;
+			this.scanInfo = false;
+			
+			//获取根节点编号及模块交易号
+			systemModule.getTranCodeList(this.updModel.nodCode, this.viewOrUpdateModel.moduTC);
+			
+			//回显交易号字段
+			let tranCode = this.updModel.tranCode.split('/')[1].replace(/^\s*|\s*$/g,"");
+			if(tranCode.indexOf('r') == 0 && tranCode.length == 3){
+				this.updModel.tranCode = ['nc', tranCode];
+			}else{
+				this.updModel.tranCode = ['mc', tranCode];
+			}
+			
+		},
+		
+		//新增节点
+		nodeInsert() {
+			
+			if(this.addModel.relInfo && this.nodCode == ''){
+				this.$Modal.warning({
+					title: '提示信息',
+					content: '已经存在根节点！请选取任意节点！'
+				});
+				
+				return;
+			}
+			
+			if(this.tranCode != '' && this.tranCode != null){
+				this.$Modal.warning({
+					title: '提示信息',
+					content: '该节点已经挂接模块交易号或根节点编号,不能新增子节点！'
+				});
+				
+				return;
+			}
+			//清空表单
+			pagetool.reset('addRef');
+			
+			//显示新增界面
+			this.insertInfo = true;
+			
+			//隐藏其他界面
+			this.updInfo = false;
+			this.scanInfo = false;
+			
+			//获取根节点编号及模块交易号
+			systemModule.getTranCodeList(this.insertModel.nodCode, this.addModel.moduTC);
+			
+		},
+		
+		//新增提交
+		addSubmit() {
+			if(this.insertModel.tranCode){
+				this.insertModel.tranCode = this.insertModel.tranCode[1];
+			}
+			this.insertModel.upNodName = this.nodName;
+			this.insertModel.upNodCode = this.nodCode;
+			systemModule.save('addRef', this.addurl, this.insertModel);
+		},
+		
+		//新增取消
+		addCansel() {
+			this.hideForm();
+		},
+		
+		//隐藏所有窗口
+		hideForm(){
+			this.insertInfo = false;
+			this.scanInfo = false;
+			this.updInfo = false;
+		},
+		
+		//清空相关字段
+		clearCol(){
+			this.nodCode = '';
+			this.nodName = '';
+			this.tranCode = '';
+		},
+		
+		//修改取消
+		updCansel(){
+			this.hideForm();
+		},
+		
+		//修改提交
+		updSubmit() {
+			if(this.updModel.tranCode){
+				this.updModel.tranCode = this.updModel.tranCode[1];
+			}
+			systemModule.save('updRef', this.updurl, this.updModel);
+		},
+		
+		//删除节点
+		nodeDelete (){
+			if(this.nodCode == '' || this.nodCode.length == 0){
+				this.$Modal.warning({
+					title: '提示信息',
+					content: '请选择任意节点！'
+				});
+				
+				return;
+			}
+			systemModule.delTrans(this.delurl + "?nodCode=" + this.nodCode);
+		}
     },
     created() {
     	this.init();
