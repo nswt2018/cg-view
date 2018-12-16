@@ -355,7 +355,9 @@ export default {
 		saving(name) {
 			//所属模型为多表模型时,将Array数组转换为","隔开的字符串
 			if(this.addModel.moduModel == 'm002' || this.addModel.moduModel == 'm004'){
-				this.addModel.relTable = this.addModels.relTables.join(',');
+				this.addModel.relTable = this.addModel.relTables.join(',');
+			}else{
+				this.addModel.relTable = this.addModel.relTables;
 			}
 			this.addModel.crtDate = datetool.format(new Date());
         	pagetool.save(name);
@@ -477,9 +479,9 @@ export default {
 				//主从模型只能选两张表
 				let data = '';
 				if(flag == 'A'){
-					data = this.addModel.relTable;
+					data = this.addModel.relTables;
 				}else if(flag == 'U'){
-					data = this.viewOrUpdateModel.relTable;
+					data = this.viewOrUpdateModel.relTables;
 				}
 				
 				if((this.addModel.moduModel == 'm004' || this.viewOrUpdateModel.moduModel == 'm004') && !(data.length == 2)){
@@ -532,13 +534,13 @@ export default {
 				relInfo = relInfo.substring(0, relInfo.length-3);
 			}
 			
-			if(this.addModel.relTable){ //新增页面
+			if(this.addModel.relTables){ //新增页面
 				if(this.addModel.relInfo){
 					this.addModel.relInfo += " and " + relInfo;
 				}else{
 					this.addModel.relInfo = relInfo;
 				}
-			}else if(this.viewOrUpdateModel.relTable){ //修改页面
+			}else if(this.viewOrUpdateModel.relTables){ //修改页面
 				if(this.viewOrUpdateModel.relInfo){
 					this.viewOrUpdateModel.relInfo += " and " + relInfo;
 				}else{
