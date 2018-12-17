@@ -418,7 +418,7 @@ export default {
 			this.viewOrUpdateModel.updDate = datetool.format(new Date());
 			
 			//所属模型为多表模型时,将Array数组转换为","隔开的字符串
-			if(this.addModel.moduModel == 'm002' || this.addModel.moduModel == 'm004'){
+			if(this.viewOrUpdateModel.moduModel == 'm002' || this.viewOrUpdateModel.moduModel == 'm004'){
 				this.viewOrUpdateModel.relTable = this.viewOrUpdateModel.relTables.join(',');
 			}else{
 				this.viewOrUpdateModel.relTable = this.viewOrUpdateModel.relTables;
