@@ -244,6 +244,12 @@ systemModule.getTreeData = function(relInfo) {
 	params.append('relInfo', relInfo);
 	util.ajax.post(this.spa.treeurl, params, header).then((rres) => {  	
 		this.spa.treeData = systemModule.eidtTree(rres.data);
+		
+		//如果根节点删除,清空关联关系	
+		if(this.spa.treeData.length == 0){
+			this.spa.viewOrUpdateModel.relInfo = '';
+			this.spa.addModel.relInfo = '';
+		}
 	});
 };
 
