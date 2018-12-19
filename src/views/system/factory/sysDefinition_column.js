@@ -31,7 +31,8 @@ sysDefinition.convertTree = function(tree) {
             title: d.sysName,
 			children: d.children,
 			isRoot: d.isRoot,
-			sysModCode: d.modCode
+			sysModCode: d.modCode,
+			expand: true
         };
 		
 		// 如果有子节点，递归

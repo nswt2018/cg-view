@@ -59,10 +59,61 @@ modelcolumn.getColumns = function() {
     ];
 };
 
+modelcolumn.getModuColumns = function() {
+	return [
+				{ 
+					type: 'index',
+			        width: 60,
+			        align: 'center'
+			    },
+				{
+					title: '模块代码',
+			        key: 'moduCode',
+			        align: 'center'
+			    },
+			    {
+					title: '中文名称',
+			        key: 'moduCName',
+			        align: 'center'
+			    },
+			    {
+			        title: '模块交易号',
+			        key: 'moduTC',
+			        align: 'center',
+			    },
+				{
+					title: '所属模型',
+			        key: 'modName',
+			        align: 'center'
+			    },
+			    {
+			        title: '创建日期',
+			        key: 'crtDate',
+			        align: 'center',
+					render: (h, params) => {                        
+			            return h('div', datetool.format(params.row.crtDate));
+			        }
+			    },
+			    {
+			        title: '修改日期',
+			        key: 'updDate',
+					align: 'center',
+					render: (h, params) => {                        
+			            return h('div', datetool.format(params.row.updDate));
+			        }
+			    }
+    ];
+};
+
 modelcolumn.choice = function(selection, row) {
 	this.spa.selectedLines = selection.length;
 	this.spa.viewOrUpdateModel = row;
 	this.spa.deletedPks.push(row.modCode);
+	
+	var params = new URLSearchParams();
+	params.append('currentPage', 1);
+	params.append('pageSize', 10);
+	modelcolumn.getModuDataList(params);
 };
 
 modelcolumn.cancel = function(selection, row) {
@@ -78,6 +129,30 @@ modelcolumn.cancel = function(selection, row) {
 	}
 	//console.log(this.spa.deletedPks);
 	
+	var params = new URLSearchParams();
+	params.append('currentPage', 1);
+	params.append('pageSize', 10);
+	modelcolumn.getModuDataList(params);
+	
+};
+
+//根据选取的模型编号,回显模块数据
+modelcolumn.getModuDataList = function(params){
+	
+	let url = this.spa.modulisturl;
+	params.append('modCode', this.spa.deletedPks.join(','));
+	params.append('sModelCode', this.spa.sModelCode1);
+	params.append('sModuCode', this.spa.sModuCode);
+	util.ajax.put(url, params, header).then((rres) => {        		
+		if(rres.data){
+			this.spa.modulist_data = rres.data.rows;
+    		this.spa.totalPage1 = rres.data.totalPage;
+    		this.spa.totalCount1 = rres.data.totalCount;
+			
+			//清空index
+			this.spa.index = -1;
+		}
+	});
 };
 
 modelcolumn.update = function(name) {
