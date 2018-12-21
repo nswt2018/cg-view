@@ -129,6 +129,8 @@ modelcolumn.getModuDataList = function(data){
     		this.spa.totalPage1 = rres.data.totalPage;
     		this.spa.totalCount1 = rres.data.totalCount;
     		this.spa.pageSize1 = rres.data.pageSize;
+			
+			this.spa.index = -1;
     	}else{
     		pagetool.err(rres.data);
 		}
