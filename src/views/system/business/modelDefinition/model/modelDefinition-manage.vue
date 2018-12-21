@@ -41,8 +41,6 @@
 					<p slot="title"> <Icon type="compose"></Icon>模块定义</p>
 					<Row>
 						<p>
-							<Input v-model="sModuEName" placeholder="请输入英文名称搜索" icon="search" 
-								style="width: 200px" @on-change="searching1"></Input>
 							<Input v-model="sModuCName" placeholder="请输入中文名称搜索" icon="search" 
 								style="width: 200px" @on-change="searching1"></Input>
 							&nbsp;
@@ -182,7 +180,6 @@ export default {
 			currentPage1: 1,
 			totalCount1: 0,
 			pageSize1: 10,
-			sModuEName: '',
 			sModuCName: '',
 			moduScan: false,
 			moduScanModel: {},
@@ -198,7 +195,7 @@ export default {
 		
 		getModuCond() {
         	return {'menuCode': '', 'pageSize': this.pageSize1, 'currentPage': this.currentPage1, 
-        		'valObj': {'moduEName': this.sModuEName, 'moduCName': this.sModuCName, 'moduModel': this.deletedPks.join(',')}
+        		'valObj': {'moduCName': this.sModuCName, 'moduModel': this.deletedPks.join(',')}
         	};
         },
 		
