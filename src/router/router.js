@@ -109,8 +109,8 @@ export const appRouter = [
 				path: 'systemDefinition', title: '模块定义', name: 'system_definition', icon: 'navicon-round',component: () => import('@/views/system/business/artical-publish-center.vue'),
 				children: [
 					{ path: 'systemModule', title: '公共模块', name: 'systemModule', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/module/systemModule-manage.vue') },
-					{ path: 'businessUnit', title: '业务单元', name: 'businessUnit', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/unit/businessUnit-manage.vue') },
-					{ path: 'pageElement', title: '页面元素', name: 'pageElement', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/element/pageElement-manage.vue') },
+					//{ path: 'businessUnit', title: '业务单元', name: 'businessUnit', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/unit/businessUnit-manage.vue') },
+					//{ path: 'pageElement', title: '页面元素', name: 'pageElement', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/element/pageElement-manage.vue') },
 				]
 			},
         ]

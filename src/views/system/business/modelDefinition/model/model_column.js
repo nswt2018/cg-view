@@ -66,11 +66,6 @@ modelcolumn.getModuColumns = function() {
 			        width: 60,
 			        align: 'center'
 			    },
-				{
-					title: '模块代码',
-			        key: 'moduCode',
-			        align: 'center'
-			    },
 			    {
 					title: '中文名称',
 			        key: 'moduCName',
@@ -85,22 +80,6 @@ modelcolumn.getModuColumns = function() {
 					title: '所属模型',
 			        key: 'modName',
 			        align: 'center'
-			    },
-			    {
-			        title: '创建日期',
-			        key: 'crtDate',
-			        align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.crtDate));
-			        }
-			    },
-			    {
-			        title: '修改日期',
-			        key: 'updDate',
-					align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.updDate));
-			        }
 			    }
     ];
 };
@@ -110,10 +89,7 @@ modelcolumn.choice = function(selection, row) {
 	this.spa.viewOrUpdateModel = row;
 	this.spa.deletedPks.push(row.modCode);
 	
-	var params = new URLSearchParams();
-	params.append('currentPage', 1);
-	params.append('pageSize', 10);
-	modelcolumn.getModuDataList(params);
+	modelcolumn.getModuDataList(this.spa.getModuCond());
 };
 
 modelcolumn.cancel = function(selection, row) {
@@ -122,35 +98,39 @@ modelcolumn.cancel = function(selection, row) {
 	if(this.spa.selectedLines>0) {
 		this.spa.viewOrUpdateModel = selection[0];
 		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.modCode), 1);
+		modelcolumn.getModuDataList(this.spa.getModuCond());
 	}
 	else {
 		this.spa.viewOrUpdateModel = {};
 		this.spa.deletedPks = [];
+		
+		let cond = this.spa.getModuCond();
+		cond.valObj.moduModel = "-1";
+		modelcolumn.getModuDataList(cond);
 	}
 	//console.log(this.spa.deletedPks);
-	
-	var params = new URLSearchParams();
-	params.append('currentPage', 1);
-	params.append('pageSize', 10);
-	modelcolumn.getModuDataList(params);
-	
 };
 
 //根据选取的模型编号,回显模块数据
-modelcolumn.getModuDataList = function(params){
+modelcolumn.getModuDataList = function(data){
 	
 	let url = this.spa.modulisturl;
-	params.append('modCode', this.spa.deletedPks.join(','));
-	params.append('sModelCode', this.spa.sModelCode1);
-	params.append('sModuCode', this.spa.sModuCode);
-	util.ajax.put(url, params, header).then((rres) => {        		
-		if(rres.data){
-			this.spa.modulist_data = rres.data.rows;
+	util.ajax.put(url, data, header).then((rres) => {        		
+		if(rres && rres.data && !rres.data.pageSize) {
+    		this.spa.$Modal.error({
+                title: '提示',
+                content: rres.data.msg
+            });
+    		//this.spa.$router.push({name: 'home_index'});
+    		return;
+		}
+    	if(rres.data.pageSize) {
+    		this.spa.modulist_data = rres.data.rows;
     		this.spa.totalPage1 = rres.data.totalPage;
     		this.spa.totalCount1 = rres.data.totalCount;
-			
-			//清空index
-			this.spa.index = -1;
+    		this.spa.pageSize1 = rres.data.pageSize;
+    	}else{
+    		pagetool.err(rres.data);
 		}
 	});
 };

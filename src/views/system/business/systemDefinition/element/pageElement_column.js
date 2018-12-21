@@ -56,33 +56,31 @@ pageElement.getColumns = function() {
     ];
 };
 
-pageElement.getBaseData = function(data) {
-	
-	util.ajax.post(this.spa.treeurl, data, header).then((rres) => {  	
-		this.spa.baseData = pageElement.convertTree(rres.data);
+pageElement.page = function (data) {
+    util.ajax.post(this.spa.listurl, data, header).then((rres) => { 
+    	if(rres && rres.data && !rres.data.pageSize) {
+    		this.spa.$Modal.error({
+                title: '提示',
+                content: rres.data.msg
+            });
+    		//this.spa.$router.push({name: 'home_index'});
+    		return;
+		}
+    	if(rres.data.pageSize) {
+    		this.spa.page_list_data = rres.data.rows;
+    		this.spa.totalPage = rres.data.totalPage;
+    		this.spa.totalCount = rres.data.totalCount;
+    		this.spa.pageSize = rres.data.pageSize;
+    	}else{
+    		this.err(rres.data);
+		}
+	}).catch((err) => {                   		
+		this.spa.$Modal.error({
+            title: '出错啦',
+            content: err
+        });
 	});
 };
-
-pageElement.convertTree = function(tree) {
-	const result = [];
-    tree.forEach(d=>{
-		let item = {
-            code: d.code,
-            title: d.value,
-			children: d.children,
-			isRoot: d.isRoot,
-            expand: true
-        };
-		// 如果有子节点，递归
-        if (item.children) {
-            item.children = pageElement.convertTree(item.children);
-        }
-
-        result.push(item);
-	});
-	
-	return result;
-}
 
 pageElement.delete = function(delurl) {
 	if(this.spa.selectedLines < 1) {
@@ -143,32 +141,6 @@ pageElement.update = function(name) {
             });
         }
     })
-};
-
-pageElement.page = function (data) {   
-    util.ajax.post(this.spa.listurl, data, header).then((rres) => { 
-    	if(rres && rres.data && !rres.data.pageSize) {
-    		this.spa.$Modal.error({
-                title: '提示',
-                content: rres.data.msg
-            });
-    		//this.spa.$router.push({name: 'home_index'});
-    		return;
-		}
-    	if(rres.data.pageSize) {
-    		this.spa.list_data = rres.data.rows;
-    		this.spa.totalPage = rres.data.totalPage;
-    		this.spa.totalCount = rres.data.totalCount;
-    		this.spa.pageSize = rres.data.pageSize;
-    	}else{
-    		this.err(rres.data);
-		}
-	}).catch((err) => {                   		
-		this.spa.$Modal.error({
-            title: '出错啦',
-            content: err
-        });
-	});
 };
 
 pageElement.choice = function(selection, row) {
