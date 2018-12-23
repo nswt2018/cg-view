@@ -1,6 +1,7 @@
 import util from '@/libs/util.js'
 import Cookies from 'js-cookie'
 import datetool from './datetool.js';
+import mspagepublictool from '@/libs/mspagepublictool';
 
 let pagepublictool = {};
 let spa ;
@@ -83,6 +84,59 @@ pagepublictool.delete=function(delurl){
 		});
 	}
 };
+pagepublictool.mdelete=function(delurl){
+	if(this.spa.selectedLines<1){
+		this.spa.$Modal.warning({
+			title:'提示信息',
+			content:'必须选中一条记录！'
+		});
+	}else{
+		this.spa.$Modal.confirm({
+			title:'确认信息',
+			content:'确认要删除吗！',
+			onOk:()=>{
+				util.ajax.delete(delurl, header).then((rres) => {
+            		if(rres.data.code==='000002') {
+            			this.spa.$Message.success('主表删除成功!');
+            			this.spa.selectedLines = 0;
+            			this.spa.viewForm={};
+            			this.spa.updForm={};
+            			this.spa.deleteKey = [];
+            			pagepublictool.page(this.spa.getSearch());
+            			pagepublictool.sdelete(this.spa.reledeleteurl+"?delFields="+this.spa.msRelationshipFields.join(','));
+            		}else{
+            			this.spa.$Modal.error({
+                            title: '错误信息',
+                            content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
+                        });
+            		}
+    			}).catch((err) => {                    		
+    				pagepublictool.err(err);
+    			});
+			}
+		});
+	}
+};
+pagepublictool.sdelete=function(delurl){
+			util.ajax.delete(delurl, header).then((rres) => {
+        		if(rres.data.code==='000002') {
+        			this.spa.$Message.success('从表删除成功!');
+        			this.spa.msselectedLines = 0;
+        			this.spa.msviewForm={};
+        			this.spa.msupdForm={};
+        			this.spa.msdeleteKey = [];
+        			this.spa.msRelationshipFields=[];
+        			mspagepublictool.page(this.spa.getMsSearch());
+        		}else{
+        			this.spa.$Modal.error({
+                        title: '错误信息',
+                        content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
+                    });
+        		}
+			}).catch((err) => {                    		
+				pagepublictool.err(err);
+			});
+};
 pagepublictool.save=function(refValue){
 	this.spa.$refs[refValue].validate((valid) => {
 		if(valid){
@@ -122,6 +176,65 @@ pagepublictool.save=function(refValue){
             });
 		}
 	})   
+};
+pagepublictool.msave=function(refValue){
+	this.spa.$refs[refValue].validate((valid) => {
+		if(valid){
+			let data;
+			let url;
+			if(refValue==='addFormRef'){
+				data=this.spa.addForm
+				url=this.spa.saveurl;
+			}else{
+				data=this.spa.updForm
+				url=this.spa.updateurl;
+			}
+			util.ajax.put(url,data, header).then((rres) => { 
+        		if(rres.data.code==='000001'|| rres.data.code==='000003') {
+        			this.spa.$Message.success('Success!');
+        			this.spa.addModal=false;
+        			this.spa.updModal=false;
+        			pagepublictool.page(this.spa.getSearch());
+        			if(refValue==='updFormRef'){
+        				pagepublictool.ssave(this.spa.releupdateurl+"?updFields="+this.spa.msRelationshipFields.join(','));
+        			}
+        		}else{
+        			this.spa.loading = false;
+        			this.spa.$Modal.error({
+                        title: '错误信息',
+                        content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
+                    });
+        		}
+			}).catch((err) => {
+				this.spa.loading = false;
+				pagepublictool.err(err);
+			});
+		}else{
+			this.spa.$Message.error('Fail!');
+        	this.spa.addloading = false;
+        	this.spa.updloading = false;
+        	this.spa.$nextTick(() => {
+        		this.spa.addloading = true;
+        		this.spa.updloading = true;
+            });
+		}
+	})   
+};
+pagepublictool.ssave=function(updurl){
+		util.ajax.put(updurl, header).then((rres) => { 
+        		if(rres.data.code==='000001'|| rres.data.code==='000003') {
+        			this.spa.$Message.success('从表修改成功!');
+        			mspagepublictool.page(this.spa.getMsSearch());
+           		}else{
+        			this.spa.loading = false;
+        			this.spa.$Modal.error({
+                        title: '错误信息',
+                        content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
+                    });
+        		}
+			}).catch((err) => {
+				pagepublictool.err(err);
+		});
 };
 pagepublictool.reset=function(ref){
 	this.$refs[ref].resetFields();
