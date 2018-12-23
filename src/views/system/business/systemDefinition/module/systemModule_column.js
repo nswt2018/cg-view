@@ -69,21 +69,29 @@ systemModule.choice = function(selection, row) {
 	this.spa.selectedLines = selection.length;
 	this.spa.viewOrUpdateModel = row;
 	this.spa.deletedPks.push(row.moduCode);
+	
+	this.spa.$refs.bUnit.getUnitDataList(this.spa.deletedPks.join(','));
 };
 
 systemModule.cancel = function(selection, row) {
 	this.spa.selectedLines = selection.length;
 	
+	let cond = '';
 	if(this.spa.selectedLines>0) {
 		this.spa.viewOrUpdateModel = selection[0];
 		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.moduCode), 1);
+		
+		cond = this.spa.deletedPks.join(',');
 	}
 	else {
 		this.spa.viewOrUpdateModel = {};
 		this.spa.deletedPks = [];
+		
+		cond = '-1';
 	}
 	//console.log(this.spa.deletedPks);
 	
+	this.spa.$refs.bUnit.getUnitDataList(cond);
 };
 
 systemModule.update = function(name) {
@@ -96,6 +104,8 @@ systemModule.update = function(name) {
         			this.spa.$Message.success('修改成功!');
         			this.spa.viewModal=false;
                     this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+					
+					this.spa.$refs.bUnit.getUnitDataList(this.spa.deletedPks.join(','));
         		}else{
         			this.spa.$Modal.error({
                         title: '错误信息',
@@ -135,6 +145,8 @@ systemModule.delete = function(delurl) {
             			this.spa.selectedLines = 0;
             			this.spa.viewOrUpdateModel= {};
                         this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+						
+						this.spa.$refs.bUnit.getUnitDataList('-1');
             		}else{
             			this.err(rres.data);
             		}

@@ -4,7 +4,7 @@
 
 <template>
     <div>
-        <Row>
+        <Row :gutter="5">
 			<Col span="12">
 				<Card>
 					<p slot="title"> <Icon type="compose"></Icon>模型定义</p>
@@ -41,9 +41,7 @@
 					<p slot="title"> <Icon type="compose"></Icon>模块定义</p>
 					<Row>
 						<p>
-							<Input v-model="sModelCode1" placeholder="请输入模块代码搜索" icon="search" 
-								style="width: 200px" @on-change="searching1"></Input>
-							<Input v-model="sModuCode" placeholder="请输入模型代码搜索" icon="search" 
+							<Input v-model="sModuCName" placeholder="请输入中文名称搜索" icon="search" 
 								style="width: 200px" @on-change="searching1"></Input>
 							&nbsp;
 							<Button type="warning" @click="handleScan()">浏览</Button>
@@ -111,6 +109,7 @@
 			<Form :model="moduScanModel" :label-width="100">
 				<FormItem label="模块代码" prop="moduCode">
 					<Input v-model="moduScanModel.moduCode" readonly/>
+				</FormItem>
 				</FormItem>
 				<FormItem label="中文名称" prop="moduCName">
 					<Input v-model="moduScanModel.moduCName" readonly/>
@@ -181,8 +180,7 @@ export default {
 			currentPage1: 1,
 			totalCount1: 0,
 			pageSize1: 10,
-			sModelCode1: '',
-			sModuCode: '',
+			sModuCName: '',
 			moduScan: false,
 			moduScanModel: {},
 			index: -1
@@ -191,7 +189,13 @@ export default {
     methods: {  
 		getSearchCond() {
         	return {'menuCode': '', 'pageSize': this.pageSize, 'currentPage': this.currentPage, 
-        		'valObj': {'modCode': this.sModelCode, 'modName': this.sModelName, 'orgCode': this.sOrgCode}
+        		'valObj': {'modCode': this.sModelCode, 'modName': this.sModelName}
+        	};
+        },
+		
+		getModuCond() {
+        	return {'menuCode': '', 'pageSize': this.pageSize1, 'currentPage': this.currentPage1, 
+        		'valObj': {'moduCName': this.sModuCName, 'moduModel': this.deletedPks.join(',')}
         	};
         },
 		
@@ -278,26 +282,19 @@ export default {
 		},
 		
 		changePage1 (page) {
-			var params = new URLSearchParams();
-			params.append('currentPage', page);
-			params.append('pageSize', this.pageSize1);
-			modelcolumn.getModuDataList(params);
+			let cond = this.getModuCond();
+			cond.currentPage = page;
+			modelcolumn.getModuDataList(cond);
         },
 
         changePageSize1 (_pageSize) {
-			var params = new URLSearchParams();
-			params.append('currentPage', this.currentPage1);
-			params.append('pageSize', _pageSize);
-			modelcolumn.getModuDataList(params);			
+			let cond = this.getModuCond();
+			cond.pageSize = _pageSize;
+			modelcolumn.getModuDataList(cond);			
         }, 
 		
 		searching1 () {
-		
-			var params = new URLSearchParams();
-			params.append('currentPage', this.currentPage1);
-			params.append('pageSize', this.pageSize1);
-			
-    		modelcolumn.getModuDataList(params);
+    		modelcolumn.getModuDataList(this.getModuCond());
         },
 		
 		//单选

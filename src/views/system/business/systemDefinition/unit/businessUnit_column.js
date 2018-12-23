@@ -75,66 +75,8 @@ businessUnit.getColumns = function() {
 						 }, params.row.relColumn)
 					 ]);
 					}
-			    },
-				{
-			        title: '其他信息',
-			        key: 'relInfo',
-			        align: 'center',
-					render: (h, params) => {
-					  return h('div', [
-						 h('span', {
-							 style: {
-								 display: 'inline-block',
-								 width: '100%',
-								 overflow: 'hidden',
-								 textOverflow: 'ellipsis',
-								 whiteSpace: 'nowrap'
-							 },
-							 domProps: {
-								 title: params.row.relInfo
-							 }
-						 }, params.row.relInfo)
-					 ]);
-					}
-			    },
-			    {
-			        title: '创建日期',
-			        key: 'crtDate',
-			        sortable: 'custom',
-			        align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.crtDate));
-			        }
-			    },
-			    {
-			        title: '修改日期',
-			        key: 'updDate',
-					sortable: 'custom',
-					align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.updDate));
-			        }
 			    }
     ];
-};
-
-businessUnit.getBaseData = function(data) {
-	
-	util.ajax.post(this.spa.treeurl, data, header).then((rres) => {
-		debugger;    	
-		const result = [];
-		rres.data.forEach(d => {
-			let item = {
-				moduCode: d.moduCode,
-				title: d.moduCName,
-				expand: true
-			};
-			
-			result.push(item);
-		});
-		
-		this.spa.baseData = result;
-	});
 };
 
 businessUnit.delete = function(delurl) {
@@ -158,6 +100,8 @@ businessUnit.delete = function(delurl) {
             			this.spa.selectedLines = 0;
             			this.spa.viewOrUpdateModel= {};
 						this.page(this.spa.getSearchCond());
+						
+						this.spa.$refs.bElement.getElementDataList([-1]);
             		}else{
             			this.err(rres.data);
             		}
@@ -180,6 +124,8 @@ businessUnit.update = function(name) {
         			this.spa.$Message.success('修改成功!');
         			this.spa.viewModal=false;
                     this.page(this.spa.getSearchCond());
+					
+					this.spa.$refs.bElement.getElementDataList(this.spa.deletedPks);
         		}else{
         			this.spa.$Modal.error({
                         title: '错误信息',
@@ -198,7 +144,7 @@ businessUnit.update = function(name) {
     })
 };
 
-businessUnit.page = function (data) {   
+businessUnit.page = function (data) {
     util.ajax.post(this.spa.listurl, data, header).then((rres) => { 
     	if(rres && rres.data && !rres.data.pageSize) {
     		this.spa.$Modal.error({
@@ -209,7 +155,7 @@ businessUnit.page = function (data) {
     		return;
 		}
     	if(rres.data.pageSize) {
-    		this.spa.list_data = rres.data.rows;
+    		this.spa.unit_list_data = rres.data.rows;
     		this.spa.totalPage = rres.data.totalPage;
     		this.spa.totalCount = rres.data.totalCount;
     		this.spa.pageSize = rres.data.pageSize;
@@ -254,20 +200,33 @@ businessUnit.save = function(name) {
 businessUnit.choice = function(selection, row) {
 	this.spa.selectedLines = selection.length;
 	this.spa.viewOrUpdateModel = row;
+	//将字符串转为数组
+	this.spa.viewOrUpdateModel.relColumn = this.spa.viewOrUpdateModel.relColumn.split(',');
 	this.spa.deletedPks.push(row.unitCode);
+	
+	this.spa.$refs.bElement.getElementDataList(this.spa.deletedPks);
 };
 
 businessUnit.cancel = function(selection, row) {
 	this.spa.selectedLines = selection.length;
 	
+	let cond = '';
 	if(this.spa.selectedLines>0) {
 		this.spa.viewOrUpdateModel = selection[0];
+		//将字符串转为数组
+		this.spa.viewOrUpdateModel.relColumn = this.spa.viewOrUpdateModel.relColumn.split(',');
 		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.unitCode), 1);
+		
+		cond = this.spa.deletedPks;
 	}
 	else {
 		this.spa.viewOrUpdateModel = {};
 		this.spa.deletedPks = [];
+		
+		cond = [-1];
 	}
+	
+	this.spa.$refs.bElement.getElementDataList(cond);
 };
 
 businessUnit.getModList = function (selecturl) {
