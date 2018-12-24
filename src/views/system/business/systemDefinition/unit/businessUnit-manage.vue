@@ -19,7 +19,7 @@
 						</p>
 					</Row>						
 					<Row>
-						<Table highlight-row border ref="dataList" @size="getFont" height="200" 
+						<Table highlight-row border ref="dataList" @size="getFont" :height="tableHeight" 
 							:columns="columns" :data="unit_list_data" :stripe="true" 
 							@on-select="choicing" @on-select-cancel="cancing">
 						</Table>
@@ -112,7 +112,8 @@ import pageElement from '../element/pageElement-manage.vue';
 				viewModal: false,
 				modList: [],
 				colList: [],
-				columns: []
+				columns: [],
+				tableHeight: 200
 			};
 			
 		},
@@ -218,6 +219,10 @@ import pageElement from '../element/pageElement-manage.vue';
 					return sizeValue;
 				}
 			}
-		} 
+		},
+		
+		mounted() {
+			this.tableHeight = (window.innerHeight - this.$refs.dataList.$el.offsetTop - 280)/2
+		},
 	};
 </script>

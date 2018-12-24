@@ -22,7 +22,7 @@
 						</p>
 					</Row>        	    
 					<Row>
-						<Table highlight-row border ref="dataList" @size="getFont" height="410" 
+						<Table highlight-row border ref="dataList" @size="getFont" :height="tableHeight" 
 							:columns="columns" :data="list_data" :stripe="true" 
 							@on-select="choicing" @on-select-cancel="cancing" 
 							@on-sort-change="sorting">
@@ -309,6 +309,7 @@ export default {
 				showCond : [{required: true}],
 				showParam : [{required: true}],
 			},
+			tableHeight: 410
         };
     },
     methods: {  
@@ -720,6 +721,10 @@ export default {
     			return sizeValue;
     		}
     	}
-    }
+    },
+	
+	mounted() {
+		this.tableHeight = window.innerHeight - this.$refs.dataList.$el.offsetTop - 280
+	},
 };
 </script>

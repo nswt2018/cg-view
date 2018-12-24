@@ -19,7 +19,7 @@
 						</p>
 					</Row>						
 					<Row>
-						<Table highlight-row border ref="dataList" height="200" 
+						<Table highlight-row border ref="dataList" :height="tableHeight" 
 							:columns="columns" :data="page_list_data" :stripe="true" @size="getFont"
 							@on-select="choicing" @on-select-cancel="cancing">
 						</Table>
@@ -105,7 +105,8 @@ import Cookies from 'js-cookie';
 				tagInfo: false,
 				tagDatas: [],
 				tagColumns: [],
-				crtdate: ''
+				crtdate: '',
+				tableHeight: 200
 			};
 			
 		},
@@ -236,6 +237,9 @@ import Cookies from 'js-cookie';
 					return sizeValue;
 				}
 			}
-		} 
+		},
+		mounted() {
+			this.tableHeight = (window.innerHeight - this.$refs.dataList.$el.offsetTop - 280)/2
+		},
 	};
 </script>
