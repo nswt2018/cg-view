@@ -5,16 +5,16 @@
 
 <template>
     <div>
-        <Row :gutter="10" type="flex" justify="center" align="middle" class="code-row-bg">
-            <Col span="12">
-				<Card>
+        <Row :gutter="5" type="flex" justify="center" align="middle" class="code-row-bg">
+            <Col span="13">
+				<Card ref="moduCard">
 					<p slot="title"> <Icon type="compose"></Icon>模块定义</p>
 					<Row>
 						<p>
 							<Input v-model="sModuCode" placeholder="请输入模块代码搜索" icon="search" 
-								style="width: 200px" @on-change="searching"></Input>
+								style="width: 150px" @on-change="searching"></Input>
 							<Input v-model="sModuCName" placeholder="请输入模块中文名称搜索" icon="search" 
-									style="width: 200px" @on-change="searching"></Input>
+									style="width: 150px" @on-change="searching"></Input>
 							&nbsp;
 							<Button type="primary" @click="handleInsert()">新增</Button>
 							<Button type="success" @click="handleUpdate()">修改</Button>
@@ -36,7 +36,7 @@
 					</Row> 
 				</Card>
 			</Col>
-			<Col span="12">
+			<Col span="11">
 				<businessUnit ref="bUnit"/>
 			</Col>
 		</Row>
@@ -308,7 +308,7 @@ export default {
 				nodName : [{required: true}],
 				showCond : [{required: true}],
 				showParam : [{required: true}],
-			}
+			},
         };
     },
     methods: {  
@@ -720,6 +720,6 @@ export default {
     			return sizeValue;
     		}
     	}
-    }    
+    }
 };
 </script>

@@ -28,11 +28,6 @@ businessUnit.getColumns = function() {
 			        align: 'center'
 			    },
 				{
-			        title: '组件类型',
-			        key: 'comName',
-			        align: 'center'
-			    },
-				{
 			        title: '关联表',
 			        key: 'relTable',
 			        align: 'center',
