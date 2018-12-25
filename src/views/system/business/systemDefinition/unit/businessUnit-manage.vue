@@ -11,7 +11,7 @@
 					<Row>
 						<p>
 							<Input v-model="sUnitName" placeholder="请输入单元名称搜索" size="small" icon="search" 
-								style="width: 200px" @on-change="searching"></Input>
+								style="width: 150px" @on-change="searching"></Input>
 							&nbsp;
 							<!-- <Button type="primary" @click="handleInsert()">新增</Button> -->
 							<Button type="success" size="small" @click="handleUpdate()">修改</Button>
@@ -19,7 +19,7 @@
 						</p>
 					</Row>						
 					<Row>
-						<Table highlight-row border ref="dataList" @size="getFont" height="225" 
+						<Table highlight-row border ref="dataList" @size="getFont" :height="tableHeight" 
 							:columns="columns" :data="unit_list_data" :stripe="true" 
 							@on-select="choicing" @on-select-cancel="cancing">
 						</Table>
@@ -33,7 +33,7 @@
 				</Card>
 				
 				
-				<pageElement ref="bElement" style="padding-top: 10px"/>
+				<pageElement ref="bElement" style="padding-top: 5px"/>
 				
 				<!-- 修改页面 -->
 				<Modal width="700" v-model="viewModal" title="组件信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false"
@@ -112,7 +112,8 @@ import pageElement from '../element/pageElement-manage.vue';
 				viewModal: false,
 				modList: [],
 				colList: [],
-				columns: []
+				columns: [],
+				tableHeight: 200
 			};
 			
 		},
@@ -218,6 +219,10 @@ import pageElement from '../element/pageElement-manage.vue';
 					return sizeValue;
 				}
 			}
-		} 
+		},
+		
+		mounted() {
+			this.tableHeight = (window.innerHeight - this.$refs.dataList.$el.offsetTop - 280)/2
+		},
 	};
 </script>

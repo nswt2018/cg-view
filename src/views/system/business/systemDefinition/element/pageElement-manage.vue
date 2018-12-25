@@ -11,15 +11,15 @@
 					<Row>
 						<p>
 							<Input v-model="sEleCName" size="small" placeholder="请输入元素中文名称搜索" icon="search" 
-								style="width: 200px" @on-change="searching"></Input>
+								style="width: 150px" @on-change="searching"></Input>
 							<Input v-model="sEleEName" size="small" placeholder="请输入元素英文名称搜索" icon="search" 
-								style="width: 200px" @on-change="searching"></Input>
+								style="width: 150px" @on-change="searching"></Input>
 							&nbsp;
 							<Button type="success" size="small" @click="handleUpdate()">修改</Button>
 						</p>
 					</Row>						
 					<Row>
-						<Table highlight-row border ref="dataList" height="225" 
+						<Table highlight-row border ref="dataList" :height="tableHeight" 
 							:columns="columns" :data="page_list_data" :stripe="true" @size="getFont"
 							@on-select="choicing" @on-select-cancel="cancing">
 						</Table>
@@ -105,7 +105,8 @@ import Cookies from 'js-cookie';
 				tagInfo: false,
 				tagDatas: [],
 				tagColumns: [],
-				crtdate: ''
+				crtdate: '',
+				tableHeight: 200
 			};
 			
 		},
@@ -236,6 +237,9 @@ import Cookies from 'js-cookie';
 					return sizeValue;
 				}
 			}
-		} 
+		},
+		mounted() {
+			this.tableHeight = (window.innerHeight - this.$refs.dataList.$el.offsetTop - 280)/2
+		},
 	};
 </script>

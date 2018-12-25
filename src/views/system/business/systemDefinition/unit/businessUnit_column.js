@@ -19,24 +19,18 @@ businessUnit.getColumns = function() {
 	return [
 				{ 
 					type: 'selection',
+					width: 60,
 			        align: 'center'
 			    },
 			    {
 					title: '单元名称',
 			        key: 'unitName',
-					width: 150,
-			        align: 'center'
-			    },
-				{
-			        title: '组件类型',
-			        key: 'comName',
 			        align: 'center'
 			    },
 				{
 			        title: '关联表',
 			        key: 'relTable',
 			        align: 'center',
-					width: 150,
 					render: (h, params) => {
 					  return h('div', [
 						 h('span', {
@@ -58,7 +52,6 @@ businessUnit.getColumns = function() {
 			        title: '关联字段',
 			        key: 'relColumn',
 			        align: 'center',
-					width: 150,
 					render: (h, params) => {
 					  return h('div', [
 						 h('span', {
