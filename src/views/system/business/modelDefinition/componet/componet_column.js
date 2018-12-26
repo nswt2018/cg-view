@@ -59,25 +59,6 @@ componet.getColumns = function() {
     ];
 };
 
-componet.getBaseData = function(data) {
-	
-	util.ajax.post(this.spa.treeurl, data, header).then((rres) => {
-		debugger;    	
-		const result = [];
-		rres.data.forEach(d => {
-			let item = {
-				modCode: d.modCode,
-				title: d.modName,
-				expand: true
-			};
-			
-			result.push(item);
-		});
-		
-		this.spa.baseData = result;
-	});
-};
-
 componet.delete = function(delurl) {
 	if(this.spa.selectedLines < 1) {
 		this.spa.$Modal.warning({

@@ -11,16 +11,20 @@
 					<p slot="title"> <Icon type="compose"></Icon>模块定义</p>
 					<Row>
 						<p>
-							<Input v-model="sModuCode" placeholder="请输入模块代码搜索" icon="search" 
-								style="width: 150px" @on-change="searching"></Input>
 							<Input v-model="sModuCName" placeholder="请输入模块中文名称搜索" icon="search" 
-									style="width: 150px" @on-change="searching"></Input>
+								style="width: 150px" @on-change="searching"></Input>
+							<Select v-model="sModCode" placeholder="请选择所属模型" clearable
+								style="width: 150px" @on-change="searching">
+								<Option v-for="item in modList" :value="item.value" :key="item.value">
+									{{ item.label }}
+								</Option>
+							</Select>
 							&nbsp;
 							<Button type="primary" @click="handleInsert()">新增</Button>
 							<Button type="success" @click="handleUpdate()">修改</Button>
 							<Button type="warning" @click="handleDelete()">删除</Button>
 						</p>
-					</Row>        	    
+					</Row>
 					<Row>
 						<Table highlight-row border ref="dataList" @size="getFont" :height="tableHeight" 
 							:columns="columns" :data="list_data" :stripe="true" 
@@ -266,9 +270,8 @@ export default {
 			currentPage: 1,
 			totalCount: 0,
 			totalPage: 0,
-			sModuCode: '',
+			sModCode: '',
 			sModuCName: '',
-			sModuEName: '',
 			addModal: false,
 			addModel: {},
 			loading: true,
@@ -309,37 +312,37 @@ export default {
 				showCond : [{required: true}],
 				showParam : [{required: true}],
 			},
-			tableHeight: 410
+			tableHeight: 410,
         };
     },
     methods: {  
 		getSearchCond() {
-    		//let menuCode = Cookies.get('menucode');
         	return {'menuCode': '', 'pageSize': this.pageSize, 'currentPage': this.currentPage, 
-        		'valObj': {'moduCode': this.sModuCode, 'moduCName': this.sModuCName}
+        		'valObj': {'moduModel': this.sModCode, 'moduCName': this.sModuCName}
         	};
         },
         init () {
         	pagetool.setPage(this);
         	systemModule.setPage(this);
-        	pagetool.page(this.getSearchCond());
+        	systemModule.page(this.getSearchCond());
         	this.columns = systemModule.getColumns();
 			
 			systemModule.getModList(this.selecturl);
 			systemModule.getTabList(this.gettaburl);
+			
         },        
         searching () {
-    		pagetool.page(this.getSearchCond());
+    		systemModule.page(this.getSearchCond());
         },
 		changePage (page) {
         	let cond = this.getSearchCond();
         	cond.currentPage = page;
-        	pagetool.page(cond);
+        	systemModule.page(cond);
         },
         changePageSize (_pageSize) {
         	let cond = this.getSearchCond();
         	cond.pageSize = _pageSize;
-        	pagetool.page(cond);        	
+        	systemModule.page(cond);        	
         },  	
 		sorting(data) {
         	pagetool.sort(data, this.getSearchCond());

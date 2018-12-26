@@ -11,9 +11,9 @@
 					<Row>
 						<p>
 							<Input v-model="sModelCode" placeholder="请输入模型代码搜索" icon="search" 
-								style="width: 200px" @on-change="searching"></Input>
+								style="width: 150px" @on-change="searching"></Input>
 							<Input v-model="sModelName" placeholder="请输入模型名称搜索" icon="search" 
-								style="width: 200px" @on-change="searching"></Input>
+								style="width: 150px" @on-change="searching"></Input>
 							&nbsp;
 							<Button type="primary" @click="handleInsert()">新增</Button>
 							<Button type="success" @click="handleUpdate()">修改</Button>
@@ -21,10 +21,9 @@
 						</p>
 					</Row>
 					<Row>
-						<Table highlight-row border ref="dataList" @size="getFont" height="410" 
+						<Table highlight-row border ref="dataList" @size="getFont" :height="tableHeight" 
 							:columns="columns" :data="list_data" :stripe="true" 
-							@on-select="choicing" @on-select-cancel="cancing" 
-							@on-sort-change="sorting">
+							@on-row-click="singleclick" @on-sort-change="sorting">
 						</Table>
 						<div style="float: right;">
 							<Page :total="totalCount" :current="1" :page-size="pageSize" 
@@ -37,30 +36,7 @@
 				</Card>
 			</Col>
 			<Col span="12">
-				<Card>
-					<p slot="title"> <Icon type="compose"></Icon>模块定义</p>
-					<Row>
-						<p>
-							<Input v-model="sModuCName" placeholder="请输入中文名称搜索" icon="search" 
-								style="width: 200px" @on-change="searching1"></Input>
-							&nbsp;
-							<Button type="warning" @click="handleScan()">浏览</Button>
-						</p>
-					</Row>
-					<Row>
-						<Table highlight-row border ref="moduList" @size="getFont" height="410" 
-							:columns="moduColumns" :data="modulist_data" :stripe="true" 
-							@on-row-click="singleClick" @on-row-dblclick="doubleClick">
-						</Table>
-						<div style="float: right;">
-							<Page :total="totalCount1" :current1="1" :page-size="pageSize1"
-								:transfer="true" @size="getFont"
-								@on-change="changePage1" @on-page-size-change="changePageSize1"
-								show-total show-elevator show-sizer>
-							</Page>
-						</div>
-					</Row>
-				</Card>
+				<componetDefinition ref="componet"/>
 			</Col>
 		</Row>
                  
@@ -102,33 +78,6 @@
 				 </FormItem>
 			</Form>    	
 		</Modal>
-		
-		
-		<!-- 模块浏览 -->
-		<Modal width="700" v-model="moduScan" title="模块信息" cancel-text="关闭" :mask-closable="false">
-			<Form :model="moduScanModel" :label-width="100">
-				<FormItem label="模块代码" prop="moduCode">
-					<Input v-model="moduScanModel.moduCode" readonly/>
-				</FormItem>
-				</FormItem>
-				<FormItem label="中文名称" prop="moduCName">
-					<Input v-model="moduScanModel.moduCName" readonly/>
-				</FormItem>
-				<FormItem label="模块交易号" prop="moduTC">
-					<Input v-model="moduScanModel.moduTC" readonly/>
-				</FormItem>
-				<FormItem label="所属模型" prop="modName">
-					<Input v-model="moduScanModel.modName" readonly/>
-				</FormItem>
-				<FormItem label="创建日期" prop="crtDate">
-					<Input v-model="moduScanModel.crtDate" readonly/>
-				</FormItem>
-				<FormItem label="修改日期" prop="updDate">
-					<Input v-model="moduScanModel.updDate" readonly/>
-				</FormItem>
-			</Form>    	
-		</Modal>
-       
     </div>
 
 </template>
@@ -138,10 +87,14 @@ import datetool from '@/libs/datetool';
 import pagetool from '@/libs/pagetool';
 import modelcolumn from './model_column';
 import Cookies from 'js-cookie';
+import componetDefinition from '../componet/componetDefinition-manage.vue';
 
 
 export default {
     name: 'model-info',
+	components: {
+            componetDefinition
+		},
     data () {
         return {
         	headers: {'Content-Type': 'application/json;charset=UTF-8'},
@@ -149,7 +102,7 @@ export default {
 			saveurl: '/business/TK0001I.do',
 			deleteurl: '/business/TK0001D.do',
 			updateurl: '/business/TK0001U.do',  
-			modulisturl: '/business/TK0001L1.do',			
+			modulisturl: '/business/TK0001L1.do',
 			list_data: [],
 			pageSize: 10,
 			currentPage: 1,
@@ -173,16 +126,9 @@ export default {
 			viewOrUpdateModel: {},
             columns: [],
 			selectedLines: 0,
-			deletedPks: [],
+			deletedPks: '',
 			viewModal: false,
-			moduColumns: [],
-			modulist_data: [],
-			currentPage1: 1,
-			totalCount1: 0,
-			pageSize1: 10,
-			sModuCName: '',
-			moduScan: false,
-			moduScanModel: {},
+			tableHeight: 410,
 			index: -1
         };
     },
@@ -193,19 +139,11 @@ export default {
         	};
         },
 		
-		getModuCond() {
-        	return {'menuCode': '', 'pageSize': this.pageSize1, 'currentPage': this.currentPage1, 
-        		'valObj': {'moduCName': this.sModuCName, 'moduModel': this.deletedPks.join(',')}
-        	};
-        },
-		
         init () {
         	pagetool.setPage(this);
         	modelcolumn.setPage(this);
         	pagetool.page(this.getSearchCond());
-        	//pagetool.getButtons();
         	this.columns = modelcolumn.getColumns();
-			this.moduColumns = modelcolumn.getModuColumns();
         },        
         searching () {
     		pagetool.page(this.getSearchCond());
@@ -223,12 +161,17 @@ export default {
 		sorting(data) {
         	pagetool.sort(data, this.getSearchCond());
         },
-		choicing(selection, row) {
-        	modelcolumn.choice(selection, row);
-        },
-        cancing(selection, row) {
-        	modelcolumn.cancel(selection, row);        	
-        },
+		
+		//单选
+		singleclick(row, index){
+			
+			this.index = index;
+			this.viewOrUpdateModel = row;
+			
+			this.deletedPks = row.modCode;
+	
+			this.$refs.componet.getComponetDataList(row.modCode);
+		},
 		
 		//新增页面
 		handleInsert(){
@@ -240,23 +183,22 @@ export default {
 		//新增保存
 		saving(name) {
 			this.addModel.crtDate = datetool.format(new Date());
-        	pagetool.save(name);
+        	modelcolumn.save(name);
         },
 		
 		//新增/修改取消
         reseting (name) {
-        	//pagetool.reset(name);
 			this.addModal = false;
         },
 		
 		//删除操作
         handleDelete () {
-        	modelcolumn.delete(this.deleteurl+"?modCode="+this.deletedPks.join(','));
+        	modelcolumn.delete(this.deleteurl+"?modCode="+this.deletedPks);
         },
 		
 		//修改操作
 		handleUpdate () {
-			if(this.selectedLines < 1) {
+			if(this.index == -1) {
 				this.$Modal.warning({
 					title: '提示信息',
 					content: '必须选中一条记录！'
@@ -280,48 +222,6 @@ export default {
 			this.viewOrUpdateModel.updDate = datetool.format(new Date());
 			modelcolumn.update(name);
 		},
-		
-		changePage1 (page) {
-			let cond = this.getModuCond();
-			cond.currentPage = page;
-			modelcolumn.getModuDataList(cond);
-        },
-
-        changePageSize1 (_pageSize) {
-			let cond = this.getModuCond();
-			cond.pageSize = _pageSize;
-			modelcolumn.getModuDataList(cond);			
-        }, 
-		
-		searching1 () {
-    		modelcolumn.getModuDataList(this.getModuCond());
-        },
-		
-		//单选
-		singleClick (row, index) {
-			this.index = index;
-			this.moduScanModel = row;
-		},
-		
-		//多选
-		doubleClick (row, index) {
-			this.index = index;
-			this.moduScanModel = row;
-			this.moduScan = true;
-		},
-		
-		//模块浏览
-		handleScan() {
-			if(this.index == -1){
-				this.$Modal.warning({
-					title: '提示信息',
-					content: '请选中一条记录！'
-				});
-				
-				return;
-			}
-			this.moduScan = true;
-		}
     },
     created() {
     	this.init();
@@ -337,6 +237,10 @@ export default {
     			return sizeValue;
     		}
     	}
-    }    
+    },
+
+	mounted() {
+		this.tableHeight = window.innerHeight - this.$refs.dataList.$el.offsetTop - 280
+	},
 };
 </script>
