@@ -198,6 +198,8 @@ pagepublictool.msave=function(refValue){
         			if(refValue==='updFormRef'){
         				pagepublictool.ssave(this.spa.releupdateurl+"?updFields="+this.spa.msRelationshipFields.join(','));
         			}
+        			this.spa.msRelationshipFields=[];
+        			mspagepublictool.page(this.spa.getMsSearch());
         		}else{
         			this.spa.loading = false;
         			this.spa.$Modal.error({
