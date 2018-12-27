@@ -9,6 +9,7 @@ let spa ;
 const header = {'Content-Type': 'application/json;charset=UTF-8'};
 const DEL_SUC='000002';
 const UPD_SUC='000003';
+const SAV_SUC='000001';
 const DUR_TIME=30;
 
 modelcolumn.setPage = function(obj) {
@@ -18,7 +19,7 @@ modelcolumn.setPage = function(obj) {
 modelcolumn.getColumns = function() {
 	return [
 				{ 
-					type: 'selection',
+					type: 'index',
 			        width: 60,
 			        align: 'center'
 			    },
@@ -59,82 +60,32 @@ modelcolumn.getColumns = function() {
     ];
 };
 
-modelcolumn.getModuColumns = function() {
-	return [
-				{ 
-					type: 'index',
-			        width: 60,
-			        align: 'center'
-			    },
-			    {
-					title: '中文名称',
-			        key: 'moduCName',
-			        align: 'center'
-			    },
-			    {
-			        title: '模块交易号',
-			        key: 'moduTC',
-			        align: 'center',
-			    },
-				{
-					title: '所属模型',
-			        key: 'modName',
-			        align: 'center'
-			    }
-    ];
-};
-
-modelcolumn.choice = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	this.spa.viewOrUpdateModel = row;
-	this.spa.deletedPks.push(row.modCode);
-	
-	modelcolumn.getModuDataList(this.spa.getModuCond());
-};
-
-modelcolumn.cancel = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	
-	if(this.spa.selectedLines>0) {
-		this.spa.viewOrUpdateModel = selection[0];
-		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.modCode), 1);
-		modelcolumn.getModuDataList(this.spa.getModuCond());
-	}
-	else {
-		this.spa.viewOrUpdateModel = {};
-		this.spa.deletedPks = [];
-		
-		let cond = this.spa.getModuCond();
-		cond.valObj.moduModel = "-1";
-		modelcolumn.getModuDataList(cond);
-	}
-	//console.log(this.spa.deletedPks);
-};
-
-//根据选取的模型编号,回显模块数据
-modelcolumn.getModuDataList = function(data){
-	
-	let url = this.spa.modulisturl;
-	util.ajax.put(url, data, header).then((rres) => {        		
-		if(rres && rres.data && !rres.data.pageSize) {
-    		this.spa.$Modal.error({
-                title: '提示',
-                content: rres.data.msg
+modelcolumn.save = function(name) {
+	this.spa.$refs[name].validate((valid) => {
+        if (valid) {
+        	util.ajax.put(this.spa.saveurl, this.spa.addModel, header).then((rres) => {        		
+        		if(rres.data.code===SAV_SUC || rres.data.code===UPD_SUC) {
+        			this.spa.$Message.success('Success!');
+        			this.spa.addModal=false;
+					this.page(this.spa.getSearchCond());
+					
+					this.spa.$refs.componet.getComponetDataList('-1');
+        		}else{
+        			this.spa.$Modal.error({
+                        title: '错误信息',
+                        content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
+                    });
+        		}
+			});
+            
+        } else {
+        	this.spa.$Message.error('Fail!');
+        	this.spa.loading = false;
+        	this.spa.$nextTick(() => {
+        		this.spa.loading = true;
             });
-    		//this.spa.$router.push({name: 'home_index'});
-    		return;
-		}
-    	if(rres.data.pageSize) {
-    		this.spa.modulist_data = rres.data.rows;
-    		this.spa.totalPage1 = rres.data.totalPage;
-    		this.spa.totalCount1 = rres.data.totalCount;
-    		this.spa.pageSize1 = rres.data.pageSize;
-			
-			this.spa.index = -1;
-    	}else{
-    		pagetool.err(rres.data);
-		}
-	});
+        }
+    })
 };
 
 modelcolumn.update = function(name) {
@@ -166,7 +117,7 @@ modelcolumn.update = function(name) {
 };
 
 modelcolumn.delete = function(delurl) {
-	if(this.spa.selectedLines < 1) {
+	if(this.spa.index == -1) {
 		this.spa.$Modal.warning({
             title: '提示信息',
             content: '必须选中一条记录！'
@@ -182,10 +133,13 @@ modelcolumn.delete = function(delurl) {
                 util.ajax.delete(delurl, header).then((rres) => {
             		if(rres.data.code===DEL_SUC) {
             			this.spa.$Message.success('删除成功!');
-            			this.spa.deletedPks = [];
+            			this.spa.deletedPks = '';
             			this.spa.selectedLines = 0;
             			this.spa.viewOrUpdateModel= {};
                         this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+						
+						this.spa.index = -1;
+						this.spa.$refs.componet.getComponetDataList('-1');
             		}else{
             			this.err(rres.data);
             		}

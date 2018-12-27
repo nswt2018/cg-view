@@ -6,7 +6,7 @@
 	<div>
 		<Row>
 			<div>
-				<Card padding="2">
+				<Card :padding="padding">
 					<h4><p><Icon type="compose"></Icon>业务单元</p></h4>
 					<Row>
 						<p>
@@ -48,10 +48,8 @@
 						<FormItem label="模块代码" prop="moduCode">
 							<Input v-model="viewOrUpdateModel.moduCode" disabled/>
 						</FormItem>
-						<FormItem label="组件类型" prop="comCode">
-							<Select v-model="viewOrUpdateModel.comCode">
-								<Option v-for="item in modList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-							</Select>
+						<FormItem label="组件类型" prop="comName">
+							<Input v-model="viewOrUpdateModel.comName" disabled/>
 						</FormItem>
 						<FormItem label="关联表" prop="relTable">
 							<Input v-model="viewOrUpdateModel.relTable" disabled/>
@@ -110,10 +108,10 @@ import pageElement from '../element/pageElement-manage.vue';
 				selectedLines: 0,
 				viewOrUpdateModel: {},
 				viewModal: false,
-				modList: [],
 				colList: [],
 				columns: [],
-				tableHeight: 200
+				tableHeight: 200,
+				padding: 2
 			};
 			
 		},
@@ -189,7 +187,6 @@ import pageElement from '../element/pageElement-manage.vue';
 					return;
 				};
 				this.viewModal = true;
-				businessUnit.getModList(this.selecturl);
 				
 				var params = new URLSearchParams();
 				params.append('relTable', this.viewOrUpdateModel.relTable);

@@ -79,24 +79,6 @@ colDefinition.getColumns = function() {
     ];
 };
 
-colDefinition.getBaseData = function(data) {
-	
-	util.ajax.post(this.spa.treeurl, data, header).then((rres) => {  	
-		const result = [];
-		rres.data.forEach(d => {
-			let item = {
-				tabCode: d.tabCode,
-				title: d.tabCode,
-				expand: true
-			};
-			
-			result.push(item);
-		});
-		
-		this.spa.baseData = result;
-	});
-};
-
 colDefinition.delete = function(delurl) {
 	if(this.spa.selectedLines < 1) {
 		this.spa.$Modal.warning({

@@ -4,111 +4,93 @@
 </style>
 <template>
 	<div>
-		<Row>
-			<Col span="5">
-				<Card padding="10">
-					<p slot="title">
-						<Icon type="ios-pricetags-outline"></Icon>
-						表
-					</p>
-					<div class="treestyle">
-						<Tree :data="baseData" @on-select-change="selectNode" ref="tree"></Tree>
-					</div>				
-				</Card>
-			</Col>
-			<Col span="17">
-				<div v-show="detailedInfo">
-					<Card>
-						<p slot="title"> <Icon type="compose"></Icon>字段定义</p> 
-						<Row>
-							<p>
-								<Input v-model="sColCode" placeholder="请输入字段名称搜索" icon="search" 
-									style="width: 200px" @on-change="searching"></Input>
-								<Input v-model="sColName" placeholder="请输入字段中文名称搜索" icon="search" 
-									style="width: 200px" @on-change="searching"></Input>
-								&nbsp;
-								<Button type="primary" @click="handleInsert()">新增</Button>
-								<Button type="success" @click="handleUpdate()">修改</Button>
-								<Button type="warning" @click="handleDelete()">删除</Button>
-							</p>
-						</Row>						
-						<Row>
-							<Table highlight-row border ref="dataList" height="410" 
-								:columns="columns" :data="list_data" :stripe="true" :size="getFont"
-								@on-select="choicing" @on-select-cancel="cancing" 
-								@on-sort-change="sorting">
-							</Table>
-							<div style="float: right;">
-								<Page :total="totalCount" :current="1" :page-size="pageSize" 
-								:transfer="true" :size="getFont"
-								@on-change="changePage" @on-page-size-change="changePageSize" 
-								show-total show-elevator show-sizer></Page>
-							</div>
-						</Row>
-					
-						<!-- 新增页面 -->
-						<Modal width="700" v-model="addModal" title="字段信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
-							@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
-							<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100" inline="true">
-								 <FormItem label="字段名" prop="colCode">
-									 <Input v-model="addModel.colCode" placeholder="请输入字段英文名称" style="width: auto"/>
-								 </FormItem>
-								 <FormItem label="中文名称" prop="colName">
-									 <Input v-model="addModel.colName" placeholder="请输入字段中文名称" style="width: auto"/>
-								 </FormItem>
-								 <FormItem label="字段类型" prop="dataType">
-									 <Select v-model="addModel.dataType" style="width:170px" clearable ref="select1" @on-change="selectChange()">
-										<Option v-for="item in dtList" :value="item.value" :key="item.value">
-											{{ item.label }}
-										</Option>
-									 </Select>
-								 </FormItem>
-								 <FormItem label="字段长度" prop="dataLen">
-									 <Input v-model="addModel.dataLen" style="width: auto" ref="input4"/>
-								 </FormItem>
-								 <FormItem label="主键策略" prop="pkGen">
-									 <Select v-model="addModel.pkGen" style="width:170px" clearable ref="select2">
-										<Option v-for="item in pkList" :value="item.value" :key="item.value">
-											{{ item.label }}
-										</Option>
-									 </Select>
-								 </FormItem>
-							 </Form>    	
-						</Modal>
-						
-						<!-- 编辑页面 -->
-						<Modal width="700" v-model="viewModal" title="字段信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false"
-							@on-ok="update('updFormRef')" :loading="loading">
-							<Form ref="updFormRef" :model="viewOrUpdateModel" :rules="modelAddRules" :label-width="100" inline="true">
-								 <FormItem label="字段名" prop="colCode">
-									 <Input v-model="viewOrUpdateModel.colCode" placeholder="请输入字段英文名称" style="width: auto" ref="input1"/>
-								 </FormItem>
-								 <FormItem label="中文名称" prop="colName">
-									 <Input v-model="viewOrUpdateModel.colName" placeholder="请输入字段中文名称" style="width: auto" ref="input2"/>
-								 </FormItem>
-								 <FormItem label="字段类型" prop="dataType">
-									 <Select v-model="viewOrUpdateModel.dataType" style="width:170px" ref="select3" @on-change="selectChange()">
-										<Option v-for="item in dtList" :value="item.value" :key="item.value">
-											{{ item.label }}
-										</Option>
-									 </Select>
-								 </FormItem>
-								 <FormItem label="字段长度" prop="dataLen">
-									 <Input v-model="viewOrUpdateModel.dataLen" style="width: auto" ref="input3"/>
-								 </FormItem>
-								 <FormItem label="主键策略" prop="pkGen">
-									 <Select v-model="viewOrUpdateModel.pkGen" style="width:170px" clearable ref="select4">
-										<Option v-for="item in pkList" :value="item.value" :key="item.label">
-											{{ item.label }}
-										</Option>
-									 </Select>
-								 </FormItem>
-							</Form>    	
-						</Modal>
-					</Card>
+		<Card>
+			<p slot="title"> <Icon type="compose"></Icon>字段定义</p> 
+			<Row>
+				<p>
+					<Input v-model="sColCode" placeholder="请输入字段名称搜索" icon="search" 
+						style="width: 150px" @on-change="searching"></Input>
+					<Input v-model="sColName" placeholder="请输入字段中文名称搜索" icon="search" 
+						style="width: 150px" @on-change="searching"></Input>
+					&nbsp;
+					<Button type="primary" @click="handleInsert()">新增</Button>
+					<Button type="success" @click="handleUpdate()">修改</Button>
+					<Button type="warning" @click="handleDelete()">删除</Button>
+				</p>
+			</Row>						
+			<Row>
+				<Table highlight-row border ref="dataList" :height="tableHeight" 
+					:columns="columns" :data="list_data" :stripe="true" @size="getFont"
+					@on-select="choicing" @on-select-cancel="cancing" 
+					@on-sort-change="sorting">
+				</Table>
+				<div style="float: right;">
+					<Page :total="totalCount" :current="1" :page-size="pageSize" 
+					:transfer="true" @size="getFont"
+					@on-change="changePage" @on-page-size-change="changePageSize" 
+					show-total show-elevator show-sizer></Page>
 				</div>
-			</Col>
-		</Row>	
+			</Row>
+		</Card>
+		<!-- 新增页面 -->
+		<Modal width="700" v-model="addModal" title="字段信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
+			@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
+			<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100" :inline="true">
+				 <FormItem label="字段名" prop="colCode">
+					 <Input v-model="addModel.colCode" placeholder="请输入字段英文名称" style="width: auto"/>
+				 </FormItem>
+				 <FormItem label="中文名称" prop="colName">
+					 <Input v-model="addModel.colName" placeholder="请输入字段中文名称" style="width: auto"/>
+				 </FormItem>
+				 <FormItem label="字段类型" prop="dataType">
+					 <Select v-model="addModel.dataType" style="width:170px" clearable ref="select1" @on-change="selectChange()">
+						<Option v-for="item in dtList" :value="item.value" :key="item.value">
+							{{ item.label }}
+						</Option>
+					 </Select>
+				 </FormItem>
+				 <FormItem label="字段长度" prop="dataLen">
+					 <Input v-model="addModel.dataLen" style="width: auto" ref="input4"/>
+				 </FormItem>
+				 <FormItem label="主键策略" prop="pkGen">
+					 <Select v-model="addModel.pkGen" style="width:170px" clearable ref="select2">
+						<Option v-for="item in pkList" :value="item.value" :key="item.value">
+							{{ item.label }}
+						</Option>
+					 </Select>
+				 </FormItem>
+			 </Form>    	
+		</Modal>
+						
+		<!-- 编辑页面 -->
+		<Modal width="700" v-model="viewModal" title="字段信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false"
+			@on-ok="update('updFormRef')" :loading="loading">
+			<Form ref="updFormRef" :model="viewOrUpdateModel" :rules="modelAddRules" :label-width="100" :inline="true">
+				 <FormItem label="字段名" prop="colCode">
+					 <Input v-model="viewOrUpdateModel.colCode" placeholder="请输入字段英文名称" style="width: auto" ref="input1"/>
+				 </FormItem>
+				 <FormItem label="中文名称" prop="colName">
+					 <Input v-model="viewOrUpdateModel.colName" placeholder="请输入字段中文名称" style="width: auto" ref="input2"/>
+				 </FormItem>
+				 <FormItem label="字段类型" prop="dataType">
+					 <Select v-model="viewOrUpdateModel.dataType" style="width:170px" ref="select3" @on-change="selectChange()">
+						<Option v-for="item in dtList" :value="item.value" :key="item.value">
+							{{ item.label }}
+						</Option>
+					 </Select>
+				 </FormItem>
+				 <FormItem label="字段长度" prop="dataLen">
+					 <Input v-model="viewOrUpdateModel.dataLen" style="width: auto" ref="input3"/>
+				 </FormItem>
+				 <FormItem label="主键策略" prop="pkGen">
+					 <Select v-model="viewOrUpdateModel.pkGen" style="width:170px" clearable ref="select4">
+						<Option v-for="item in pkList" :value="item.value" :key="item.label">
+							{{ item.label }}
+						</Option>
+					 </Select>
+				 </FormItem>
+			</Form>    	
+		</Modal>
 	</div>
 </template>
 <script>
@@ -121,16 +103,12 @@ import Cookies from 'js-cookie';
 	 export default {
         data () {
             return {
-				baseData: [],
-				tagData: [],
-				detailedInfo: false,
-				list_data: [],
-				treeurl: '/business/TK0007T.do',
 				listurl: '/business/TK0008L.do',
 				updateurl: '/business/TK0008U.do',
 				deleteurl: '/business/TK0008D.do',
 				saveurl: '/business/TK0008I.do',
 				columns: [],
+				list_data: [],
 				pageSize: 10,
 				currentPage: 1,
 				totalCount: 0,
@@ -187,22 +165,34 @@ import Cookies from 'js-cookie';
                         value: '1',
                         label: '1-自动生成'
                     }
-				]
+				],
+				
+				tableHeight: 410
 			};
 			
 		},
 		methods: {
 			getSearchCond() {
-				//let menuCode = Cookies.get('menucode');
 				return {'menuCode': '', 'pageSize': this.pageSize, 'currentPage': this.currentPage, 
 					'valObj': {'colCode': this.sColCode, 'colName': this.sColName, 'tabCode': this.sTabCode}
 				};
+			},
+			
+			//根据父组件(主表)传来的数据 查询子组件(从表)数据
+			getColDataList(data){
+				this.sTabCode = data;
+				colDefinition.page(this.getSearchCond());
+				
+				//去数据库查询该表是否存在
+				var params = new URLSearchParams();
+				params.append('tabCode', data);
+				colDefinition.findTable(params);
 			},
 		
 			//获取数据	
 			init() {
 				colDefinition.setPage(this);
-				colDefinition.getBaseData("");
+				this.columns = colDefinition.getColumns();
 			},
 			
 			changePage(page) {
@@ -215,24 +205,6 @@ import Cookies from 'js-cookie';
 				let cond = this.getSearchCond();
 				cond.pageSize = _pageSize;
 				pagetool.page(cond);
-			},
-			
-			selectNode(selectedArray) { //选择模型，显示该模型下所有组件
-				
-				this.classificationFinalSelected = selectedArray.map(item => {
-				
-					pagetool.setPage(this);
-					this.sTabCode = item.tabCode;
-					pagetool.page(this.getSearchCond());
-					this.columns = colDefinition.getColumns();
-					this.detailedInfo = true;
-					this.selectedLines = 0;
-					
-					//去数据库查询该表是否存在
-					var params = new URLSearchParams();
-					params.append('tabCode', item.tabCode);
-					colDefinition.findTable(params);
-				});
 			},
 			sorting(data) {
 				pagetool.sort(data, this.getSearchCond());
@@ -317,8 +289,21 @@ import Cookies from 'js-cookie';
 				colDefinition.delete(this.deleteurl+"?codes="+this.deletedPks.join(','));
 			},
 			
+			reset(name){
+				this.$refs[name].resetFields();
+			},
+			
+			
 			//新增页面
 			handleInsert(){
+				if(this.sTabCode == ''){
+					this.$Modal.warning({
+						title: '错误信息',
+						content: '请先选取表！'
+					});
+					return;	
+				}
+			
 				if(this.exist){
 					this.$Modal.warning({
 						title: '错误信息',
@@ -327,7 +312,7 @@ import Cookies from 'js-cookie';
 					return;
 				}
 				this.addModal = true;
-				pagetool.reset('addFormRef');
+				this.reset('addFormRef');
 				this.$refs.select1.clearSingleSelect();
 				this.$refs.select2.clearSingleSelect();
 			},
@@ -390,6 +375,10 @@ import Cookies from 'js-cookie';
 					return sizeValue;
 				}
 			}
-		} 
+		},
+		
+		mounted() {
+			this.tableHeight = window.innerHeight - this.$refs.dataList.$el.offsetTop - 280
+		},
 	};
 </script>

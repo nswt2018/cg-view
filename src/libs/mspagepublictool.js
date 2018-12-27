@@ -39,7 +39,15 @@ mspagepublictool.view=function(){
 mspagepublictool.add=function(){
 	//清空数据列表中选择的数据项
 	//this.spa.$refs.parmList.selectAll(false);
-	this.spa.msaddModal = true; 
+	//判断主表是否选择
+	if(this.spa.selectedLines!=1){
+		this.spa.$Modal.warning({
+			title:'提示信息',
+			content:'必须选中一条主表记录！'
+		});
+	}else{
+		this.spa.msaddModal = true;
+	}
 };
 mspagepublictool.update=function(){
 	if(this.spa.msselectedLines!=1){
