@@ -46,7 +46,7 @@
 							<br/>
 							<br/>
 							<div>
-								<Form ref="addFormRef" :model="addModel" :rules="addRules" :label-width="200" inline="true">
+								<Form ref="addFormRef" :model="addModel" :rules="addRules" :label-width="200" :inline="true">
 									<FormItem label="系统二位简码" prop="sysCode">
 										<Input v-model="addModel.sysCode" placeholder="请输入系统二位简码" style="width: auto"/>
 									</FormItem>
@@ -87,7 +87,7 @@
 						<!-- 查看页面 -->
 						<Row v-show="checkForm">
 							<div>
-								<Form ref="checkFormRef" :model="checkModel" :label-width="200" inline="true">
+								<Form ref="checkFormRef" :model="checkModel" :label-width="200" :inline="true">
 									<FormItem label="系统二位简码" prop="sysCode">
 										<Input v-model="checkModel.sysCode" placeholder="请输入系统二位简码" style="width: auto" readonly disabled/>
 									</FormItem>
@@ -121,7 +121,7 @@
 							<br/>
 							<br/>
 							<div>
-								<Form ref="updFormRef" :model="updModel" :rules="updRules" :label-width="200" inline="true">
+								<Form ref="updFormRef" :model="updModel" :rules="updRules" :label-width="200" :inline="true">
 									<FormItem label="系统二位简码" prop="sysCode">
 										<Input v-model="updModel.sysCode" placeholder="请输入系统二位简码" style="width: auto"/>
 									</FormItem>
