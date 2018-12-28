@@ -173,6 +173,8 @@ systemModule.page = function (data) {
     		this.spa.pageSize = rres.data.pageSize;
 			
 			this.spa.$refs.bUnit.getUnitDataList('-1');
+			this.spa.deletedPks = [];
+			this.spa.selectedLines = 0;
     	}else{
     		this.err(rres.data);
 		}
@@ -334,6 +336,7 @@ systemModule.save = function(name,url,model) {
 					//设置关联关系字段
 					if(rres.data.nodCode){
 						this.spa.addModel.relInfo = rres.data.nodCode;
+						this.spa.viewOrUpdateModel.relInfo = rres.data.nodCode;
 						relInfo = rres.data.nodCode;
 					}
 					

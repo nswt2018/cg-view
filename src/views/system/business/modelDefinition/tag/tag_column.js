@@ -217,6 +217,9 @@ tag.getColumns = function() {
     		this.spa.totalPage = rres.data.totalPage;
     		this.spa.totalCount = rres.data.totalCount;
     		this.spa.pageSize = rres.data.pageSize;
+			
+			this.spa.deletedPks = [];
+			this.spa.selectedLines = 0;
     	}else{
     		this.err(rres.data);
 		}

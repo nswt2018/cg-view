@@ -95,6 +95,7 @@ export const appRouter = [
 				children: [
 					{ path: 'tabDefinition', title: '表定义', name: 'tabDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/dataDefinition/table/tabDefinition-manage.vue') },
 					//{ path: 'colDefinition', title: '字段定义', name: 'colDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/dataDefinition/columns/colDefinition-manage.vue') }
+					{ path: 'commonFieldDefinition', title: '报元定义', name: 'commonFieldDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/dataDefinition/commonField/commonFieldDefinition-manage.vue') },
 				]
 			},
 			{ 

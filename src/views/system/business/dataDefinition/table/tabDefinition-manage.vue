@@ -10,9 +10,9 @@
 					<p slot="title"> <Icon type="compose"></Icon>表定义</p>
 					<Row>
 						<p>
-							<Input v-model="sTabCode" placeholder="请输入表中文名称搜索" icon="search" 
+							<Input v-model="sTabCode" placeholder="请输入表名搜索" icon="search" 
 								style="width: 150px" @on-change="searching"></Input>
-							<Input v-model="sTabName" placeholder="请输入表英文名称搜索" icon="search" 
+							<Input v-model="sTabName" placeholder="请输入中文名搜索" icon="search" 
 								style="width: 150px" @on-change="searching"></Input>
 							&nbsp;
 							<Button type="primary" @click="handleInsert()">新增</Button>
@@ -160,6 +160,7 @@ export default {
 		saving(name) {
 			this.addModel.crtDate = datetool.format(new Date());
         	pagetool.save(name);
+			this.$refs.colRef.getColDataList('-1');
         },
 		
 		//新增/修改取消
@@ -171,6 +172,7 @@ export default {
 		//删除操作
         handleDelete () {
         	tabDefinition.delete(this.deleteurl+"?tabCode="+this.deletedPks);
+			this.$refs.colRef.getColDataList('-1');
         },
 		
 		//修改操作

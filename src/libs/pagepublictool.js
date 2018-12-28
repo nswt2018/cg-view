@@ -16,6 +16,9 @@ pagepublictool.page = function (data) {
     	if(rres && rres.data) {
         	this.spa.data_list = rres.data.rows;
         	this.spa.totalCount = rres.data.totalCount;
+			
+			this.spa.deleteKey = [];
+			this.spa.selectedLines = 0;
 		}else{
 	    	this.spa.$Modal.error({
 	             title: '提示',
@@ -46,7 +49,7 @@ pagepublictool.update=function(){
 	if(this.spa.selectedLines!=1){
 		this.spa.$Modal.warning({
 			title:'提示信息',
-			content:'必须选中一条记录！'
+			content:'必须且只能选中一条记录！'
 		});
 	}else{
 		this.spa.updModal = true; 
@@ -239,7 +242,7 @@ pagepublictool.ssave=function(updurl){
 		});
 };
 pagepublictool.reset=function(ref){
-	this.$refs[ref].resetFields();
+	this.spa.$refs[ref].resetFields();
 };
 pagepublictool.choice=function(selection,row){
 	this.spa.selectedLines=selection.length;
