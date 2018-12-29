@@ -5,7 +5,6 @@
 <template>
 	<Menu ref="sideMenu" :active-name="$route.name" :open-names="openNames" :theme="menuTheme" width="auto" @on-select="changeMenu">
 		<template v-for="item in menuList">
- 
 			<Submenu v-if="item.children" :name="item.name" :key="item.name">
 				<template slot="title">
 					 <Icon :type="item.icon" :size="iconSize"></Icon>

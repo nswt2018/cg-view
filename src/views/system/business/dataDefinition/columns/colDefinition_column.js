@@ -25,12 +25,14 @@ colDefinition.getColumns = function() {
 				{
 					title: '字段名',
 			        key: 'colCode',
+					width: 120,
 			        sortable: 'custom',
 			        align: 'center'
 			    },
 			    {
 					title: '中文名',
 			        key: 'colName',
+					width: 120,
 			        align: 'center'
 			    },
 			    {
@@ -58,43 +60,7 @@ colDefinition.getColumns = function() {
 					  return h('div',texts);
 					}
 				},
-			    {
-			        title: '创建日期',
-			        key: 'crtDate',
-			        sortable: 'custom',
-			        align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.crtDate));
-			        }
-			    },
-			    {
-			        title: '修改日期',
-			        key: 'updDate',
-					sortable: 'custom',
-					align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.updDate));
-			        }
-			    }
     ];
-};
-
-colDefinition.getBaseData = function(data) {
-	
-	util.ajax.post(this.spa.treeurl, data, header).then((rres) => {  	
-		const result = [];
-		rres.data.forEach(d => {
-			let item = {
-				tabCode: d.tabCode,
-				title: d.tabCode,
-				expand: true
-			};
-			
-			result.push(item);
-		});
-		
-		this.spa.baseData = result;
-	});
 };
 
 colDefinition.delete = function(delurl) {
@@ -173,6 +139,9 @@ colDefinition.page = function (data) {
     		this.spa.totalPage = rres.data.totalPage;
     		this.spa.totalCount = rres.data.totalCount;
     		this.spa.pageSize = rres.data.pageSize;
+			
+			this.spa.deletedPks = [];
+			this.spa.selectedLines = 0;
     	}else{
     		this.err(rres.data);
 		}
@@ -207,7 +176,7 @@ colDefinition.save = function(name) {
 	this.spa.$refs[name].validate((valid) => {
         if (valid) {
         	//console.log(valid);
-        	util.ajax.put(this.spa.saveurl, this.spa.addModel, header).then((rres) => {        		
+        	util.ajax.put(this.spa.saveurl, this.spa.addModel, header).then((rres) => {
         		if(rres.data.code===SAV_SUC || rres.data.code===UPD_SUC) {
         			this.spa.$Message.success('Success!');
         			this.spa.addModal=false;
@@ -237,6 +206,38 @@ colDefinition.findTable = function(params) {
 		}else{
 			this.spa.exist = true;
 		}
+	});
+};
+
+colDefinition.getTabList = function(url){
+	util.ajax.post(url,header).then((rres) => {   	
+		const result = [];
+		rres.data.forEach(d => {
+			let tab = {
+				value: d,
+				label: d
+			};
+			
+			result.push(tab);
+		});
+		
+		this.spa.tabList = result;
+	});
+};
+
+colDefinition.getColList = function(url, params){
+	util.ajax.post(url, params, header).then((rres) => {   	
+		const result = [];
+		rres.data.forEach(d => {
+			let tab = {
+				value: d,
+				label: d
+			};
+			
+			result.push(tab);
+		});
+		
+		this.spa.colList = result;
 	});
 };
 

@@ -1,9 +1,9 @@
 <template>
     <Breadcrumb>
         <BreadcrumbItem 
-            v-for="item in currentPath" 
+            v-for="(item, index) in currentPath" 
             :href="item.path" 
-            :key="item.name"
+            :key="index"
         >{{ itemTitle(item) }}</BreadcrumbItem>
     </Breadcrumb>
 </template>

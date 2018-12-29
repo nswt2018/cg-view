@@ -6,7 +6,7 @@
 	<div>
 		<Row>
 			<div>
-				<Card padding="2">
+				<Card :padding="padding">
 					<h4><p><Icon type="compose"></Icon>页面元素</p></h4>
 					<Row>
 						<p>
@@ -106,7 +106,8 @@ import Cookies from 'js-cookie';
 				tagDatas: [],
 				tagColumns: [],
 				crtdate: '',
-				tableHeight: 200
+				tableHeight: 200,
+				padding: 2
 			};
 			
 		},

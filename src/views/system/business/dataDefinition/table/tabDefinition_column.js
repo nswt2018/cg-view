@@ -19,7 +19,7 @@ tabDefinition.setPage = function(obj) {
 tabDefinition.getColumns = function() {
 	return [
 				{ 
-					type: 'selection',
+					type: 'index',
 			        width: 60,
 			        align: 'center'
 			    },
@@ -60,12 +60,6 @@ tabDefinition.getColumns = function() {
     ];
 };
 
-tabDefinition.choice = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	this.spa.viewOrUpdateModel = row;
-	this.spa.deletedPks.push(row.tabCode);
-};
-
 //查询数据库表是否存在
 tabDefinition.findTab = function(url) {
 	
@@ -79,21 +73,6 @@ tabDefinition.findTab = function(url) {
 			this.spa.viewModal = true;
 		}
 	});
-	
-};
-
-tabDefinition.cancel = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	
-	if(this.spa.selectedLines>0) {
-		this.spa.viewOrUpdateModel = selection[0];
-		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.tabCode), 1);
-	}
-	else {
-		this.spa.viewOrUpdateModel = {};
-		this.spa.deletedPks = [];
-	}
-	//console.log(this.spa.deletedPks);
 	
 };
 
@@ -126,7 +105,7 @@ tabDefinition.update = function(name) {
 };
 
 tabDefinition.delete = function(delurl) {
-	if(this.spa.selectedLines < 1) {
+	if(this.spa.index == -1) {
 		this.spa.$Modal.warning({
             title: '提示信息',
             content: '必须选中一条记录！'
@@ -142,8 +121,8 @@ tabDefinition.delete = function(delurl) {
                 util.ajax.delete(delurl, header).then((rres) => {
             		if(rres.data.code===DEL_SUC) {
             			this.spa.$Message.success('删除成功!');
-            			this.spa.deletedPks = [];
-            			this.spa.selectedLines = 0;
+            			this.spa.deletedPks = '';
+            			this.spa.index = -1;
             			this.spa.viewOrUpdateModel= {};
                         this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
             		}else{
@@ -174,6 +153,9 @@ tabDefinition.page = function (data) {
     		this.spa.totalPage = rres.data.totalPage;
     		this.spa.totalCount = rres.data.totalCount;
     		this.spa.pageSize = rres.data.pageSize;
+			
+			this.spa.deletedPks = [];
+			this.spa.selectedLines = 0;	
     	}else{
     		this.err(rres.data);
 		}
@@ -193,7 +175,7 @@ tabDefinition.err = function (data) {
 };
 
 tabDefinition.tabFactory = function (cturl) {  
-	if(this.spa.selectedLines < 1) {
+	if(this.spa.index == -1) {
 		this.spa.$Modal.warning({
             title: '提示信息',
             content: '必须选中一条记录！'

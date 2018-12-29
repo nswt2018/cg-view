@@ -7,13 +7,13 @@
 	<div>
 		<Row>
 			<Col span="5">
-				<Card padding="10">
+				<Card :padding="10">
 					<p slot="title">
 						<Icon type="ios-pricetags-outline"></Icon>
 						标签
 					</p>
 					<div class="treestyle">
-						<Tree :data="baseData" @on-select-change="selectNode" ref="tree" :render="renderContent"></Tree>
+						<Tree :data="baseData" @on-select-change="selectNode" ref="tree"></Tree>
 					</div>				
 				</Card>
 			</Col>
@@ -38,14 +38,14 @@
 							</p>
 						</Row>						
 						<Row>
-							<Table highlight-row border ref="dataList" :size="getFont" height="410" 
+							<Table highlight-row border ref="dataList" @size="getFont" height="410" 
 								:columns="columns" :data="list_data" :stripe="true" 
 								@on-select="choicing" @on-select-cancel="cancing" 
 								@on-sort-change="sorting">
 							</Table>
 							<div style="float: right;">
 								<Page :total="totalCount" :current="1" :page-size="pageSize" 
-								:transfer="true" :size="getFont"
+								:transfer="true" @size="getFont"
 								@on-change="changePage" @on-page-size-change="changePageSize" 
 								show-total show-elevator show-sizer></Page>
 							</div>
@@ -128,7 +128,8 @@ export default {
 			saveurl: '/business/TK0003I.do',
 			deleteurl: '/business/TK0003D.do',
 			updateurl: '/business/TK0003U.do',  		
-			baseData: {},
+			baseData: [],
+			columns: [],
 			detailedInfo: false,
 			classificationFinalSelected: [],
 			sTagProp: '',
@@ -243,7 +244,7 @@ export default {
 		
 		//新增/修改取消
 		reseting (name) {
-			this.addModal = true;
+			this.addModal = false;
 			//pagetool.reset(name);
 		},
 		

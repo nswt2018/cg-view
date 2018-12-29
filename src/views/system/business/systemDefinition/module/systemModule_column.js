@@ -104,8 +104,6 @@ systemModule.update = function(name) {
         			this.spa.$Message.success('修改成功!');
         			this.spa.viewModal=false;
                     this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
-					
-					this.spa.$refs.bUnit.getUnitDataList(this.spa.deletedPks.join(','));
         		}else{
         			this.spa.$Modal.error({
                         title: '错误信息',
@@ -145,8 +143,6 @@ systemModule.delete = function(delurl) {
             			this.spa.selectedLines = 0;
             			this.spa.viewOrUpdateModel= {};
                         this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
-						
-						this.spa.$refs.bUnit.getUnitDataList('-1');
             		}else{
             			this.err(rres.data);
             		}
@@ -175,6 +171,10 @@ systemModule.page = function (data) {
     		this.spa.totalPage = rres.data.totalPage;
     		this.spa.totalCount = rres.data.totalCount;
     		this.spa.pageSize = rres.data.pageSize;
+			
+			this.spa.$refs.bUnit.getUnitDataList('-1');
+			this.spa.deletedPks = [];
+			this.spa.selectedLines = 0;
     	}else{
     		this.err(rres.data);
 		}
@@ -336,6 +336,7 @@ systemModule.save = function(name,url,model) {
 					//设置关联关系字段
 					if(rres.data.nodCode){
 						this.spa.addModel.relInfo = rres.data.nodCode;
+						this.spa.viewOrUpdateModel.relInfo = rres.data.nodCode;
 						relInfo = rres.data.nodCode;
 					}
 					
