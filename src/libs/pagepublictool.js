@@ -16,9 +16,6 @@ pagepublictool.page = function (data) {
     	if(rres && rres.data) {
         	this.spa.data_list = rres.data.rows;
         	this.spa.totalCount = rres.data.totalCount;
-			
-			this.spa.deleteKey = [];
-			this.spa.selectedLines = 0;
 		}else{
 	    	this.spa.$Modal.error({
 	             title: '提示',
@@ -157,6 +154,7 @@ pagepublictool.save=function(refValue){
         			this.spa.$Message.success('Success!');
         			this.spa.addModal=false;
         			this.spa.updModal=false;
+        			this.spa.addForm={};
         			pagepublictool.page(this.spa.getSearch());
         		}else{
         			this.spa.loading = false;
@@ -197,6 +195,7 @@ pagepublictool.msave=function(refValue){
         			this.spa.$Message.success('Success!');
         			this.spa.addModal=false;
         			this.spa.updModal=false;
+        			this.spa.addForm={};
         			pagepublictool.page(this.spa.getSearch());
         			if(refValue==='updFormRef'){
         				pagepublictool.ssave(this.spa.releupdateurl+"?updFields="+this.spa.msRelationshipFields.join(','));
