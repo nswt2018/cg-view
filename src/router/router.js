@@ -94,25 +94,25 @@ export const appRouter = [
 				path: 'dataDefinition', title: '数据定义', name: 'data_definition', icon: 'navicon-round',component: () => import('@/views/system/business/artical-publish-center.vue'),
 				children: [
 					{ path: 'tabDefinition', title: '表定义', name: 'tabDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/dataDefinition/table/tabDefinition-manage.vue') },
-					{ path: 'colDefinition', title: '字段定义', name: 'colDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/dataDefinition/columns/colDefinition-manage.vue') }
+					//{ path: 'colDefinition', title: '字段定义', name: 'colDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/dataDefinition/columns/colDefinition-manage.vue') }
+					{ path: 'commonFieldDefinition', title: '报元定义', name: 'commonFieldDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/dataDefinition/commonField/commonFieldDefinition-manage.vue') },
 				]
 			},
 			{ 
 				path: 'modelDefinition', title: '模型定义', name: 'model_definition', icon: 'navicon-round',component: () => import('@/views/system/business/artical-publish-center.vue'),
 				children: [
 					{ path: 'modelDefinition', title: '模型定义', name: 'modelDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/modelDefinition/model/modelDefinition-manage.vue') },
-					{ path: 'componetDefinition', title: '组件定义', name: 'componetDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/modelDefinition/componet/componetDefinition-manage.vue') },
+					//{ path: 'componetDefinition', title: '组件定义', name: 'componetDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/modelDefinition/componet/componetDefinition-manage.vue') },
 					{ path: 'tagDefinition', title: '标签定义', name: 'tagDefinition', icon: 'navicon-round',component: () => import('@/views/system/business/modelDefinition/tag/tagDefinition-manage.vue') }
 				]
 			},
 			{ 
-				path: 'systemModule', title: '公共模块', name: 'systemModule', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/module/systemModule-manage.vue'),
-				//path: 'systemDefinition', title: '模块定义', name: 'system_definition', icon: 'navicon-round',component: () => import('@/views/system/business/artical-publish-center.vue'),
-				//children: [
-					//{ path: 'systemModule', title: '公共模块', name: 'systemModule', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/module/systemModule-manage.vue') },
+				path: 'systemDefinition', title: '模块定义', name: 'system_definition', icon: 'navicon-round',component: () => import('@/views/system/business/artical-publish-center.vue'),
+				children: [
+					{ path: 'systemModule', title: '公共模块', name: 'systemModule', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/module/systemModule-manage.vue') },
 					//{ path: 'businessUnit', title: '业务单元', name: 'businessUnit', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/unit/businessUnit-manage.vue') },
 					//{ path: 'pageElement', title: '页面元素', name: 'pageElement', icon: 'navicon-round',component: () => import('@/views/system/business/systemDefinition/element/pageElement-manage.vue') },
-				//]
+				]
 			},
         ]
     },
