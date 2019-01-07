@@ -101,7 +101,7 @@
 						</Option>
 					</Select>
 				</FormItem>
-				<FormItem label="关联字段" prop="joinColCode">
+				<FormItem label="关联字段" prop="joinColCodes">
 					<Select :multiple="true" v-model="addForm.joinColCodes" style="width:455px" ref="addFormColList" clearable>
 						<Option v-for="item in colList" :value="item.value" :key="item.value">
 							{{ item.label }}
@@ -151,7 +151,7 @@
 						</Option>
 					</Select>
 				</FormItem>
-				<FormItem label="关联字段" prop="joinColCode">
+				<FormItem label="关联字段" prop="joinColCodes">
 					<Select :multiple="true" v-model="updForm.joinColCodes" style="width:455px" ref="updFormColList" clearable>
 						<Option v-for="item in colList" :value="item.value" :key="item.value">
 							{{ item.label }}
@@ -476,6 +476,12 @@ export default {
 		
 		//修改
 		update(){
+			var params = new URLSearchParams();
+			params.append('tabCode', this.updForm.joinTabCode);
+			
+			//获取该表的所有字段
+			colDefinition.getColList(this.colurl, params);
+				
 			if(this.updForm.joinColCode && this.updForm.joinColCode.length > 0){
 				this.updForm.joinColCodes = this.updForm.joinColCode.split(',');
 			}
