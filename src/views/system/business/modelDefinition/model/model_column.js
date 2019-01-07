@@ -97,7 +97,7 @@ modelcolumn.update = function(name) {
         		if(rres.data.code===UPD_SUC) {
         			this.spa.$Message.success('修改成功!');
         			this.spa.viewModal=false;
-                    this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+                    this.page(this.spa.getSearchCond());
         		}else{
         			this.spa.$Modal.error({
                         title: '错误信息',
@@ -136,7 +136,7 @@ modelcolumn.delete = function(delurl) {
             			this.spa.deletedPks = '';
             			this.spa.selectedLines = 0;
             			this.spa.viewOrUpdateModel= {};
-                        this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+                        this.page(this.spa.getSearchCond());
 						
 						this.spa.index = -1;
 						this.spa.$refs.componet.getComponetDataList('-1');

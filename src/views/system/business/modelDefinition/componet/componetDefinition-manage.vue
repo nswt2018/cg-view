@@ -20,14 +20,14 @@
 					</p>
 				</Row>						
 				<Row>
-					<Table highlight-row border ref="dataList" @size="getFont" :height="tableHeight" 
+					<Table highlight-row border ref="dataList" :size="getFont" :height="tableHeight" 
 						:columns="columns" :data="list_data" :stripe="true" 
 						@on-select="choicing" @on-select-cancel="cancing" 
 						@on-sort-change="sorting">
 					</Table>
 					<div style="float: right;">
 						<Page :total="totalCount" :current="1" :page-size="pageSize" 
-						:transfer="true" @size="getFont"
+						:transfer="true"
 						@on-change="changePage" @on-page-size-change="changePageSize" 
 						show-total show-elevator show-sizer></Page>
 					</div>

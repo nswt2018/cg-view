@@ -12,23 +12,22 @@
 						<p>
 							<Input v-model="sTabCode" placeholder="请输入表名搜索" icon="search" 
 								style="width: 150px" @on-change="searching"></Input>
-							<Input v-model="sTabName" placeholder="请输入中文名搜索" icon="search" 
-								style="width: 150px" @on-change="searching"></Input>
 							&nbsp;
-							<Button type="primary" @click="handleInsert()">新增</Button>
+							<Button type="primary"  @click="handleInsert()">新增</Button>
 							<Button type="success" @click="handleUpdate()">修改</Button>
-							<Button type="warning" @click="handleDelete()">删除</Button>
+							<Button type="error" @click="handleDelete()">删除</Button>
+							<Button type="warning" @click="handleInsertTab()">导入</Button>
 							<Button type="info" @click="tabFactory()">表创建</Button>
 						</p>
 					</Row>        	    
 					<Row>
-						<Table highlight-row border ref="dataList" @size="getFont" :height="tableHeight" 
+						<Table highlight-row border ref="dataList" :size="getFont" :height="tableHeight" 
 							:columns="columns" :data="list_data" :stripe="true" 
 							@on-sort-change="sorting" @on-row-click="singleclick">
 						</Table>
 						<div style="float: right;">
 							<Page :total="totalCount" :current="1" :page-size="pageSize" 
-								:transfer="true" @size="getFont"
+								:transfer="true"
 								@on-change="changePage" @on-page-size-change="changePageSize" 
 								show-total show-elevator show-sizer>
 							</Page>
@@ -45,15 +44,15 @@
 		<Modal width="700" v-model="addModal" title="表信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
 			@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
 			<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100">
-				 <FormItem label="表名" prop="tabCode">
+				<FormItem label="表名" prop="tabCode">
 					<Input v-model="addModel.tabCode" placeholder="请输入表英文名称" />
-				 </FormItem>
-				 <FormItem label="中文名称" prop="tabName">
+				</FormItem>
+				<FormItem label="中文名称" prop="tabName">
 					<Input v-model="addModel.tabName" placeholder="请输入表中文名称" />
-				 </FormItem>
-				 <FormItem label="备注" prop="tabComm">
+				</FormItem>
+				<FormItem label="备注" prop="tabComm">
 					<Input v-model="addModel.tabComm"/>
-				 </FormItem>
+				</FormItem>
 			 </Form>    	
 		</Modal>
 		
@@ -71,6 +70,30 @@
 					<Input v-model="viewOrUpdateModel.tabComm"/>
 				 </FormItem>
 			</Form>    	
+		</Modal>
+		
+		<!-- 导入表 -->
+		<Modal width="700" v-model="addTabModal" title="表信息"  ok-text="导入" cancel-text="关闭" :mask-closable="false" :loading="loading"
+			@on-ok="addTabs('addTabRef')" @on-cancel="reseting('addTabRef')">
+				
+				<Input v-model="sTabCode1" placeholder="请输入表名搜索" icon="search" 
+					style="width: 150px" @on-change="searching"></Input>
+				<Input v-model="sTabName1" placeholder="请输入中文名搜索" icon="search" 
+					style="width: 150px" @on-change="searching"></Input>
+							
+				<Table highlight-row border height="280px" 
+					:columns="tab_columns" :data="tab_list_data" :stripe="true" 
+					@on-sort-change="sorting" @on-row-click="singleclick">
+				</Table>
+						
+				<div style="text-align:center">
+					<Page :total="totalCount1" :current="1" :page-size="pageSize1" 
+						:transfer="true"
+						@on-change="changePage" @on-page-size-change="changePageSize" 
+						show-total show-elevator show-sizer>
+					</Page>
+				</div>
+					
 		</Modal>
     </div>
 
@@ -98,6 +121,8 @@ export default {
 			updateurl: '/business/TK0007U.do', 
 			createTaburl: '/business/TK0007G.do',
 			findtaburl: '/business/TK0007F.do',
+			addtaburl: '/business/TK0007I1.do',
+			taburl: '/business/TK0007L1.do', 
 			list_data: [],
 			pageSize: 10,
 			currentPage: 1,
@@ -118,7 +143,17 @@ export default {
 			deletedPks: '',
 			viewModal: false,
 			exist: false,
-			tableHeight: 410
+			tableHeight: 410,
+			addTabModal: false,
+			sTabCode1: '',
+			sTabName1: '',
+			tab_list_data: [],
+			tab_columns: [],
+			pageSize1: 10,
+			currentPage1: 1,
+			totalCount1: 0,
+			totalPage1: 0,
+			deletedPks1: []
         };
     },
     methods: {  
@@ -165,7 +200,6 @@ export default {
 		
 		//新增/修改取消
         reseting (name) {
-        	//pagetool.reset(name);
 			this.addModal = false;
         },
 		
@@ -186,15 +220,6 @@ export default {
 				return;
 			}
 			
-			if(this.index == -1) {
-				this.$Modal.warning({
-					title: '提示信息',
-					content: '只能选中一条记录！'
-				});
-				
-				return;
-			};
-			
 			//表存在则不能修改
 			tabDefinition.findTab(this.findtaburl+"?tabCode="+this.deletedPks);
 		},
@@ -208,6 +233,7 @@ export default {
 		//生成表
 		tabFactory () {
 			tabDefinition.tabFactory(this.createTaburl+"?tabCode="+this.deletedPks);
+			this.$refs.colRef.getColDataList('-1');
 		},
 		
 		//单选
@@ -220,6 +246,23 @@ export default {
 	
 			this.$refs.colRef.getColDataList(row.tabCode);
 		},
+		
+		handleInsertTab(){
+			this.tab_columns = tabDefinition.getTabColumns();
+			tabDefinition.page(this.getTabSearchCond());
+			this.addTabModal = true;
+		},
+		
+		getTabSearchCond() {
+        	return {'pageSize': this.pageSize1, 'currentPage': this.currentPage1, 
+        		'valObj': {'tabCode': this.sTabCode1, 'tabName': this.sTabName1}
+        	};
+        },
+		
+		//从数据库添加表
+		addTabs(){
+			tabDefinition.addTab(this.addtaburl);
+		}
     },
     created() {
     	this.init();

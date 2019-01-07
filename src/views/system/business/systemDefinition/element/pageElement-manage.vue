@@ -19,9 +19,9 @@
 						</p>
 					</Row>						
 					<Row>
-						<Table highlight-row border ref="dataList" :height="tableHeight" 
-							:columns="columns" :data="page_list_data" :stripe="true" @size="getFont"
-							@on-select="choicing" @on-select-cancel="cancing">
+						<Table highlight-row border ref="peList" :height="tableHeight" 
+							:columns="columns" :data="page_list_data" :stripe="true" :size="getFont"
+							@on-row-click="singleclick">
 						</Table>
 						<div style="float: right;">
 							<Page :total="totalCount" :current="1" :page-size="pageSize" 
@@ -61,8 +61,7 @@
 						<Col span="19">
 							<div v-show="tagInfo">
 								<Table highlight-row border 
-									:columns="tagColumns" :data="tagDatas" :stripe="true" 
-									@on-select="choicing" @on-select-cancel="cancing">
+									:columns="tagColumns" :data="tagDatas" :stripe="true">
 								</Table>
 							</div>
 						</Col>
@@ -92,10 +91,8 @@ import Cookies from 'js-cookie';
 				currentPage: 1,
 				totalCount: 0,
 				totalPage: 0,
-				codeList: '',
 				sEleCName: '',
 				sEleEName: '',
-				deletedPks: [],
 				selectedLines: 0,
 				viewOrUpdateModel: {},
 				viewModal: false,
@@ -107,20 +104,22 @@ import Cookies from 'js-cookie';
 				tagColumns: [],
 				crtdate: '',
 				tableHeight: 200,
-				padding: 2
+				padding: 2,
+				unitCode: '',
+				index: -1
 			};
 			
 		},
 		methods: {
 			getSearchCond() {
 				return {'menuCode': '', 'pageSize': this.pageSize, 'currentPage': this.currentPage, 
-					'valObj': {'codeList': this.codeList, 'eleCName': this.sEleCName, 'eleEName': this.sEleEName}
+					'valObj': {'unitCode': this.unitCode, 'eleCName': this.sEleCName, 'eleEName': this.sEleEName}
 				};
 			},
 			
 			//根据父组件(主表)传来的数据 查询子组件(从表)数据
 			getElementDataList(data){
-				this.codeList = data;
+				this.unitCode = data;
 				pageElement.page(this.getSearchCond());
 			},
 		
@@ -141,19 +140,13 @@ import Cookies from 'js-cookie';
 				cond.pageSize = _pageSize;
 				pageElement.page(cond);
 			},
-			choicing(selection, row) {
-				pageElement.choice(selection, row);
-			},
-			cancing(selection, row) {
-				pageElement.cancel(selection, row);
-			},
 			searching() {
 				pageElement.page(this.getSearchCond());
 			},
 			
 			//修改操作
 			handleUpdate () {
-				if(this.selectedLines < 1) {
+				if(this.index == -1) {
 					this.$Modal.warning({
 						title: '提示信息',
 						content: '必须选中一条记录！'
@@ -161,14 +154,7 @@ import Cookies from 'js-cookie';
 					
 					return;
 				};
-				if(this.selectedLines > 1) {
-					this.$Modal.warning({
-						title: '提示信息',
-						content: '只能选中一条记录！'
-					});
-					
-					return;
-				};
+				
 				this.viewOrUpdateModel.crtDate = this.crtdate;
 				this.viewModal = true;
 			},
@@ -222,6 +208,11 @@ import Cookies from 'js-cookie';
 			
 			cancelSub () {
 				this.tagInfo = false;
+			},
+			
+			singleclick(row, index){
+				this.index = index;
+				this.viewOrUpdateModel = row;
 			}
 		},
 		created () {
@@ -240,7 +231,7 @@ import Cookies from 'js-cookie';
 			}
 		},
 		mounted() {
-			this.tableHeight = (window.innerHeight - this.$refs.dataList.$el.offsetTop - 280)/2
+			this.tableHeight = (window.innerHeight - this.$refs.peList.$el.offsetTop - 280)/2
 		},
 	};
 </script>

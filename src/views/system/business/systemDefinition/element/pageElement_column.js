@@ -18,7 +18,7 @@ pageElement.setPage = function(obj) {
 pageElement.getColumns = function() {
 	return [
 				{ 
-					type: 'selection',
+					type: 'index',
 			        width: 60,
 			        align: 'center'
 			    },
@@ -144,26 +144,6 @@ pageElement.update = function(name) {
             });
         }
     })
-};
-
-pageElement.choice = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	this.spa.viewOrUpdateModel = row;
-	this.spa.crtdate = row.crtDate;
-	this.spa.deletedPks.push(row.unitCode);
-};
-
-pageElement.cancel = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	
-	if(this.spa.selectedLines>0) {
-		this.spa.viewOrUpdateModel = selection[0];
-		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.unitCode), 1);
-	}
-	else {
-		this.spa.viewOrUpdateModel = {};
-		this.spa.deletedPks = [];
-	}
 };
 
 pageElement.getTagData = function(data) {

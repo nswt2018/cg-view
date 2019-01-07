@@ -2,6 +2,7 @@ import Vue from 'vue';
 import iView from 'iview';
 import datetool from '@/libs/datetool';
 import util from '@/libs/util.js'
+import pagetool from '@/libs/pagetool';
 //import util from '../../util';
 
 let tabDefinition = {};
@@ -60,6 +61,27 @@ tabDefinition.getColumns = function() {
     ];
 };
 
+tabDefinition.getTabColumns = function() {
+	return [
+				{ 
+					type: 'selection',
+			        width: 60,
+			        align: 'center'
+			    },
+				{
+					title: '表名',
+			        key: 'tabCode',
+			        sortable: 'custom',
+			        align: 'center'
+			    },
+			    {
+					title: '中文名',
+			        key: 'tabName',
+			        align: 'center'
+			    },
+    ];
+};
+
 //查询数据库表是否存在
 tabDefinition.findTab = function(url) {
 	
@@ -85,7 +107,7 @@ tabDefinition.update = function(name) {
         		if(rres.data.code===UPD_SUC) {
         			this.spa.$Message.success('修改成功!');
         			this.spa.viewModal=false;
-                    this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+                    pagetool.page(this.spa.getSearchCond());
         		}else{
         			this.spa.$Modal.error({
                         title: '错误信息',
@@ -124,7 +146,7 @@ tabDefinition.delete = function(delurl) {
             			this.spa.deletedPks = '';
             			this.spa.index = -1;
             			this.spa.viewOrUpdateModel= {};
-                        this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+                        pagetool.page(this.spa.getSearchCond());
             		}else{
             			this.err(rres.data);
             		}
@@ -139,23 +161,21 @@ tabDefinition.delete = function(delurl) {
 
 tabDefinition.page = function (data) {   
 	//console.log(this.spa);
-    util.ajax.post(this.spa.listurl, data, header).then((rres) => { 
+    util.ajax.post(this.spa.taburl, data, header).then((rres) => { 
     	if(rres && rres.data && !rres.data.pageSize) {
     		this.spa.$Modal.error({
                 title: '提示',
                 content: rres.data.msg
             });
-    		//this.spa.$router.push({name: 'home_index'});
     		return;
 		}
     	if(rres.data.pageSize) {
-    		this.spa.list_data = rres.data.rows;
-    		this.spa.totalPage = rres.data.totalPage;
-    		this.spa.totalCount = rres.data.totalCount;
-    		this.spa.pageSize = rres.data.pageSize;
+    		this.spa.tab_list_data = rres.data.rows;
+    		this.spa.totalPage1 = rres.data.totalPage;
+    		this.spa.totalCount1 = rres.data.totalCount;
+    		this.spa.pageSize1 = rres.data.pageSize;
 			
-			this.spa.deletedPks = [];
-			this.spa.selectedLines = 0;	
+			this.spa.deletedPks1 = [];
     	}else{
     		this.err(rres.data);
 		}
@@ -174,7 +194,7 @@ tabDefinition.err = function (data) {
 	});
 };
 
-tabDefinition.tabFactory = function (cturl) {  
+tabDefinition.tabFactory = function (cturl) {
 	if(this.spa.index == -1) {
 		this.spa.$Modal.warning({
             title: '提示信息',
@@ -205,6 +225,21 @@ tabDefinition.tabFactory = function (cturl) {
 			});
 		});
 	}
+};
+
+tabDefinition.addTab = function (url) {
+	
+	util.ajax.post(url, header).then((rres) => {   	
+		if((rres.data.code === '000001' )){
+			this.spa.$Message.success('表导入成功!');
+		}else {
+			this.spa.$Modal.error({
+				title: '提示',
+				content: rres.data.msg
+			});
+			return;
+		}
+	});
 };
 
 export default tabDefinition;

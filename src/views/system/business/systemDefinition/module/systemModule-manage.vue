@@ -26,14 +26,13 @@
 						</p>
 					</Row>
 					<Row>
-						<Table highlight-row border ref="dataList" @size="getFont" :height="tableHeight" 
+						<Table highlight-row border ref="dataList" :size="getFont" :height="tableHeight" 
 							:columns="columns" :data="list_data" :stripe="true" 
-							@on-select="choicing" @on-select-cancel="cancing" 
-							@on-sort-change="sorting">
+							@on-row-click="singleclick" @on-sort-change="sorting">
 						</Table>
 						<div style="float: right;">
 						<Page :total="totalCount" :current="1" :page-size="pageSize" 
-							:transfer="true" @size="getFont"
+							:transfer="true"
 							@on-change="changePage" @on-page-size-change="changePageSize" 
 							show-total show-elevator show-sizer></Page>
 						</div>
@@ -288,7 +287,7 @@ export default {
 			viewOrUpdateModel: {},
             columns: [],
 			selectedLines: 0,
-			deletedPks: [],
+			deletedPks: '',
 			viewModal: false,
 			modList: [],
 			tabList: [],
@@ -313,6 +312,7 @@ export default {
 				showParam : [{required: true}],
 			},
 			tableHeight: 410,
+			index: -1
         };
     },
     methods: {  
@@ -346,12 +346,6 @@ export default {
         },  	
 		sorting(data) {
         	pagetool.sort(data, this.getSearchCond());
-        },
-		choicing(selection, row) {
-        	systemModule.choice(selection, row);
-        },
-        cancing(selection, row) {
-        	systemModule.cancel(selection, row);        	
         },
 		
 		//新增页面
@@ -391,12 +385,12 @@ export default {
 		
 		//删除操作
         handleDelete () {
-        	systemModule.delete(this.deleteurl+"?moduCode="+this.deletedPks.join(','));
+        	systemModule.delete(this.deleteurl+"?moduCode="+this.deletedPks);
         },
 		
 		//修改操作
 		handleUpdate () {
-			if(this.selectedLines < 1) {
+			if(this.index == -1) {
 				this.$Modal.warning({
 					title: '提示信息',
 					content: '必须选中一条记录！'
@@ -404,15 +398,6 @@ export default {
 				
 				return;
 			}
-			
-			if(this.selectedLines > 1) {
-				this.$Modal.warning({
-					title: '提示信息',
-					content: '只能选中一条记录！'
-				});
-				
-				return;
-			};
 			
 			this.viewModal = true;
 			
@@ -708,7 +693,16 @@ export default {
 				return;
 			}
 			systemModule.delTrans(this.delurl + "?nodCode=" + this.nodCode);
+		},
+		
+		singleclick(row, index){
+			this.index = index;
+			this.viewOrUpdateModel = row;
+			
+			this.deletedPks = row.moduCode;
+			this.$refs.bUnit.getUnitDataList(this.deletedPks);
 		}
+		
     },
     created() {
     	this.init();
