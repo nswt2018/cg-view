@@ -579,14 +579,6 @@ import Cookies from 'js-cookie';
 					});
 					return;	
 				}
-				
-				if(this.exist){
-					this.$Modal.warning({
-						title: '错误信息',
-						content: '该表在数据库中已经存在,不能新增字段！'
-					});
-					return;
-				}
 			
 				let query = {tabCode: this.sTabCode};
 				this.$router.push({
