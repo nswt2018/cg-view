@@ -39,24 +39,6 @@ tabDefinition.getColumns = function() {
 			        title: '备注',
 			        key: 'tabComm',
 			        align: 'center',
-			    },
-			    {
-			        title: '创建日期',
-			        key: 'crtDate',
-			        sortable: 'custom',
-			        align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.crtDate));
-			        }
-			    },
-			    {
-			        title: '修改日期',
-			        key: 'updDate',
-					sortable: 'custom',
-					align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.updDate));
-			        }
 			    }
     ];
 };

@@ -307,9 +307,7 @@ export default {
 			tranCode: '',
 			tCodeData: [],
 			addRules: {
-				nodName : [{required: true}],
-				showCond : [{required: true}],
-				showParam : [{required: true}],
+				nodName : [{required: true}]
 			},
 			tableHeight: 410,
 			index: -1
