@@ -16,6 +16,9 @@ pagepublictool.page = function (data) {
     	if(rres && rres.data) {
         	this.spa.data_list = rres.data.rows;
         	this.spa.totalCount = rres.data.totalCount;
+			
+			this.spa.deleteKey = [];
+			this.spa.selectedLines = 0;
 		}else{
 	    	this.spa.$Modal.error({
 	             title: '提示',

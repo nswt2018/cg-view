@@ -50,11 +50,15 @@
 				<FormItem label="中文名称" prop="cname">
 					<Input v-model="addForm.cname" placeholder="中文名称"/>
 				</FormItem>
-				<FormItem label="数据类型" prop="dataType">
-					<Input v-model="addForm.dataType"/>
+				<FormItem label="字段类型" prop="dataType">
+					<Select v-model="addForm.dataType" style="width:170px" @on-change="dataTypeChage('A')" clearable>
+						<Option v-for="item in dtList" :value="item.value" :key="item.value">
+							{{ item.label }}
+						</Option>
+					</Select>
 				</FormItem>
-				<FormItem label="长度" prop="dataLen">
-					<Input v-model="addForm.dataLen"/>
+				<FormItem label="字段长度" prop="dataLen">
+					<Input v-model="addForm.dataLen" style="width: auto"/>
 				</FormItem>
 			</Form>
 		</Modal> 
@@ -62,16 +66,20 @@
 		<Modal v-model="updModal" title="信息修改" width="700" ok-text="保存" cancel-text="关闭" :loading="updloading" :mask-closable="false"  @on-ok="saving('updFormRef')" @on-cancel="reseting('updFormRef')">
 			<Form ref="updFormRef" :model="updForm" :rules="formRules" :label-width="100" inline>
 				<FormItem label="英文名称" prop="ename">
-					<Input v-model="updForm.ename" placeholder="英文名称"/>
+					<Input v-model="updForm.ename" placeholder="英文名称" disabled/>
 				</FormItem>
 				<FormItem label="中文名称" prop="cname">
 					<Input v-model="updForm.cname" placeholder="中文名称"/>
 				</FormItem>
-				<FormItem label="数据类型" prop="dataType">
-					<Input v-model="updForm.dataType"/>
+				<FormItem label="字段类型" prop="dataType">
+					<Select v-model="updForm.dataType" style="width:170px" @on-change="dataTypeChage('U')" clearable>
+						<Option v-for="item in dtList" :value="item.value" :key="item.value">
+							{{ item.label }}
+						</Option>
+					</Select>
 				</FormItem>
-				<FormItem label="长度" prop="dataLen">
-					<Input v-model="updForm.dataLen"/>
+				<FormItem label="字段长度" prop="dataLen">
+					<Input v-model="updForm.dataLen" style="width: auto"/>
 				</FormItem>
 		   </Form>
 		</Modal>  
@@ -87,6 +95,41 @@ import domain from './domain-column.js';
 export default {
     name: 'domain-info',
     data () {
+		var validateDataLen = (rule, value, callback) =>{
+			var self = this;
+			let dataType;
+			let dataLen;
+			if(self.addModal){
+				dataType = this.addForm.dataType;
+				dataLen = this.addForm.dataLen != null? this.addForm.dataLen.replace(/^\s+|\s+$/g,''):'';
+			}else if(self.updModal){
+				dataType = this.updForm.dataType;
+				dataLen = this.updForm.dataLen != null? this.updForm.dataLen.replace(/^\s+|\s+$/g,''):'';
+			}else{
+				callback();
+			}
+			
+			if((dataType === 'decimal' || dataType === 'char' || dataType === 'varchar') && !value){
+				return callback(new Error("字段长度不能为空！"));
+			}else if((dataType === 'int' || dataType === 'date' || dataType === 'datetime') && value){
+				return callback(new Error("int/date/datetime类型字段长度默认,不必输入！"));
+			}else{
+				callback();
+			}
+		};
+
+		var validateDataType = (rule, value, callback) =>{
+			var self = this;
+			if(self.addModal || self.updModal){
+				if(!value){
+					return callback(new Error(rule.message));
+				}else{
+					callback();
+				}
+			}else{
+				callback();
+			}
+		};
         return {
         	listurl: '/business/TK0010L.do', 
         	saveurl: '/business/TK0010I.do',
@@ -137,8 +180,36 @@ export default {
         	columns:[],
         	formRules: {
 				ename : [{required: true, message: '英文名称不能为空！', trigger: 'blur'}],
+				dataType : [{validator: validateDataType, message: '字段类型不能为空！', trigger: 'change'}],
+				dataLen : [{validator: validateDataLen, trigger: 'blur'}]
 			},
-       	    deleteKey:[]
+       	    deleteKey:[],
+			dtList: [
+				{
+					value: 'char',
+					label: 'char'
+				},
+				{
+					value: 'date',
+					label: 'date'
+				},
+				{
+					value: 'datetime',
+					label: 'datetime'
+				},
+				{
+				value: 'decimal',
+				label: 'decimal'
+				},
+				{
+					value: 'int',
+					label: 'int'
+				},
+				{
+					value: 'varchar',
+					label: 'varchar'
+				}
+			]
         };
     },
     methods: {
@@ -220,6 +291,22 @@ export default {
 			pagepublictool.reset('addFormRef');
 			
 			pagepublictool.add();
+		},
+		
+		//数据类型变化时
+		dataTypeChage (flag) {
+			let dataType;
+			if(flag === 'A'){
+				dataType = this.addForm.dataType;
+				if(this.addModal){
+					this.addForm.dataLen = '';
+				}
+			}else{
+				dataType = this.updForm.dataType;
+				if(this.updModal){
+					this.updForm.dataLen = '';
+				}
+			}
 		},
     },
 	

@@ -12,7 +12,7 @@
 						<Button style="margin: 2px;" v-for="(item,index) in buttonInfos" :type="item.icon"  
 							:key="item.code" @click="onClicking(item.href)" :size="getSizeValue">{{item.title }}
 						</Button>
-						<Button type="info" @click="handleInsert()">插入</Button>
+						<Button type="info" :size="getSizeValue" @click="handleInsert()">插入</Button>
 					</p>	
 				</Row>
 				<Row>
@@ -376,7 +376,6 @@ export default {
         	else if(type==='DEL' || type==='del') pagepublictool.delete(this.deleteurl+"?delKeys="+this.deleteKey.join(','));
         },
         saving(refValue){
-			debugger;
 			if(refValue === 'addFormRef'){
 				if(this.addForm.joinColCodes && this.addForm.joinColCodes.length > 0)
 					this.addForm.joinColCode = this.addForm.joinColCodes.join(',');
@@ -435,7 +434,7 @@ export default {
 				else if(dataType === 'int' || dataType === 'decimal') this.addForm.uiType = 'D1';
 				else this.addForm.uiType = '';
 				
-				this.addModal = true;
+				//this.addModal = true;
 			}else{
 				dataType = this.updForm.dataType;
 				
@@ -523,6 +522,7 @@ export default {
 			//个性化设置，设置字体大小
 			const sizeValue=Cookies.get("sizeValue");
 			const size=this.$store.state.app.sizeFont;
+			
 			if(!sizeValue){
 				return size;
 			}else{
