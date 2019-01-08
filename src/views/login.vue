@@ -89,6 +89,7 @@ export default {
 								
 								Cookies.set('access', rres.data.join(","));
 								Cookies.set('user', this.form.userName);
+								Cookies.set('sizeValue', 'default');
 								this.$router.push({name: 'home_index'});						
 							});
 						} else {
