@@ -17,7 +17,7 @@
 					</div>				
 				</Card>
 			</Col>
-			<Col span="17">
+			<Col span="19">
 				<div v-show="detailedInfo">
 					<Card id="card2">
 						<p slot="title"> <Icon type="compose"></Icon>标签定义</p> 

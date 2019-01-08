@@ -224,4 +224,12 @@ tabDefinition.addTab = function (url) {
 	});
 };
 
+tabDefinition.findCol = function () {
+	if(this.spa.$route.query.tabCode){
+		this.spa.$refs.colRef.getColDataList(this.spa.$route.query.tabCode);
+	}
+	
+	return;
+}
+
 export default tabDefinition;

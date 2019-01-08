@@ -286,13 +286,13 @@ import Cookies from 'js-cookie';
 				addRules: {
 					colCode : [{required: true, message: '字段名不能为空！', trigger: 'blur'}],
 					colName : [{required: true, message: '中文名称不能为空！', trigger: 'blur'}],
-					uiOrder : [{required: true, message: '显示顺序不能为空！', trigger: 'blur'},{validator: validateUiOrder, trigger: 'blur'}],
+					uiOrder : [{validator: validateUiOrder, trigger: 'change'}],
 					dataType : [{validator: validateDataType, message: '字段类型不能为空！', trigger: 'blur'}],
 					dataLen : [{validator: validateDataLen, trigger: 'blur'}]
 				},
 				updRules: {
 					colName : [{required: true, message: '中文名称不能为空！', trigger: 'blur'}],
-					uiOrder : [{required: true, message: '显示顺序不能为空！', trigger: 'blur'},{validator: validateUiOrder, trigger: 'blur'}],
+					uiOrder : [{validator: validateUiOrder, trigger: 'blur'}],
 					dataLen : [{validator: validateDataLen1, trigger: 'blur'}]
 				},
 				exist: false,
@@ -452,8 +452,6 @@ import Cookies from 'js-cookie';
 					return;
 				};
 				
-				this.viewModal = true;
-				
 				var params = new URLSearchParams();
 				params.append('tabCode', this.viewOrUpdateModel.joinTabCode);
 				
@@ -467,6 +465,8 @@ import Cookies from 'js-cookie';
 				//回显关联字段
 				if(this.viewOrUpdateModel.joinColCode && this.viewOrUpdateModel.joinColCode.length > 0)
 					this.viewOrUpdateModel.joinColCodes = this.viewOrUpdateModel.joinColCode.split(',');
+				
+				this.viewModal = true;
 			},
 			
 			//修改保存

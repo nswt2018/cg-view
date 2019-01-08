@@ -60,6 +60,11 @@ colDefinition.getColumns = function() {
 					  return h('div',texts);
 					}
 				},
+				{
+			        title: '显示顺序',
+			        key: 'uiOrder',
+			        align: 'center',
+			    },
     ];
 };
 
@@ -156,6 +161,10 @@ colDefinition.page = function (data) {
 colDefinition.choice = function (selection, row) {
 	this.spa.selectedLines = selection.length;
 	this.spa.viewOrUpdateModel = row;
+	if(row.uiOrder == null){
+		this.spa.viewOrUpdateModel.uiOrder = '';
+	}
+	
 	this.spa.deletedPks.push(row.colCode + "/" +this.spa.sTabCode);
 };
 

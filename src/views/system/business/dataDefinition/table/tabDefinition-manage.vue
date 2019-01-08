@@ -5,7 +5,7 @@
 <template>
     <div>
 		<Row :gutter="5">
-			<Col span="12">
+			<Col span="11">
 				<Card>
 					<p slot="title"> <Icon type="compose"></Icon>表定义</p>
 					<Row>
@@ -35,7 +35,7 @@
 					</Row> 
 				</Card>
 			</Col>
-			<Col span="12">
+			<Col span="13">
 				<colDefinition ref="colRef"/>
 			</Col>
 		</Row>
@@ -167,6 +167,10 @@ export default {
         	tabDefinition.setPage(this);
         	pagetool.page(this.getSearchCond());
         	this.columns = tabDefinition.getColumns();
+			
+			setTimeout(function() {
+				tabDefinition.findCol();
+			}, 500 );
         },        
         searching () {
     		pagetool.page(this.getSearchCond());

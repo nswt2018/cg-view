@@ -71,8 +71,10 @@ commonfield.insertCol = function (url, params) {
 	util.ajax.put(url, params, header).then((rres) => {
 		if(rres.data.code=== '000001') {
 			this.spa.$Message.success('Success!');
+			let query = {tabCode: params.get('tabCode')};
 			this.spa.$router.push({
-				name: 'tabDefinition'
+				name: 'tabDefinition',
+				query: query
 			});
 		}else{
 			this.spa.$Modal.error({
