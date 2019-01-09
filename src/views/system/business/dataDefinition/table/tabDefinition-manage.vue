@@ -93,7 +93,6 @@
 						show-total show-elevator show-sizer>
 					</Page>
 				</div>
-					
 		</Modal>
     </div>
 

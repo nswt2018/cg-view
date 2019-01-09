@@ -65,7 +65,7 @@
 					 </Select>
 				 </FormItem>
 				 <FormItem label="关联表" prop="relTables">
-					 <Select v-model="addModel.relTables" ref="addSelect">
+					 <Select v-model="addModel.relTables" ref="addSelect" clearable>
 						<Option v-for="item in tabList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
@@ -96,7 +96,7 @@
 					</Select>
 				 </FormItem>
 				 <FormItem label="关联表" prop="relTables">
-					 <Select v-model="viewOrUpdateModel.relTables" ref="updSelect">
+					 <Select v-model="viewOrUpdateModel.relTables" ref="updSelect" clearable>
 						<Option v-for="item in tabList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
@@ -243,7 +243,7 @@ export default {
     data () {
 		var validateUpdData = (rule, value, callback) =>{
 			var self = this;
-			if (!value) {
+			if (!value && self.viewModal) {
 				return callback(new Error(rule.message));
 			}else {
 				callback();
@@ -282,7 +282,7 @@ export default {
 				relTables : [{required: true}]
             },
 			modelUpdRules: {
-				relTables : [{validator: validateUpdData, message: '关联表不能为空！'}],
+				relTables : [{validator: validateUpdData, message: '关联表不能为空！', trigger: 'change'}],
 			},
 			viewOrUpdateModel: {},
             columns: [],
