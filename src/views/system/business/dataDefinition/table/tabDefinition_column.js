@@ -53,14 +53,13 @@ tabDefinition.getTabColumns = function() {
 				{
 					title: '表名',
 			        key: 'tabCode',
-			        sortable: 'custom',
 			        align: 'center'
 			    },
 			    {
 					title: '中文名',
 			        key: 'tabName',
 			        align: 'center'
-			    },
+			    }
     ];
 };
 
@@ -211,9 +210,11 @@ tabDefinition.tabFactory = function (cturl) {
 
 tabDefinition.addTab = function (url) {
 	
-	util.ajax.post(url, header).then((rres) => {   	
+	util.ajax.put(url, header).then((rres) => {   	
 		if((rres.data.code === '000001' )){
 			this.spa.$Message.success('表导入成功!');
+			this.spa.addTabModal = false;
+			pagetool.page(this.spa.getSearchCond());
 		}else {
 			this.spa.$Modal.error({
 				title: '提示',

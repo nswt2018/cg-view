@@ -76,22 +76,29 @@
 		<Modal width="700" v-model="addTabModal" title="表信息"  ok-text="导入" cancel-text="关闭" :mask-closable="false" :loading="loading"
 			@on-ok="addTabs('addTabRef')" @on-cancel="reseting('addTabRef')">
 				
-				<Input v-model="sTabCode1" placeholder="请输入表名搜索" icon="search" 
-					style="width: 150px" @on-change="searching"></Input>
-				<Input v-model="sTabName1" placeholder="请输入中文名搜索" icon="search" 
-					style="width: 150px" @on-change="searching"></Input>
-							
-				<Table highlight-row border height="280px" 
-					:columns="tab_columns" :data="tab_list_data" :stripe="true" 
-					@on-sort-change="sorting" @on-row-click="singleclick">
-				</Table>
-						
-				<div style="text-align:center">
-					<Page :total="totalCount1" :current="1" :page-size="pageSize1" 
-						:transfer="true"
-						@on-change="changePage" @on-page-size-change="changePageSize" 
-						show-total show-elevator show-sizer>
-					</Page>
+				<div>
+					<Row>
+						<Input v-model="sTabCode1" placeholder="请输入表名搜索" icon="search" 
+							style="width: 200px" @on-change="searching1"></Input>
+						<Input v-model="sTabName1" placeholder="请输入中文名搜索" icon="search" 
+							style="width: 200px" @on-change="searching1"></Input>
+					</Row>
+					
+					<Row>					
+						<Table highlight-row border height="280" size="small" 
+							:columns="tab_columns" :data="tab_list_data" :stripe="true"
+							@on-select="choicing" @on-select-cancel="cancing" 
+							@on-select-all="choicingAll" @on-selection-change="cancingAll">
+						</Table>
+								
+						<div style="text-align:center">
+							<Page :total="totalCount1" :current="1" :page-size="pageSize1" 
+								:transfer="true" size="small"
+								@on-change="changePage1" @on-page-size-change="changePageSize1" 
+								show-total show-elevator show-sizer>
+							</Page>
+						</div>
+					</Row>
 				</div>
 		</Modal>
     </div>
@@ -251,6 +258,8 @@ export default {
 		},
 		
 		handleInsertTab(){
+			this.sTabCode1 = '';
+			this.sTabName1 = '';
 			this.tab_columns = tabDefinition.getTabColumns();
 			tabDefinition.page(this.getTabSearchCond());
 			this.addTabModal = true;
@@ -264,8 +273,54 @@ export default {
 		
 		//从数据库添加表
 		addTabs(){
-			tabDefinition.addTab(this.addtaburl);
-		}
+			if(this.deletedPks1.length == 0){
+				this.$Modal.warning({
+					title: '提示信息',
+					content: '必须选中一条记录！'
+				});
+				
+				return;
+			}else{
+				tabDefinition.addTab(this.addtaburl + "?tabCode="+this.deletedPks1.join(','));
+			}
+		},
+		
+		changePage1 (page) {
+        	let cond = this.getTabSearchCond();
+        	cond.currentPage = page;
+        	tabDefinition.page(cond);
+        },
+        changePageSize1 (_pageSize) {
+        	let cond = this.getTabSearchCond();
+        	cond.pageSize = _pageSize;
+        	tabDefinition.page(cond);        	
+        },
+		searching1 () {
+    		tabDefinition.page(this.getTabSearchCond());
+        },
+		
+		choicing(selection, row) {
+        	this.deletedPks1.push(row.tabCode);
+        },
+		
+        cancing(selection, row){
+        	if(selection.length > 0){
+        		this.deletedPks1.splice(this.deletedPks1.indexOf(row.tabCode), 1);
+        	}
+        },
+		
+        choicingAll(selection){
+        	this.deletedPks1 = [];
+        	for(var i=0; i<selection.length; i++){
+        		this.deletedPks1.push(selection[i].tabCode)
+        	}
+        },
+		
+        cancingAll(selection){
+        	if(selection.length == 0){
+        		this.deletedPks1 = [];
+        	}
+        },
     },
     created() {
     	this.init();

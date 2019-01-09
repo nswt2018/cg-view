@@ -411,13 +411,13 @@ import Cookies from 'js-cookie';
 			changePage(page) {
 				let cond = this.getSearchCond();
 				cond.currentPage = page;
-				pagetool.page(cond);
+				colDefinition.page(cond);
 			},
 			
 			changePageSize(_pageSize) {
 				let cond = this.getSearchCond();
 				cond.pageSize = _pageSize;
-				pagetool.page(cond);
+				colDefinition.page(cond);
 			},
 			sorting(data) {
 				pagetool.sort(data, this.getSearchCond());
