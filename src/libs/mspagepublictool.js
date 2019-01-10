@@ -92,44 +92,62 @@ mspagepublictool.delete=function(delurl){
 	}
 };
 mspagepublictool.save=function(refValue){
-	this.spa.$refs[refValue].validate((valid) => {
-		if(valid){
-			let data;
-			let url;
-			if(refValue==='msaddFormRef'){
-				data=this.spa.msaddForm
-				url=this.spa.mssaveurl;
+	//用于判断新增修改是否需要验证
+	var flag=true;
+	if(refValue==='msaddFormRef'){
+		if(Object.keys(this.spa.msaddRules).length==0){
+			flag=false;
+		}
+	}else{
+		if(Object.keys(this.spa.msupdRules).length==0){
+			flag=false;
+		}
+	}
+	if(flag){
+		this.spa.$refs[refValue].validate((valid) => {
+			if(valid){
+				mspagepublictool.saves(refValue);
 			}else{
-				data=this.spa.msupdForm
-				url=this.spa.msupdateurl;
+				this.spa.$Message.error('Fail!');
+	        	this.spa.msaddloading = false;
+	        	this.spa.msupdloading = false;
+	        	this.spa.$nextTick(() => {
+	        		this.spa.msaddloading = true;
+	        		this.spa.msupdloading = true;
+	            });
 			}
-			util.ajax.put(url,data, header).then((rres) => { 
-        		if(rres.data.code==='000001'|| rres.data.code==='000003') {
-        			this.spa.$Message.success('Success!');
-        			this.spa.msaddModal=false;
-        			this.spa.msupdModal=false;
-        			mspagepublictool.page(this.spa.getMsSearch());
-        		}else{
-        			this.spa.msloading = false;
-        			this.spa.$Modal.error({
-                        title: '错误信息',
-                        content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
-                    });
-        		}
-			}).catch((err) => {
-				this.spa.msloading = false;
-				mspagepublictool.err(err);
-			});
+		})
+	}else{
+		mspagepublictool.saves(refValue);
+	}
+};
+mspagepublictool.saves=function(refName){
+	let data;
+	let url;
+	if(refName==='msaddFormRef'){
+		data=this.spa.msaddForm
+		url=this.spa.mssaveurl;
+	}else{
+		data=this.spa.msupdForm
+		url=this.spa.msupdateurl;
+	}
+	util.ajax.put(url,data, header).then((rres) => { 
+		if(rres.data.code==='000001'|| rres.data.code==='000003') {
+			this.spa.$Message.success('Success!');
+			this.spa.msaddModal=false;
+			this.spa.msupdModal=false;
+			mspagepublictool.page(this.spa.getMsSearch());
 		}else{
-			this.spa.$Message.error('Fail!');
-        	this.spa.msaddloading = false;
-        	this.spa.msupdloading = false;
-        	this.spa.$nextTick(() => {
-        		this.spa.msaddloading = true;
-        		this.spa.msupdloading = true;
+			this.spa.msloading = false;
+			this.spa.$Modal.error({
+                title: '错误信息',
+                content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
             });
 		}
-	})   
+	}).catch((err) => {
+		this.spa.msloading = false;
+		mspagepublictool.err(err);
+	});
 };
 mspagepublictool.reset=function(ref){
 	this.$refs[ref].resetFields();
