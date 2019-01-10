@@ -10,18 +10,18 @@
 						<Input type="text" v-model="colName" placeholder="请输入字段中文名称" style="width:200px" @on-change="searching" icon="search"></Input>
 						<Input type="text" v-model="colCode" placeholder="请输入字段英文名称" style="width:200px" @on-change="searching" icon="search"></Input>
 						<Button style="margin: 2px;" v-for="(item,index) in buttonInfos" :type="item.icon"  
-							:key="item.code" @click="onClicking(item.href)" @size="getSizeValue">{{item.title }}
+							:key="item.code" @click="onClicking(item.href)" :size="getSizeValue">{{item.title }}
 						</Button>
-						<Button type="info" @click="handleInsert()">插入</Button>
+						<Button type="info" :size="getSizeValue" @click="handleInsert()">插入</Button>
 					</p>	
 				</Row>
 				<Row>
 					<Table :columns="columns" :data="data_list" height="410" highlight-row
-						border @size="getSizeValue" :stripe="true" @on-select="choicing" @on-select-cancel="cancing" 
+						border :size="getSizeValue" :stripe="true" @on-select="choicing" @on-select-cancel="cancing" 
 						@on-select-all="choicingAll" @on-selection-change="cancingAll">
 					</Table>	
 					<div style="float: right;">
-						<Page :total="totalCount" :current="1" :page-size="pageSize" :transfer="true" @size="getSizeValue"
+						<Page :total="totalCount" :current="1" :page-size="pageSize" :transfer="true"
 							@on-change="changePage" @on-page-size-change="changePageSize" show-total show-elevator show-sizer>
 						</Page> 	
 					</div> 
@@ -95,14 +95,14 @@
 				</FormItem>
 				<br>
 				<FormItem label="关联表" prop="joinTabCode">
-					<Select v-model="addForm.joinTabCode" style="width:170px" @on-change="tabCodeChage('A')" clearable>
+					<Select v-model="addForm.joinTabCode" style="width:455px" @on-change="tabCodeChage('A')" clearable>
 						<Option v-for="item in tabList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
 					</Select>
 				</FormItem>
-				<FormItem label="关联字段" prop="joinColCode">
-					<Select v-model="addForm.joinColCode" style="width:170px" ref="addFormColList" clearable>
+				<FormItem label="关联字段" prop="joinColCodes">
+					<Select :multiple="true" v-model="addForm.joinColCodes" style="width:455px" ref="addFormColList" clearable>
 						<Option v-for="item in colList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
@@ -145,14 +145,14 @@
 				</FormItem>
 				<br>
 				<FormItem label="关联表" prop="joinTabCode">
-					<Select v-model="updForm.joinTabCode" style="width:170px" @on-change="tabCodeChage('U')" clearable>
+					<Select v-model="updForm.joinTabCode" style="width:455px" @on-change="tabCodeChage('U')" clearable>
 						<Option v-for="item in tabList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
 					</Select>
 				</FormItem>
-				<FormItem label="关联字段" prop="joinColCode">
-					<Select v-model="updForm.joinColCode" style="width:170px" ref="updFormColList" clearable>
+				<FormItem label="关联字段" prop="joinColCodes">
+					<Select :multiple="true" v-model="updForm.joinColCodes" style="width:455px" ref="updFormColList" clearable>
 						<Option v-for="item in colList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
@@ -362,7 +362,7 @@ export default {
 			commonfield.setPage(this);
         	this.columns = commonfield.getColumns();
 			
-			//获取数据库所以表
+			//获取数据库所有表
 			colDefinition.setPage(this);
 			colDefinition.getTabList(this.taburl);
         },
@@ -372,10 +372,17 @@ export default {
         onClicking(type){
          	if(type==='VIEW' || type==='view') pagepublictool.view();
         	else if(type==='ADD'  || type==='add') this.add();
-        	else if(type==='UPD' || type==='upd') pagepublictool.update();
+        	else if(type==='UPD' || type==='upd') this.update();
         	else if(type==='DEL' || type==='del') pagepublictool.delete(this.deleteurl+"?delKeys="+this.deleteKey.join(','));
         },
         saving(refValue){
+			if(refValue === 'addFormRef'){
+				if(this.addForm.joinColCodes && this.addForm.joinColCodes.length > 0)
+					this.addForm.joinColCode = this.addForm.joinColCodes.join(',');
+			}else{
+				if(this.updForm.joinColCodes && this.updForm.joinColCodes.length > 0)
+					this.updForm.joinColCode = this.updForm.joinColCodes.join(',');
+			}
          	pagepublictool.save(refValue);
         },
         reseting (refValue) {
@@ -427,7 +434,7 @@ export default {
 				else if(dataType === 'int' || dataType === 'decimal') this.addForm.uiType = 'D1';
 				else this.addForm.uiType = '';
 				
-				this.addModal = true;
+				//this.addModal = true;
 			}else{
 				dataType = this.updForm.dataType;
 				
@@ -466,6 +473,20 @@ export default {
 			pagepublictool.add();
 		},
 		
+		//修改
+		update(){
+			var params = new URLSearchParams();
+			params.append('tabCode', this.updForm.joinTabCode);
+			
+			//获取该表的所有字段
+			colDefinition.getColList(this.colurl, params);
+				
+			if(this.updForm.joinColCode && this.updForm.joinColCode.length > 0){
+				this.updForm.joinColCodes = this.updForm.joinColCode.split(',');
+			}
+			pagepublictool.update();
+		},
+		
 		handleInsert(){
 			if(this.selectedLines < 1){
 				this.$Modal.warning({
@@ -501,6 +522,7 @@ export default {
 			//个性化设置，设置字体大小
 			const sizeValue=Cookies.get("sizeValue");
 			const size=this.$store.state.app.sizeFont;
+			
 			if(!sizeValue){
 				return size;
 			}else{

@@ -7,19 +7,19 @@
 	<div>
 		<Row>
 			<Col span="5">
-				<Card :padding="10">
+				<Card :padding="10" id="card1">
 					<p slot="title">
 						<Icon type="ios-pricetags-outline"></Icon>
 						标签
 					</p>
-					<div class="treestyle">
+					<div id="Odiv" class="treestyle">
 						<Tree :data="baseData" @on-select-change="selectNode" ref="tree"></Tree>
 					</div>				
 				</Card>
 			</Col>
-			<Col span="17">
+			<Col span="19">
 				<div v-show="detailedInfo">
-					<Card>
+					<Card id="card2">
 						<p slot="title"> <Icon type="compose"></Icon>标签定义</p> 
 						<Row>
 							<p>
@@ -38,14 +38,14 @@
 							</p>
 						</Row>						
 						<Row>
-							<Table highlight-row border ref="dataList" @size="getFont" height="410" 
+							<Table highlight-row border ref="dataList" :size="getFont" height="410" 
 								:columns="columns" :data="list_data" :stripe="true" 
 								@on-select="choicing" @on-select-cancel="cancing" 
 								@on-sort-change="sorting">
 							</Table>
 							<div style="float: right;">
 								<Page :total="totalCount" :current="1" :page-size="pageSize" 
-								:transfer="true" @size="getFont"
+								:transfer="true"
 								@on-change="changePage" @on-page-size-change="changePageSize" 
 								show-total show-elevator show-sizer></Page>
 							</div>
@@ -296,7 +296,13 @@ export default {
     			return sizeValue;
     		}
     	}
-    } 
+    },
+	
+	mounted() {
+		document.getElementById("Odiv").style.height = (window.innerHeight - 200) + 'px'
+		document.getElementById("card1").style.height = (window.innerHeight - 140) + 'px'
+		document.getElementById("card2").style.height = (window.innerHeight - 140) + 'px'
+	},
 };
 </script>
 detailedInfo

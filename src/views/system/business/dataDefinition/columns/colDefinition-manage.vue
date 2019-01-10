@@ -10,8 +10,6 @@
 				<p>
 					<Input v-model="sColCode" placeholder="请输入字段名称搜索" icon="search" 
 						style="width: 150px" @on-change="searching"></Input>
-					<Input v-model="sColName" placeholder="请输入字段中文名称搜索" icon="search" 
-						style="width: 150px" @on-change="searching"></Input>
 					&nbsp;
 					<Button type="primary" @click="handleInsert()">新增</Button>
 					<Button type="success" @click="handleUpdate()">修改</Button>
@@ -21,13 +19,13 @@
 			</Row>						
 			<Row>
 				<Table highlight-row border ref="dataList" :height="tableHeight" 
-					:columns="columns" :data="list_data" :stripe="true" @size="getFont"
+					:columns="columns" :data="list_data" :stripe="true" :size="getFont"
 					@on-select="choicing" @on-select-cancel="cancing" 
 					@on-sort-change="sorting">
 				</Table>
 				<div style="float: right;">
 					<Page :total="totalCount" :current="1" :page-size="pageSize" 
-					:transfer="true" @size="getFont"
+					:transfer="true"
 					@on-change="changePage" @on-page-size-change="changePageSize" 
 					show-total show-elevator show-sizer></Page>
 				</div>
@@ -36,12 +34,26 @@
 		<!-- 新增页面 -->
 		<Modal width="700" v-model="addModal" title="字段信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" 
 			:loading="loading" @on-ok="saving('addFormRef')">
-			<Form ref="addFormRef" :model="addModel" :rules="formRules" :label-width="100" :inline="true">
+			<Form ref="addFormRef" :model="addModel" :rules="addRules" :label-width="100" :inline="true">
 				<FormItem label="字段名" prop="colCode">
 					<Input v-model="addModel.colCode" placeholder="请输入字段英文名称" style="width: auto"/>
 				</FormItem>
 				<FormItem label="中文名称" prop="colName">
 					<Input v-model="addModel.colName" placeholder="请输入字段中文名称" style="width: auto"/>
+				</FormItem>
+				<FormItem label="主键策略" prop="pkGen">
+					<Select v-model="addModel.pkGen" style="width:170px" clearable ref="select2">
+						<Option v-for="item in pkList" :value="item.value" :key="item.value">
+							{{ item.label }}
+						</Option>
+					</Select>
+				</FormItem>
+				<FormItem label="域类型" prop="doMainType">
+					<Select v-model="addModel.doMainType" style="width:170px" clearable @on-change="doMainTypeChage('A', $event)">
+						<Option v-for="item in dmList" :value="item.value" :key="item.label">
+							{{ item.label }}
+						</Option>
+					</Select>
 				</FormItem>
 				<FormItem label="字段类型" prop="dataType">
 					<Select v-model="addModel.dataType" style="width:170px" clearable ref="select1" @on-change="dataTypeChage('A')">
@@ -53,14 +65,6 @@
 				<FormItem label="字段长度" prop="dataLen">
 					<Input v-model="addModel.dataLen" style="width: auto"/>
 				</FormItem>
-				<FormItem label="主键策略" prop="pkGen">
-					<Select v-model="addModel.pkGen" style="width:170px" clearable ref="select2">
-						<Option v-for="item in pkList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
-					</Select>
-				</FormItem>
-				<br>
 				<FormItem label="显示顺序" prop="uiOrder">
 					<Input v-model="addModel.uiOrder" style="width: auto"/>
 				</FormItem>
@@ -72,14 +76,14 @@
 					</Select>
 				</FormItem>
 				<FormItem label="关联表" prop="joinTabCode">
-					<Select v-model="addModel.joinTabCode" style="width:170px" @on-change="tabCodeChage('A')" clearable>
+					<Select v-model="addModel.joinTabCode" style="width:455px" @on-change="tabCodeChage('A')" clearable>
 						<Option v-for="item in tabList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="关联字段" prop="joinColCode">
-					<Select v-model="addModel.joinColCode" style="width:170px" ref="addFormColList" clearable>
+					<Select :multiple="true" v-model="addModel.joinColCodes" style="width:455px" ref="addFormColList" clearable>
 						<Option v-for="item in colList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
@@ -97,15 +101,29 @@
 		<!-- 编辑页面 -->
 		<Modal width="700" v-model="viewModal" title="字段信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false"
 			@on-ok="update('updFormRef')" :loading="loading">
-			<Form ref="updFormRef" :model="viewOrUpdateModel" :rules="formRules" :label-width="100" :inline="true">
+			<Form ref="updFormRef" :model="viewOrUpdateModel" :rules="updRules" :label-width="100" :inline="true">
 				<FormItem label="字段名" prop="colCode">
 					<Input v-model="viewOrUpdateModel.colCode" placeholder="请输入字段英文名称" style="width: auto" disabled/>
 				</FormItem>
 				<FormItem label="中文名称" prop="colName">
 					<Input v-model="viewOrUpdateModel.colName" placeholder="请输入字段中文名称" style="width: auto"/>
 				</FormItem>
+				<FormItem label="主键策略" prop="pkGen">
+					<Select v-model="viewOrUpdateModel.pkGen" style="width:170px" clearable ref="select2">
+						<Option v-for="item in pkList" :value="item.value" :key="item.value">
+							{{ item.label }}
+						</Option>
+					</Select>
+				</FormItem>
+				<FormItem label="域类型" prop="doMainType">
+					<Select disabled v-model="viewOrUpdateModel.doMainType" style="width:170px">
+						<Option v-for="item in dmList" :value="item.value" :key="item.label">
+							{{ item.label }}
+						</Option>
+					</Select>
+				</FormItem>
 				<FormItem label="字段类型" prop="dataType">
-					<Select v-model="viewOrUpdateModel.dataType" clearable style="width:170px" @on-change="dataTypeChage('U')">
+					<Select disabled v-model="viewOrUpdateModel.dataType" style="width:170px">
 						<Option v-for="item in dtList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
@@ -114,14 +132,6 @@
 				<FormItem label="字段长度" prop="dataLen">
 					<Input v-model="viewOrUpdateModel.dataLen" style="width: auto"/>
 				</FormItem>
-				<FormItem label="主键策略" prop="pkGen">
-					<Select v-model="viewOrUpdateModel.pkGen" style="width:170px" clearable>
-						<Option v-for="item in pkList" :value="item.value" :key="item.label">
-							{{ item.label }}
-						</Option>
-					</Select>
-				</FormItem>
-				<br>
 				<FormItem label="显示顺序" prop="uiOrder">
 					<Input v-model="viewOrUpdateModel.uiOrder" style="width: auto"/>
 				</FormItem>
@@ -133,14 +143,14 @@
 					</Select>
 				</FormItem>
 				<FormItem label="关联表" prop="joinTabCode">
-					<Select v-model="viewOrUpdateModel.joinTabCode" style="width:170px" @on-change="tabCodeChage('U')" clearable>
+					<Select v-model="viewOrUpdateModel.joinTabCode" style="width:455px" @on-change="tabCodeChage('U')" clearable>
 						<Option v-for="item in tabList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="关联字段" prop="joinColCode">
-					<Select v-model="viewOrUpdateModel.joinColCode" style="width:170px" ref="updFormColList" clearable>
+					<Select :multiple="true" v-model="viewOrUpdateModel.joinColCodes" style="width:455px" ref="updFormColList" clearable>
 						<Option v-for="item in colList" :value="item.value" :key="item.value">
 							{{ item.label }}
 						</Option>
@@ -172,18 +182,21 @@ import Cookies from 'js-cookie';
 				if(self.addModal){
 					dataType = this.addModel.dataType;
 					dataLen = this.addModel.dataLen != null? this.addModel.dataLen.replace(/^\s+|\s+$/g,''):'';
-				}else if(self.viewModal){
-					dataType = this.viewOrUpdateModel.dataType;
-					dataLen = this.viewOrUpdateModel.dataLen != null? this.viewOrUpdateModel.dataLen.replace(/^\s+|\s+$/g,''):'';
 				}else{
 					callback();
 				}
 				
-				if(!(dataType === 'int' || dataType === 'date' || dataType === 'datetime') && !value){
-					return callback(new Error(rule.message));
+				if(value){
+					if(dataType === 'int' || dataType === 'date' || dataType === 'datetime'){
+						return callback(new Error(dataType + "类型不用输入字段长度！"));
+					}
 				}else{
-					callback();
+					if(dataType === 'char' || dataType === 'varchar' || dataType === 'decimal'){
+						return callback(new Error(dataType + "类型字段长度不能为空！"));
+					}
 				}
+				
+				callback();
 			};
 			
 			var validateDataType = (rule, value, callback) =>{
@@ -211,6 +224,40 @@ import Cookies from 'js-cookie';
 					callback();
 				}
 			};
+			
+			var validateDataLen1 = (rule, value, callback) =>{
+				var self = this;
+				let dataType;
+				let dataLen;
+				if(self.viewModal){
+					dataType = this.viewOrUpdateModel.dataType;
+					dataLen = this.viewOrUpdateModel.dataLen != null? this.viewOrUpdateModel.dataLen.replace(/^\s+|\s+$/g,''):'';
+				}else{
+					callback();
+				}
+				
+				let colLen = this.colLen;
+				
+				if(value){
+					if(dataType === 'int' || dataType === 'date' || dataType === 'datetime'){
+						return callback(new Error(dataType + "类型不用输入字段长度！"));
+					}else if(dataType === 'char' || dataType === 'varchar'){
+						if(value < colLen){
+							return callback(new Error("字段长度不能变小！"));
+						}
+					}else if(dataType === 'decimal'){
+						if(value.split(',')[0] < colLen.split(',')[0]){
+							return callback(new Error("字段长度不能变小！"));
+						}
+					}
+				}else{
+					if(dataType === 'char' || dataType === 'varchar' || dataType === 'decimal'){
+						return callback(new Error(dataType + "类型字段长度不能为空！"));
+					}
+				}
+				
+				callback();
+			};
             return {
 				listurl: '/business/TK0008L.do',
 				updateurl: '/business/TK0008U.do',
@@ -218,6 +265,7 @@ import Cookies from 'js-cookie';
 				saveurl: '/business/TK0008I.do',
 				taburl: '/business/TK0004L1.do',
 				colurl: '/business/TK0004L2.do',
+				dmurl: '/business/TK0010L1.do',
 				columns: [],
 				list_data: [],
 				pageSize: 10,
@@ -235,12 +283,17 @@ import Cookies from 'js-cookie';
 				addModal: false,
 				addModel: {},
 				loading: true,
-				formRules: {
+				addRules: {
 					colCode : [{required: true, message: '字段名不能为空！', trigger: 'blur'}],
 					colName : [{required: true, message: '中文名称不能为空！', trigger: 'blur'}],
-					uiOrder : [{required: true, message: '显示顺序不能为空！', trigger: 'blur'},{validator: validateUiOrder, trigger: 'blur'}],
+					uiOrder : [{validator: validateUiOrder, trigger: 'change'}],
 					dataType : [{validator: validateDataType, message: '字段类型不能为空！', trigger: 'blur'}],
-					dataLen : [{validator: validateDataLen, message: '字段长度不能为空！', trigger: 'blur'}]
+					dataLen : [{validator: validateDataLen, trigger: 'blur'}]
+				},
+				updRules: {
+					colName : [{required: true, message: '中文名称不能为空！', trigger: 'blur'}],
+					uiOrder : [{validator: validateUiOrder, trigger: 'blur'}],
+					dataLen : [{validator: validateDataLen1, trigger: 'blur'}]
 				},
 				exist: false,
 				dtList: [
@@ -319,7 +372,8 @@ import Cookies from 'js-cookie';
 				],
 				tabList: [],
 				colList: [],
-				
+				dmList: [],
+				colLen: '',
 				tableHeight: 410
 			};
 			
@@ -341,8 +395,11 @@ import Cookies from 'js-cookie';
 				params.append('tabCode', data);
 				colDefinition.findTable(params);
 				
-				//获取数据库所以表
+				//获取数据库所有表
 				colDefinition.getTabList(this.taburl);
+				
+				//获取域定义域类型
+				colDefinition.getDoMainList(this.dmurl);
 			},
 		
 			//获取数据	
@@ -354,13 +411,13 @@ import Cookies from 'js-cookie';
 			changePage(page) {
 				let cond = this.getSearchCond();
 				cond.currentPage = page;
-				pagetool.page(cond);
+				colDefinition.page(cond);
 			},
 			
 			changePageSize(_pageSize) {
 				let cond = this.getSearchCond();
 				cond.pageSize = _pageSize;
-				pagetool.page(cond);
+				colDefinition.page(cond);
 			},
 			sorting(data) {
 				pagetool.sort(data, this.getSearchCond());
@@ -372,7 +429,7 @@ import Cookies from 'js-cookie';
 				colDefinition.cancel(selection, row);
 			},
 			searching() {
-				pagetool.page(this.getSearchCond());
+				colDefinition.page(this.getSearchCond());
 			},
 			
 			//修改操作
@@ -395,16 +452,6 @@ import Cookies from 'js-cookie';
 					return;
 				};
 				
-				if(this.exist){
-					//如果表在数据库存在,不允许修改字段
-					this.$Modal.warning({
-						title: '提示信息',
-						content: '该表在数据库中已经存在,不能修改字段！'
-					});
-					return;
-				}
-				this.viewModal = true;
-				
 				var params = new URLSearchParams();
 				params.append('tabCode', this.viewOrUpdateModel.joinTabCode);
 				
@@ -412,23 +459,28 @@ import Cookies from 'js-cookie';
 				colDefinition.getColList(this.colurl, params);
 				
 				this.viewOrUpdateModel.uiOrder = this.viewOrUpdateModel.uiOrder + '';
+				
+				this.colLen = this.viewOrUpdateModel.dataLen;
+				
+				//回显关联字段
+				if(this.viewOrUpdateModel.joinColCode && this.viewOrUpdateModel.joinColCode.length > 0)
+					this.viewOrUpdateModel.joinColCodes = this.viewOrUpdateModel.joinColCode.split(',');
+				
+				this.viewModal = true;
 			},
 			
 			//修改保存
 			update (name) {
 				this.viewOrUpdateModel.updDate = datetool.format(new Date());
+				if(this.viewOrUpdateModel.joinColCodes && this.viewOrUpdateModel.joinColCodes.length > 0){
+					this.viewOrUpdateModel.joinColCode = this.viewOrUpdateModel.joinColCodes.join(',');
+				}
+				
 				colDefinition.update(name);
 			},
 			
 			//删除操作
 			handleDelete () {
-				if(this.exist){
-					this.$Modal.warning({
-						title: '错误信息',
-						content: '该表在数据库中已经存在,不能删除字段！'
-					});
-					return;
-				}
 				colDefinition.delete(this.deleteurl+"?codes="+this.deletedPks.join(','));
 			},
 			
@@ -447,13 +499,6 @@ import Cookies from 'js-cookie';
 					return;	
 				}
 			
-				if(this.exist){
-					this.$Modal.warning({
-						title: '错误信息',
-						content: '该表在数据库中已经存在,不能新增字段！'
-					});
-					return;
-				}
 				this.addModal = true;
 				this.addModel = {};
 				this.reset('addFormRef');
@@ -465,6 +510,9 @@ import Cookies from 'js-cookie';
 			saving(name) {
 				this.addModel.tabCode = this.sTabCode;
 				this.addModel.crtDate = datetool.format(new Date());
+				if(this.addModel.joinColCodes && this.addModel.joinColCodes.length > 0){
+					this.addModel.joinColCode = this.addModel.joinColCodes.join(',');
+				}
 				colDefinition.save(name);
 			},
 			
@@ -508,6 +556,18 @@ import Cookies from 'js-cookie';
 				
 				//获取该表的所有字段
 				colDefinition.getColList(this.colurl, params);
+			},
+			
+			//域类型变化时
+			doMainTypeChage(flag, event) {
+				let data = event.split(',');
+				if(flag === 'A'){
+					this.addModel.dataType = data[0];
+					this.addModel.dataLen = data[1];
+				}else{
+					this.viewOrUpdateModel.dataType = data[0];
+					this.viewOrUpdateModel.dataLen = data[1];
+				}
 			},
 			
 			handleSelect(){

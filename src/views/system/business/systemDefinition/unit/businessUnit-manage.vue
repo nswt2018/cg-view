@@ -19,9 +19,9 @@
 						</p>
 					</Row>						
 					<Row>
-						<Table highlight-row border ref="dataList" @size="getFont" :height="tableHeight" 
+						<Table highlight-row border ref="dataList" :size="getFont" :height="tableHeight" 
 							:columns="columns" :data="unit_list_data" :stripe="true" 
-							@on-select="choicing" @on-select-cancel="cancing">
+							@on-row-click="singleclick">
 						</Table>
 						<div style="float: right;">
 							<Page :total="totalCount" :current="1" :page-size="pageSize" 
@@ -104,14 +104,15 @@ import pageElement from '../element/pageElement-manage.vue';
 					relTable : [{required: true}],
 					relColumn : [{required: true}]
 				},
-				deletedPks: [],
+				deletedPks: '',
 				selectedLines: 0,
 				viewOrUpdateModel: {},
 				viewModal: false,
 				colList: [],
 				columns: [],
 				tableHeight: 200,
-				padding: 2
+				padding: 2,
+				index: -1
 			};
 			
 		},
@@ -136,9 +137,9 @@ import pageElement from '../element/pageElement-manage.vue';
 				businessUnit.page(this.getSearchCond());
 				
 				//刷新页面元素数据
-				this.deletedPks = [];
+				this.deletedPks = '';
 				this.selectedLines = 0;
-				this.$refs.bElement.getElementDataList([-1]);
+				this.$refs.bElement.getElementDataList('-1');
 			},
 			
 			changePage(page) {
@@ -152,24 +153,18 @@ import pageElement from '../element/pageElement-manage.vue';
 				cond.pageSize = _pageSize;
 				businessUnit.page(cond);        	
 			},
-			choicing(selection, row) {
-				businessUnit.choice(selection, row);
-			},
-			cancing(selection, row) {
-				businessUnit.cancel(selection, row);        	
-			},
 			searching() {
 				businessUnit.page(this.getSearchCond());
 			},
 			
 			//删除操作
 			handleDelete () {
-				businessUnit.delete(this.deleteurl+"?unitCode="+this.deletedPks.join(','));
+				businessUnit.delete(this.deleteurl+"?unitCode="+this.deletedPks);
 			},
 			
 			//修改操作
 			handleUpdate () {
-				if(this.selectedLines < 1) {
+				if(this.index == -1) {
 					this.$Modal.warning({
 						title: '提示信息',
 						content: '必须选中一条记录！'
@@ -178,14 +173,6 @@ import pageElement from '../element/pageElement-manage.vue';
 					return;
 				};
 				
-				if(this.selectedLines > 1) {
-					this.$Modal.warning({
-						title: '提示信息',
-						content: '只能选中一条记录！'
-					});
-					
-					return;
-				};
 				this.viewModal = true;
 				
 				var params = new URLSearchParams();
@@ -200,6 +187,15 @@ import pageElement from '../element/pageElement-manage.vue';
 				//将Array数组转换为","隔开的字符串
 				this.viewOrUpdateModel.relColumn = this.viewOrUpdateModel.relColumn.join(',');
 				businessUnit.update(name);
+			},
+			
+			singleclick(row, index){
+				this.index = index;
+				this.viewOrUpdateModel = row;
+				this.viewOrUpdateModel.relColumn = this.viewOrUpdateModel.relColumn.split(',');
+				
+				this.deletedPks = row.unitCode;
+				this.$refs.bElement.getElementDataList(this.deletedPks);
 			}
 		},
 		created () {

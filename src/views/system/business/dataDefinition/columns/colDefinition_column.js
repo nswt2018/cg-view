@@ -60,10 +60,15 @@ colDefinition.getColumns = function() {
 					  return h('div',texts);
 					}
 				},
+				{
+			        title: '显示顺序',
+			        key: 'uiOrder',
+			        align: 'center',
+			    },
     ];
 };
 
-colDefinition.delete = function(delurl) {
+colDefinition.delete = function (delurl) {
 	if(this.spa.selectedLines < 1) {
 		this.spa.$Modal.warning({
             title: '提示信息',
@@ -96,7 +101,7 @@ colDefinition.delete = function(delurl) {
 	}
 };
 
-colDefinition.update = function(name) {
+colDefinition.update = function (name) {
 	this.spa.$refs[name].validate((valid) => {
         if (valid) {
 			this.spa.viewOrUpdateModel.crtDate = datetool.format(this.spa.viewOrUpdateModel.crtDate);
@@ -153,13 +158,17 @@ colDefinition.page = function (data) {
 	});
 };
 
-colDefinition.choice = function(selection, row) {
+colDefinition.choice = function (selection, row) {
 	this.spa.selectedLines = selection.length;
 	this.spa.viewOrUpdateModel = row;
+	if(row.uiOrder == null){
+		this.spa.viewOrUpdateModel.uiOrder = '';
+	}
+	
 	this.spa.deletedPks.push(row.colCode + "/" +this.spa.sTabCode);
 };
 
-colDefinition.cancel = function(selection, row) {
+colDefinition.cancel = function (selection, row) {
 	this.spa.selectedLines = selection.length;
 	
 	if(this.spa.selectedLines>0) {
@@ -172,7 +181,7 @@ colDefinition.cancel = function(selection, row) {
 	}
 };
 
-colDefinition.save = function(name) {
+colDefinition.save = function (name) {
 	this.spa.$refs[name].validate((valid) => {
         if (valid) {
         	//console.log(valid);
@@ -199,7 +208,7 @@ colDefinition.save = function(name) {
     })
 };
 
-colDefinition.findTable = function(params) {
+colDefinition.findTable = function (params) {
 	util.ajax.put('/business/TK0008L1.do', params, header).then((rres) => {        		
 		if(rres.data.code===SAV_SUC || rres.data.code===UPD_SUC) {
 			this.spa.exist = false;
@@ -209,12 +218,12 @@ colDefinition.findTable = function(params) {
 	});
 };
 
-colDefinition.getTabList = function(url){
+colDefinition.getTabList = function (url){
 	util.ajax.post(url,header).then((rres) => {   	
 		const result = [];
 		rres.data.forEach(d => {
 			let tab = {
-				value: d,
+				value: d.split('/')[0],
 				label: d
 			};
 			
@@ -225,7 +234,7 @@ colDefinition.getTabList = function(url){
 	});
 };
 
-colDefinition.getColList = function(url, params){
+colDefinition.getColList = function (url, params){
 	util.ajax.post(url, params, header).then((rres) => {   	
 		const result = [];
 		rres.data.forEach(d => {
@@ -238,6 +247,23 @@ colDefinition.getColList = function(url, params){
 		});
 		
 		this.spa.colList = result;
+	});
+};
+
+colDefinition.getDoMainList = function (url, params){
+	util.ajax.post(url, params, header).then((rres) => {   	
+		const result = [];
+		rres.data.forEach(d => {
+			let data = d.split(',');
+			let tab = {
+				value: data[1] + ',' + data[2],
+				label: data[0]
+			};
+			
+			result.push(tab);
+		});
+		
+		this.spa.dmList = result;
 	});
 };
 

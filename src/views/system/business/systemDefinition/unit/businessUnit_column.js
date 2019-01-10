@@ -18,7 +18,7 @@ businessUnit.setPage = function(obj) {
 businessUnit.getColumns = function() {
 	return [
 				{ 
-					type: 'selection',
+					type: 'index',
 					width: 60,
 			        align: 'center'
 			    },
@@ -73,7 +73,7 @@ businessUnit.getColumns = function() {
 };
 
 businessUnit.delete = function(delurl) {
-	if(this.spa.selectedLines < 1) {
+	if(this.spa.index == -1) {
 		this.spa.$Modal.warning({
             title: '提示信息',
             content: '必须选中一条记录！'
@@ -89,12 +89,12 @@ businessUnit.delete = function(delurl) {
                 util.ajax.delete(delurl, header).then((rres) => {
             		if(rres.data.code===DEL_SUC) {
             			this.spa.$Message.success('删除成功!');
-            			this.spa.deletedPks = [];
+            			this.spa.deletedPks = '';
             			this.spa.selectedLines = 0;
             			this.spa.viewOrUpdateModel= {};
 						this.page(this.spa.getSearchCond());
 						
-						this.spa.$refs.bElement.getElementDataList([-1]);
+						this.spa.$refs.bElement.getElementDataList(-1);
             		}else{
             			this.err(rres.data);
             		}
@@ -153,7 +153,7 @@ businessUnit.page = function (data) {
     		this.spa.totalCount = rres.data.totalCount;
     		this.spa.pageSize = rres.data.pageSize;
 			
-			this.spa.deletedPks = [];
+			this.spa.deletedPks = '';
 			this.spa.selectedLines = 0;
     	}else{
     		this.err(rres.data);
@@ -191,38 +191,6 @@ businessUnit.save = function(name) {
             });
         }
     })
-};
-
-businessUnit.choice = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	this.spa.viewOrUpdateModel = row;
-	//将字符串转为数组
-	this.spa.viewOrUpdateModel.relColumn = this.spa.viewOrUpdateModel.relColumn.split(',');
-	this.spa.deletedPks.push(row.unitCode);
-	
-	this.spa.$refs.bElement.getElementDataList(this.spa.deletedPks);
-};
-
-businessUnit.cancel = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	
-	let cond = '';
-	if(this.spa.selectedLines>0) {
-		this.spa.viewOrUpdateModel = selection[0];
-		//将字符串转为数组
-		this.spa.viewOrUpdateModel.relColumn = this.spa.viewOrUpdateModel.relColumn.split(',');
-		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.unitCode), 1);
-		
-		cond = this.spa.deletedPks;
-	}
-	else {
-		this.spa.viewOrUpdateModel = {};
-		this.spa.deletedPks = [];
-		
-		cond = [-1];
-	}
-	
-	this.spa.$refs.bElement.getElementDataList(cond);
 };
 
 businessUnit.getModList = function (selecturl) {

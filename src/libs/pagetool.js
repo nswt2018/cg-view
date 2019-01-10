@@ -123,7 +123,7 @@ pagetool.delete = function(delurl) {
             			this.spa.deletedPks = [];
             			this.spa.selectedLines = 0;
             			this.spa.viewOrUpdateModel= {};
-                        pagetool.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+                        pagetool.page(this.spa.getSearchCond());
             		}else{
             			pagetool.err(rres.data);
             		}
@@ -144,7 +144,7 @@ pagetool.save = function(name) {
         		if(rres.data.code===SAV_SUC || rres.data.code===UPD_SUC) {
         			this.spa.$Message.success('Success!');
         			this.spa.addModal=false;
-                    pagetool.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+					pagetool.page(this.spa.getSearchCond());
         		}else{
         			this.spa.$Modal.error({
                         title: '错误信息',

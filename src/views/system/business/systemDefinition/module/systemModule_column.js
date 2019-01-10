@@ -19,7 +19,7 @@ systemModule.setPage = function(obj) {
 systemModule.getColumns = function() {
 	return [
 				{ 
-					type: 'selection',
+					type: 'index',
 			        width: 60,
 			        align: 'center'
 			    },
@@ -44,54 +44,12 @@ systemModule.getColumns = function() {
 			        key: 'modName',
 			        align: 'center'
 			    },
-			    {
-			        title: '创建日期',
-			        key: 'crtDate',
-			        sortable: 'custom',
-			        align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.crtDate));
-			        }
-			    },
-			    {
-			        title: '修改日期',
-			        key: 'updDate',
-					sortable: 'custom',
-					align: 'center',
-					render: (h, params) => {                        
-			            return h('div', datetool.format(params.row.updDate));
-			        }
+				{
+					title: '关联表',
+			        key: 'relTable',
+			        align: 'center'
 			    }
     ];
-};
-
-systemModule.choice = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	this.spa.viewOrUpdateModel = row;
-	this.spa.deletedPks.push(row.moduCode);
-	
-	this.spa.$refs.bUnit.getUnitDataList(this.spa.deletedPks.join(','));
-};
-
-systemModule.cancel = function(selection, row) {
-	this.spa.selectedLines = selection.length;
-	
-	let cond = '';
-	if(this.spa.selectedLines>0) {
-		this.spa.viewOrUpdateModel = selection[0];
-		this.spa.deletedPks.splice(this.spa.deletedPks.indexOf(row.moduCode), 1);
-		
-		cond = this.spa.deletedPks.join(',');
-	}
-	else {
-		this.spa.viewOrUpdateModel = {};
-		this.spa.deletedPks = [];
-		
-		cond = '-1';
-	}
-	//console.log(this.spa.deletedPks);
-	
-	this.spa.$refs.bUnit.getUnitDataList(cond);
 };
 
 systemModule.update = function(name) {
@@ -103,7 +61,7 @@ systemModule.update = function(name) {
         		if(rres.data.code===UPD_SUC) {
         			this.spa.$Message.success('修改成功!');
         			this.spa.viewModal=false;
-                    this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+                    this.page(this.spa.getSearchCond());
         		}else{
         			this.spa.$Modal.error({
                         title: '错误信息',
@@ -123,7 +81,7 @@ systemModule.update = function(name) {
 };
 
 systemModule.delete = function(delurl) {
-	if(this.spa.selectedLines < 1) {
+	if(this.spa.index == -1) {
 		this.spa.$Modal.warning({
             title: '提示信息',
             content: '必须选中一条记录！'
@@ -142,7 +100,7 @@ systemModule.delete = function(delurl) {
             			this.spa.deletedPks = [];
             			this.spa.selectedLines = 0;
             			this.spa.viewOrUpdateModel= {};
-                        this.page({'pageSize': this.spa.pageSize, 'currentPage': this.spa.currentPage});
+                        this.page(this.spa.getSearchCond());
             		}else{
             			this.err(rres.data);
             		}
@@ -214,7 +172,7 @@ systemModule.getTabList = function (gettaburl) {
 		const result = [];
 		rres.data.forEach(d => {
 			let tab = {
-				value: d,
+				value: d.split('/')[0],
 				label: d
 			};
 			
