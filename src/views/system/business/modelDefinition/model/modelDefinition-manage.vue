@@ -1,11 +1,18 @@
 <style lang="less">
     @import '../../../../../styles/common.less';
 </style>
-
+<style lang="less">
+	.div-split{
+		height: 100px
+    }
+	.split-pane{
+		padding: 3px;
+	}
+</style>
 <template>
-    <div>
-        <Row :gutter="5">
-			<Col span="12">
+     <div class="div-split">
+        <Split v-model="split">
+			<div slot="left" class="split-pane">
 				<Card>
 					<p slot="title"> <Icon type="compose"></Icon>模型定义</p>
 					<Row>
@@ -34,50 +41,50 @@
 						</div>
 					</Row>
 				</Card>
-			</Col>
-			<Col span="12">
+			</div>
+			<div slot="right" class="split-pane">	
 				<componetDefinition ref="componet"/>
-			</Col>
-		</Row>
+			</div>
                  
 			 
-		<!-- 新增页面 -->
-		<Modal width="700" v-model="addModal" title="模型信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
-			@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
-			<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100">
-				<FormItem label="模型代码" prop="modCode">
-					 <Input v-model="addModel.modCode" placeholder="请输入4位模型代码" />
-				 </FormItem>
-				 <FormItem label="模型名称" prop="modName">
-					 <Input v-model="addModel.modName" placeholder="请输入模型中文名称" />
-				 </FormItem>
-				 <FormItem label="版本" prop="modVersion">
-					 <Input v-model="addModel.modVersion" placeholder="请输入版本" />
-				 </FormItem>
-				 <FormItem label="备注" prop="remarks">
-					 <Input v-model="addModel.remarks"/>
-				 </FormItem>
-			 </Form>    	
-		</Modal>
-			
-		<!-- 修改页面 -->
-		<Modal width="700" v-model="viewModal" title="模型信息" ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
-			@on-ok="update('updFormRef')">
-			<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100" :rules="modelUpdRules">
-				<FormItem label="模型代码" prop="modCode">
-					 <Input v-model="viewOrUpdateModel.modCode" disabled/>
-				 </FormItem>
-				 <FormItem label="模型名称" prop="modName">
-					 <Input v-model="viewOrUpdateModel.modName"/>
-				 </FormItem>
-				 <FormItem label="版本" prop="modVersion">
-					 <Input v-model="viewOrUpdateModel.modVersion"/>
-				 </FormItem>
-				 <FormItem label="备注" prop="remarks">
-					 <Input v-model="viewOrUpdateModel.remarks"/>
-				 </FormItem>
-			</Form>    	
-		</Modal>
+			<!-- 新增页面 -->
+			<Modal width="700" v-model="addModal" title="模型信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
+				@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
+				<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100">
+					<FormItem label="模型代码" prop="modCode">
+						 <Input v-model="addModel.modCode" placeholder="请输入4位模型代码" />
+					 </FormItem>
+					 <FormItem label="模型名称" prop="modName">
+						 <Input v-model="addModel.modName" placeholder="请输入模型中文名称" />
+					 </FormItem>
+					 <FormItem label="版本" prop="modVersion">
+						 <Input v-model="addModel.modVersion" placeholder="请输入版本" />
+					 </FormItem>
+					 <FormItem label="备注" prop="remarks">
+						 <Input v-model="addModel.remarks"/>
+					 </FormItem>
+				 </Form>    	
+			</Modal>
+				
+			<!-- 修改页面 -->
+			<Modal width="700" v-model="viewModal" title="模型信息" ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
+				@on-ok="update('updFormRef')">
+				<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100" :rules="modelUpdRules">
+					<FormItem label="模型代码" prop="modCode">
+						 <Input v-model="viewOrUpdateModel.modCode" disabled/>
+					 </FormItem>
+					 <FormItem label="模型名称" prop="modName">
+						 <Input v-model="viewOrUpdateModel.modName"/>
+					 </FormItem>
+					 <FormItem label="版本" prop="modVersion">
+						 <Input v-model="viewOrUpdateModel.modVersion"/>
+					 </FormItem>
+					 <FormItem label="备注" prop="remarks">
+						 <Input v-model="viewOrUpdateModel.remarks"/>
+					 </FormItem>
+				</Form>    	
+			</Modal>
+		</Split>
     </div>
 
 </template>
@@ -97,6 +104,7 @@ export default {
 		},
     data () {
         return {
+			split: 0.5,
         	headers: {'Content-Type': 'application/json;charset=UTF-8'},
         	listurl: '/business/TK0001L.do', 
 			saveurl: '/business/TK0001I.do',

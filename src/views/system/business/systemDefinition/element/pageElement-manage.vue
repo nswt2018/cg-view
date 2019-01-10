@@ -19,7 +19,7 @@
 						</p>
 					</Row>						
 					<Row>
-						<Table highlight-row border ref="peList" :height="tableHeight" 
+						<Table highlight-row border ref="peList" :height="tableHeight"
 							:columns="columns" :data="page_list_data" :stripe="true" :size="getFont"
 							@on-row-click="singleclick">
 						</Table>
