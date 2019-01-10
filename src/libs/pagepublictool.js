@@ -16,9 +16,6 @@ pagepublictool.page = function (data) {
     	if(rres && rres.data) {
         	this.spa.data_list = rres.data.rows;
         	this.spa.totalCount = rres.data.totalCount;
-			
-			this.spa.deleteKey = [];
-			this.spa.selectedLines = 0;
 		}else{
 	    	this.spa.$Modal.error({
 	             title: '提示',
@@ -140,92 +137,67 @@ pagepublictool.sdelete=function(delurl){
 				pagepublictool.err(err);
 			});
 };
+
 pagepublictool.save=function(refValue){
-	this.spa.$refs[refValue].validate((valid) => {
-		if(valid){
-			let data;
-			let url;
-			if(refValue==='addFormRef'){
-				data=this.spa.addForm
-				url=this.spa.saveurl;
-			}else{
-				data=this.spa.updForm
-				url=this.spa.updateurl;
-			}
-			util.ajax.put(url,data, header).then((rres) => { 
-        		if(rres.data.code==='000001'|| rres.data.code==='000003') {
-        			this.spa.$Message.success('Success!');
-        			this.spa.addModal=false;
-        			this.spa.updModal=false;
-        			this.spa.addForm={};
-        			pagepublictool.page(this.spa.getSearch());
-        		}else{
-        			this.spa.loading = false;
-        			this.spa.$Modal.error({
-                        title: '错误信息',
-                        content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
-                    });
-        		}
-			}).catch((err) => {
-				this.spa.loading = false;
-				pagepublictool.err(err);
-			});
-		}else{
-			this.spa.$Message.error('Fail!');
-        	this.spa.addloading = false;
-        	this.spa.updloading = false;
-        	this.spa.$nextTick(() => {
-        		this.spa.addloading = true;
-        		this.spa.updloading = true;
-            });
+	//用于判断新增修改是否需要验证
+	var flag=true;
+	if(refValue==='addFormRef'){
+		if(Object.keys(this.spa.addRules).length==0){
+			flag=false;
 		}
-	})   
+	}else{
+		if(Object.keys(this.spa.updRules).length==0){
+			flag=false;
+		}
+	}
+	if(flag){
+		this.spa.$refs[refValue].validate((valid) => {
+			if(valid){
+				pagepublictool.saves(refValue);
+			}else{
+				this.spa.$Message.error('Fail!');
+	        	this.spa.addloading = false;
+	        	this.spa.updloading = false;
+	        	this.spa.$nextTick(() => {
+	        		this.spa.addloading = true;
+	        		this.spa.updloading = true;
+	            });
+			}
+		})
+	}else{
+		pagepublictool.saves(refValue);
+	}
 };
 pagepublictool.msave=function(refValue){
-	this.spa.$refs[refValue].validate((valid) => {
-		if(valid){
-			let data;
-			let url;
-			if(refValue==='addFormRef'){
-				data=this.spa.addForm
-				url=this.spa.saveurl;
-			}else{
-				data=this.spa.updForm
-				url=this.spa.updateurl;
-			}
-			util.ajax.put(url,data, header).then((rres) => { 
-        		if(rres.data.code==='000001'|| rres.data.code==='000003') {
-        			this.spa.$Message.success('Success!');
-        			this.spa.addModal=false;
-        			this.spa.updModal=false;
-        			this.spa.addForm={};
-        			pagepublictool.page(this.spa.getSearch());
-        			if(refValue==='updFormRef'){
-        				pagepublictool.ssave(this.spa.releupdateurl+"?updFields="+this.spa.msRelationshipFields.join(','));
-        			}
-        			this.spa.msRelationshipFields=[];
-        			mspagepublictool.page(this.spa.getMsSearch());
-        		}else{
-        			this.spa.loading = false;
-        			this.spa.$Modal.error({
-                        title: '错误信息',
-                        content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
-                    });
-        		}
-			}).catch((err) => {
-				this.spa.loading = false;
-				pagepublictool.err(err);
-			});
-		}else{
-			this.spa.$Message.error('Fail!');
-        	this.spa.addloading = false;
-        	this.spa.updloading = false;
-        	this.spa.$nextTick(() => {
-        		this.spa.addloading = true;
-        		this.spa.updloading = true;
-            });
+	//用于判断新增修改是否需要验证
+	var flag=true;
+	if(refValue==='addFormRef'){
+		if(Object.keys(this.spa.addRules).length==0){
+			flag=false;
 		}
-	})   
+	}else{
+		if(Object.keys(this.spa.updRules).length==0){
+			flag=false;
+		}
+	}
+	if(flag){
+		this.spa.$refs[refValue].validate((valid) => {
+			if(valid){
+				pagepublictool.msaves(refValue);
+			}else{
+				this.spa.$Message.error('Fail!');
+	        	this.spa.addloading = false;
+	        	this.spa.updloading = false;
+	        	this.spa.$nextTick(() => {
+	        		this.spa.addloading = true;
+	        		this.spa.updloading = true;
+	            });
+			}
+		})   
+	}else{
+		pagepublictool.msaves(refValue);
+	}
+	
 };
 pagepublictool.ssave=function(updurl){
 		util.ajax.put(updurl, header).then((rres) => { 
@@ -242,6 +214,69 @@ pagepublictool.ssave=function(updurl){
 			}).catch((err) => {
 				pagepublictool.err(err);
 		});
+};
+pagepublictool.saves=function(refName){
+	let data;
+	let url;
+	if(refName==='addFormRef'){
+		data=this.spa.addForm
+		url=this.spa.saveurl;
+	}else{
+		data=this.spa.updForm
+		url=this.spa.updateurl;
+	}
+	util.ajax.put(url,data, header).then((rres) => { 
+		if(rres.data.code==='000001'|| rres.data.code==='000003') {
+			this.spa.$Message.success('Success!');
+			this.spa.addModal=false;
+			this.spa.updModal=false;
+			this.spa.addForm={};
+			pagepublictool.page(this.spa.getSearch());
+		}else{
+			this.spa.loading = false;
+			this.spa.$Modal.error({
+                title: '错误信息',
+                content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
+            });
+		}
+	}).catch((err) => {
+		this.spa.loading = false;
+		pagepublictool.err(err);
+	});		
+};
+pagepublictool.msaves=function(refName){
+	let data;
+	let url;
+	if(refName==='addFormRef'){
+		data=this.spa.addForm
+		url=this.spa.saveurl;
+	}else{
+		data=this.spa.updForm
+		url=this.spa.updateurl;
+	}
+	util.ajax.put(url,data, header).then((rres) => { 
+		if(rres.data.code==='000001'|| rres.data.code==='000003') {
+			this.spa.$Message.success('Success!');
+			this.spa.addModal=false;
+			this.spa.updModal=false;
+			this.spa.addForm={};
+			pagepublictool.page(this.spa.getSearch());
+			if(refName==='updFormRef'){
+				pagepublictool.ssave(this.spa.releupdateurl+"?updFields="+this.spa.msRelationshipFields.join(','));
+			}
+			this.spa.msRelationshipFields=[];
+			mspagepublictool.page(this.spa.getMsSearch());
+		}else{
+			this.spa.loading = false;
+			this.spa.$Modal.error({
+                title: '错误信息',
+                content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
+            });
+		}
+	}).catch((err) => {
+		this.spa.loading = false;
+		pagepublictool.err(err);
+	});
 };
 pagepublictool.reset=function(ref){
 	this.spa.$refs[ref].resetFields();
@@ -291,21 +326,27 @@ pagepublictool.doButtonExt = function(thisMenuButtons) {
 	}
 	this.spa.buttonInfos = thisMenuButtons;
 };
-pagepublictool.getSizeValue=function(){
-    //个性化设置，设置字体大小
-	const sizeValue=Cookies.get("sizeValue");
-	const size=this.$store.state.app.sizeFont;
-	if(!sizeValue){
-		return size;
-	}else{
-		return sizeValue;
-	}
+//获得字段表中选择框的值
+pagepublictool.getSelectList = function(obj) {
+	const result = [];
+	util.ajax.post(this.spa.selecturl,obj,header).then((rres) => { 
+		rres.data.forEach(d => {
+			let item = {
+				value: d.optCode,
+				label: d.optText
+			};
+		    result.push(item);
+		});
+	}).catch((err) => {                    		
+		pagepublictool.err(err);
+	});
+	return result;
 };
+
 pagepublictool.err=function(err){
 	this.spa.$Modal.error({
         title: '出错啦',
         content: err
     });
 }
-
 export default pagepublictool;
