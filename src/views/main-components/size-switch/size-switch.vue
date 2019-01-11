@@ -2,13 +2,13 @@
     <div style="display:inline-block;padding:0 6px;">
         <Dropdown trigger="click" @on-click="setSize">
             <a href="javascript:void(0)">
-                <Icon :style="{marginTop: '-2px', verticalAlign: 'middle'}" color="#495060" :size="18" type="eye"></Icon>
-                <Icon type="arrow-down-b"></Icon>
+                <Icon :style="{marginTop: '-2px', verticalAlign: 'middle'}" color="#495060" :size="18" type="ios-eye"></Icon>
+                <Icon type="md-arrow-dropdown" size="15"></Icon>
             </a>
             <DropdownMenu slot="list">
                 <DropdownItem v-for="(item, index) in sizeList" :key="index" :name="item.name">
                     <Row type="flex" justify="center" align="middle">
-                        <span><Icon :size="item.size" type="record" :color="item.element"/></span>
+                        <span><Icon :size="item.size" type="ios-radio-button-on" :color="item.element"/></span>
                     </Row>
                 </DropdownItem>
             </DropdownMenu>

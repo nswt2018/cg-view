@@ -195,7 +195,7 @@ colDefinition.save = function (name) {
                         title: '错误信息',
                         content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
                     });
-        		}k
+        		}
 			});
             
         } else {

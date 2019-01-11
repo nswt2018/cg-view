@@ -69,7 +69,7 @@
 
 		<!-- 新增 -->
 		<Modal v-model="addModal" title="字段新增" width="700" ok-text="保存" cancel-text="关闭" :loading="addloading" :mask-closable="false"  @on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
-			<Form ref="addFormRef" :model="addForm" :rules="formRules" :label-width="100" inline> 
+			<Form ref="addFormRef" :model="addForm" :rules="addRules" :label-width="100" inline> 
 				<FormItem label="字段名" prop="colCode">
 					<Input v-model="addForm.colCode" placeholder="请输入字段英文名称" style="width: auto"/>
 				</FormItem>
@@ -119,7 +119,7 @@
 		
 		<!-- 修改 -->
 		<Modal v-model="updModal" title="字段修改" width="700" ok-text="保存" cancel-text="关闭" :loading="updloading" :mask-closable="false" @on-ok="saving('updFormRef')">
-			<Form ref="updFormRef" :model="updForm" :rules="formRules" :label-width="100" inline>
+			<Form ref="updFormRef" :model="updForm" :rules="updRules" :label-width="100" inline>
 				<FormItem label="字段名" prop="colCode">
 					<Input v-model="updForm.colCode" placeholder="请输入字段英文名称" style="width: auto" disabled/>
 				</FormItem>
@@ -186,7 +186,7 @@ export default {
 			if(self.addModal){
 				dataType = this.addForm.dataType;
 				dataLen = this.addForm.dataLen != null? this.addForm.dataLen.replace(/^\s+|\s+$/g,''):'';
-			}else if(self.viewModal){
+			}else if(self.updModal){
 				dataType = this.updForm.dataType;
 				dataLen = this.updForm.dataLen != null? this.updForm.dataLen.replace(/^\s+|\s+$/g,''):'';
 			}else{
@@ -204,7 +204,7 @@ export default {
 
 		var validateDataType = (rule, value, callback) =>{
 			var self = this;
-			if(self.addModal || self.viewModal){
+			if(self.addModal || self.updModal){
 				if(!value){
 					return callback(new Error(rule.message));
 				}else{
@@ -265,7 +265,13 @@ export default {
         		} 	   
 			],          
         	columns: [],
-        	formRules: {
+			addRules: {
+				colCode : [{required: true, message: '字段名不能为空！', trigger: 'blur'}],
+				colName : [{required: true, message: '中文名称不能为空！', trigger: 'blur'}],
+				dataType : [{validator: validateDataType, message: '字段类型不能为空！', trigger: 'blur'}],
+				dataLen : [{validator: validateDataLen, trigger: 'blur'}]
+			},
+        	updRules: {
 				colCode : [{required: true, message: '字段名不能为空！', trigger: 'blur'}],
 				colName : [{required: true, message: '中文名称不能为空！', trigger: 'blur'}],
 				dataType : [{validator: validateDataType, message: '字段类型不能为空！', trigger: 'blur'}],

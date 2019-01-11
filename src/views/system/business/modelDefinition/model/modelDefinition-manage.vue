@@ -45,46 +45,45 @@
 			<div slot="right" class="split-pane">	
 				<componetDefinition ref="componet"/>
 			</div>
-                 
+		</Split>       
 			 
-			<!-- 新增页面 -->
-			<Modal width="700" v-model="addModal" title="模型信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
-				@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
-				<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100">
-					<FormItem label="模型代码" prop="modCode">
-						 <Input v-model="addModel.modCode" placeholder="请输入4位模型代码" />
-					 </FormItem>
-					 <FormItem label="模型名称" prop="modName">
-						 <Input v-model="addModel.modName" placeholder="请输入模型中文名称" />
-					 </FormItem>
-					 <FormItem label="版本" prop="modVersion">
-						 <Input v-model="addModel.modVersion" placeholder="请输入版本" />
-					 </FormItem>
-					 <FormItem label="备注" prop="remarks">
-						 <Input v-model="addModel.remarks"/>
-					 </FormItem>
-				 </Form>    	
-			</Modal>
-				
-			<!-- 修改页面 -->
-			<Modal width="700" v-model="viewModal" title="模型信息" ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
-				@on-ok="update('updFormRef')">
-				<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100" :rules="modelUpdRules">
-					<FormItem label="模型代码" prop="modCode">
-						 <Input v-model="viewOrUpdateModel.modCode" disabled/>
-					 </FormItem>
-					 <FormItem label="模型名称" prop="modName">
-						 <Input v-model="viewOrUpdateModel.modName"/>
-					 </FormItem>
-					 <FormItem label="版本" prop="modVersion">
-						 <Input v-model="viewOrUpdateModel.modVersion"/>
-					 </FormItem>
-					 <FormItem label="备注" prop="remarks">
-						 <Input v-model="viewOrUpdateModel.remarks"/>
-					 </FormItem>
-				</Form>    	
-			</Modal>
-		</Split>
+		<!-- 新增页面 -->
+		<Modal width="700" v-model="addModal" title="模型信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
+			@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
+			<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100">
+				<FormItem label="模型代码" prop="modCode">
+					 <Input v-model="addModel.modCode" placeholder="请输入4位模型代码" />
+				 </FormItem>
+				 <FormItem label="模型名称" prop="modName">
+					 <Input v-model="addModel.modName" placeholder="请输入模型中文名称" />
+				 </FormItem>
+				 <FormItem label="版本" prop="modVersion">
+					 <Input v-model="addModel.modVersion" placeholder="请输入版本" />
+				 </FormItem>
+				 <FormItem label="备注" prop="remarks">
+					 <Input v-model="addModel.remarks"/>
+				 </FormItem>
+			 </Form>    	
+		</Modal>
+			
+		<!-- 修改页面 -->
+		<Modal width="700" v-model="viewModal" title="模型信息" ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
+			@on-ok="update('updFormRef')">
+			<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100" :rules="modelUpdRules">
+				<FormItem label="模型代码" prop="modCode">
+					 <Input v-model="viewOrUpdateModel.modCode" disabled/>
+				 </FormItem>
+				 <FormItem label="模型名称" prop="modName">
+					 <Input v-model="viewOrUpdateModel.modName"/>
+				 </FormItem>
+				 <FormItem label="版本" prop="modVersion">
+					 <Input v-model="viewOrUpdateModel.modVersion"/>
+				 </FormItem>
+				 <FormItem label="备注" prop="remarks">
+					 <Input v-model="viewOrUpdateModel.remarks"/>
+				 </FormItem>
+			</Form>    	
+		</Modal>
     </div>
 
 </template>
