@@ -2,15 +2,12 @@
     @import '../../../../../styles/common.less';
 </style>
 <style lang="less">
-	.div-split{
-		height: 100px
-    }
 	.split-pane{
 		padding: 3px;
 	}
 </style>
 <template>
-    <div class="div-split">
+    <div id="div1">
 		<Split v-model="split">
 			<div slot="left" class="split-pane">
 				<Card>
@@ -348,7 +345,8 @@ export default {
     },
 
 	mounted() {
-		this.tableHeight = window.innerHeight - this.$refs.dataList.$el.offsetTop - 280
+		this.tableHeight = window.innerHeight - this.$refs.dataList.$el.offsetTop - 280;
+		document.getElementById("div1").style.height = this.tableHeight + 'px'
 	},
 };
 </script>

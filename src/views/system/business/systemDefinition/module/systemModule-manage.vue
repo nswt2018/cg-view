@@ -4,14 +4,14 @@
 </style>
 <style lang="less">
 	.div-split{
-		height: 100px
+		height: 100%
     }
 	.split-pane{
 		padding: 3px;
 	}
 </style>
 <template>
-     <div class="div-split">
+     <div id="div1">
 		<Split v-model="split">
 			<div slot="left" class="split-pane">
 				<Card ref="moduCard">
@@ -728,6 +728,7 @@ export default {
 	
 	mounted() {
 		this.tableHeight = window.innerHeight - this.$refs.dataList.$el.offsetTop - 280
+		document.getElementById("div1").style.height = this.tableHeight + 'px'
 	},
 };
 </script>

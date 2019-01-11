@@ -36,18 +36,18 @@
 				<!-- 编辑页面 -->
 				<Modal width="700" v-model="viewModal" title="元素信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false"
 					@on-ok="update('updFormRef')">
-					<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100">
+					<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100" inline>
 						<FormItem label="英文名称" prop="eleEName">
-							<Input v-model="viewOrUpdateModel.eleEName" disabled style="width: auto"/>
+							<Input v-model="viewOrUpdateModel.eleEName" disabled style="width:170px"/>
 						</FormItem>
 						<FormItem label="中文名称" prop="eleCName">
-							<Input v-model="viewOrUpdateModel.eleCName" style="width: auto"/>
+							<Input v-model="viewOrUpdateModel.eleCName" style="width:170px"/>
 						</FormItem>
 						<FormItem label="标签信息" prop="tagInfo">
-							<Input v-model="viewOrUpdateModel.tagInfo" icon="ios-search" @on-click="editTags" style="width: auto"/>
+							<Input v-model="viewOrUpdateModel.tagInfo" icon="ios-search" @on-click="editTags" style="width:170px"/>
 						</FormItem>
 						<FormItem label="创建日期" prop="crtDate">
-							<DatePicker type="date" v-model="viewOrUpdateModel.crtDate" disabled readonly/>
+							<DatePicker type="date" v-model="viewOrUpdateModel.crtDate" disabled readonly style="width:170px"/>
 						</FormItem>
 					</Form>    	
 				</Modal>

@@ -28,16 +28,16 @@
 		<Modal v-model="viewModal" title="信息查看" width="700">
 			<Form ref="viewFormRef" :model="viewForm" :label-width="100" inline>
 				<FormItem label="英文名称" prop="ename">
-					<Input :readonly="true" v-model="viewForm.ename"/>
+					<Input :readonly="true" v-model="viewForm.ename" style="width:170px"/>
 				</FormItem>
 				<FormItem label="中文名称" prop="cname">
-					<Input :readonly="true" v-model="viewForm.cname"/>
+					<Input :readonly="true" v-model="viewForm.cname" style="width:170px"/>
 				</FormItem>
 				<FormItem label="数据类型" prop="dataType">
-					<Input :readonly="true" v-model="viewForm.dataType"/>
+					<Input :readonly="true" v-model="viewForm.dataType" style="width:170px"/>
 				</FormItem>
 				<FormItem label="长度" prop="dataLen">
-					<Input :readonly="true" v-model="viewForm.dataLen"/>
+					<Input :readonly="true" v-model="viewForm.dataLen" style="width:170px"/>
 				</FormItem>
 			</Form>
 		</Modal>  
@@ -58,7 +58,7 @@
 					</Select>
 				</FormItem>
 				<FormItem label="字段长度" prop="dataLen">
-					<Input v-model="addForm.dataLen" style="width: auto"/>
+					<Input v-model="addForm.dataLen" style="width:170px"/>
 				</FormItem>
 			</Form>
 		</Modal> 
@@ -79,7 +79,7 @@
 					</Select>
 				</FormItem>
 				<FormItem label="字段长度" prop="dataLen">
-					<Input v-model="updForm.dataLen" style="width: auto"/>
+					<Input v-model="updForm.dataLen" style="width:170px"/>
 				</FormItem>
 		   </Form>
 		</Modal>  
