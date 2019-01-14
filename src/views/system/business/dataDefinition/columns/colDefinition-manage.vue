@@ -36,10 +36,10 @@
 			:loading="loading" @on-ok="saving('addFormRef')">
 			<Form ref="addFormRef" :model="addModel" :rules="addRules" :label-width="100" :inline="true">
 				<FormItem label="字段名" prop="colCode">
-					<Input v-model="addModel.colCode" placeholder="请输入字段英文名称" style="width: auto"/>
+					<Input v-model="addModel.colCode" placeholder="请输入字段英文名称" style="width:170px"/>
 				</FormItem>
 				<FormItem label="中文名称" prop="colName">
-					<Input v-model="addModel.colName" placeholder="请输入字段中文名称" style="width: auto"/>
+					<Input v-model="addModel.colName" placeholder="请输入字段中文名称" style="width:170px"/>
 				</FormItem>
 				<FormItem label="主键策略" prop="pkGen">
 					<Select v-model="addModel.pkGen" style="width:170px" clearable ref="select2">
@@ -63,10 +63,10 @@
 					</Select>
 				</FormItem>
 				<FormItem label="字段长度" prop="dataLen">
-					<Input v-model="addModel.dataLen" style="width: auto"/>
+					<Input v-model="addModel.dataLen" style="width:170px"/>
 				</FormItem>
 				<FormItem label="显示顺序" prop="uiOrder">
-					<Input v-model="addModel.uiOrder" style="width: auto"/>
+					<Input v-model="addModel.uiOrder" style="width:170px"/>
 				</FormItem>
 				<FormItem label="显示类型" prop="uiType">
 					<Select v-model="addModel.uiType" style="width:170px">
@@ -90,10 +90,10 @@
 					</Select>
 				</FormItem>
 				<FormItem label="传递参数" prop="joinWhere">
-					<Input v-model="addModel.joinWhere" style="width: auto"/>
+					<Input v-model="addModel.joinWhere" style="width:170px"/>
 				</FormItem>
 				<FormItem label="值区间" prop="valBetween">
-					<Input v-model="addModel.valBetween" style="width: auto"/>
+					<Input v-model="addModel.valBetween" style="width:170px"/>
 				</FormItem>
 			 </Form>    	
 		</Modal>
@@ -103,10 +103,10 @@
 			@on-ok="update('updFormRef')" :loading="loading">
 			<Form ref="updFormRef" :model="viewOrUpdateModel" :rules="updRules" :label-width="100" :inline="true">
 				<FormItem label="字段名" prop="colCode">
-					<Input v-model="viewOrUpdateModel.colCode" placeholder="请输入字段英文名称" style="width: auto" disabled/>
+					<Input v-model="viewOrUpdateModel.colCode" placeholder="请输入字段英文名称" style="width:170px" disabled/>
 				</FormItem>
 				<FormItem label="中文名称" prop="colName">
-					<Input v-model="viewOrUpdateModel.colName" placeholder="请输入字段中文名称" style="width: auto"/>
+					<Input v-model="viewOrUpdateModel.colName" placeholder="请输入字段中文名称" style="width:170px"/>
 				</FormItem>
 				<FormItem label="主键策略" prop="pkGen">
 					<Select v-model="viewOrUpdateModel.pkGen" style="width:170px" clearable ref="select2">
@@ -130,10 +130,10 @@
 					</Select>
 				</FormItem>
 				<FormItem label="字段长度" prop="dataLen">
-					<Input v-model="viewOrUpdateModel.dataLen" style="width: auto"/>
+					<Input v-model="viewOrUpdateModel.dataLen" style="width:170px"/>
 				</FormItem>
 				<FormItem label="显示顺序" prop="uiOrder">
-					<Input v-model="viewOrUpdateModel.uiOrder" style="width: auto"/>
+					<Input v-model="viewOrUpdateModel.uiOrder" style="width:170px"/>
 				</FormItem>
 				<FormItem label="显示类型" prop="uiType">
 					<Select v-model="viewOrUpdateModel.uiType" style="width:170px">
@@ -157,10 +157,10 @@
 					</Select>
 				</FormItem>
 				<FormItem label="传递参数" prop="joinWhere">
-					<Input v-model="viewOrUpdateModel.joinWhere" style="width: auto"/>
+					<Input v-model="viewOrUpdateModel.joinWhere" style="width:170px"/>
 				</FormItem>
 				<FormItem label="值区间" prop="valBetween">
-					<Input v-model="viewOrUpdateModel.valBetween" style="width: auto"/>
+					<Input v-model="viewOrUpdateModel.valBetween" style="width:170px"/>
 				</FormItem>
 			</Form>    	
 		</Modal>

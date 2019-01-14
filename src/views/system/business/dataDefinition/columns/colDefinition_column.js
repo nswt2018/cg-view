@@ -36,17 +36,17 @@ colDefinition.getColumns = function() {
 			        align: 'center'
 			    },
 			    {
-			        title: '字段类型',
+			        title: '类型',
 			        key: 'dataType',
 			        align: 'center',
 			    },
 				{
-			        title: '字段长度',
+			        title: '长度',
 			        key: 'dataLen',
 			        align: 'center',
 			    },
 				{
-			        title: '主键策略',
+			        title: '主键',
 			        key: 'pkGen',
 			        align: 'center',
 					render: (h, params) => {
@@ -61,7 +61,7 @@ colDefinition.getColumns = function() {
 					}
 				},
 				{
-			        title: '显示顺序',
+			        title: '顺序',
 			        key: 'uiOrder',
 			        align: 'center',
 			    },
@@ -195,7 +195,7 @@ colDefinition.save = function (name) {
                         title: '错误信息',
                         content: rres.data.code+'\r\n'+rres.data.msg+'\r\n'+rres.data.excetion
                     });
-        		}k
+        		}
 			});
             
         } else {

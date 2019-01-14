@@ -4,14 +4,14 @@
 </style>
 <style lang="less">
 	.div-split{
-		height: 100px
+		height: 100%
     }
 	.split-pane{
 		padding: 3px;
 	}
 </style>
 <template>
-     <div class="div-split">
+     <div id="div1">
 		<Split v-model="split">
 			<div slot="left" class="split-pane">
 				<Card ref="moduCard">
@@ -49,187 +49,187 @@
 			<div slot="right" class="split-pane">
 				<businessUnit ref="bUnit"/>
 			</div>
+		</Split>
 				
-			<!-- 新增页面 -->
-			<Modal width="700" v-model="addModal" title="模块信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
-				@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
-				<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100">
-					<FormItem label="模块代码" prop="moduCode">
-						 <Input v-model="addModel.moduCode" placeholder="请输入4位模块代码" />
-					 </FormItem>
-					 <FormItem label="中文名称" prop="moduCName">
-						 <Input v-model="addModel.moduCName" placeholder="请输入模块中文名称" />
-					 </FormItem>
-					 <FormItem label="模块交易号" prop="moduTC">
-						 <Input v-model="addModel.moduTC" />
-					 </FormItem>
-					 <FormItem label="所属模型" prop="moduModel">
-						 <Select v-model="addModel.moduModel" @on-change="moduModelChange()">
-							<Option v-for="item in modList" :value="item.value" :key="item.value">
-								{{ item.label }}
-							</Option>
-						 </Select>
-					 </FormItem>
-					 <FormItem label="关联表" prop="relTables">
-						 <Select v-model="addModel.relTables" ref="addSelect" clearable>
-							<Option v-for="item in tabList" :value="item.value" :key="item.value">
-								{{ item.label }}
-							</Option>
-						 </Select>
-					 </FormItem>
-					 <FormItem label="关联关系" prop="relInfo">
-						 <Input v-model="addModel.relInfo" icon="ios-search" @on-click="chooseRelInfo('A')" ref="addRelInfo"/>
-					 </FormItem>
-				 </Form>    	
-			</Modal>
-			
-			<!-- 修改页面 -->
-			<Modal width="700" v-model="viewModal" title="模块信息" ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
-				@on-ok="update('updFormRef')" @on-cancel="reseting('updFormRef')">
-				<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100" :rules="modelUpdRules">
-					<FormItem label="模块代码" prop="moduCode">
-						 <Input v-model="viewOrUpdateModel.moduCode" disabled/>
-					 </FormItem>
-					 <FormItem label="中文名称" prop="moduCName">
-						 <Input v-model="viewOrUpdateModel.moduCName" />
-					 </FormItem>
-					 <FormItem label="模块交易号" prop="moduTC">
-						 <Input v-model="viewOrUpdateModel.moduTC" />
-					 </FormItem>
-					 <FormItem label="所属模型" prop="moduModel">
-						 <Select v-model="viewOrUpdateModel.moduModel" @on-change="moduModelChange()">
-							<Option v-for="item in modList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+		<!-- 新增页面 -->
+		<Modal width="700" v-model="addModal" title="模块信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
+			@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
+			<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100">
+				<FormItem label="模块代码" prop="moduCode">
+					 <Input v-model="addModel.moduCode" placeholder="请输入4位模块代码" />
+				 </FormItem>
+				 <FormItem label="中文名称" prop="moduCName">
+					 <Input v-model="addModel.moduCName" placeholder="请输入模块中文名称" />
+				 </FormItem>
+				 <FormItem label="模块交易号" prop="moduTC">
+					 <Input v-model="addModel.moduTC" />
+				 </FormItem>
+				 <FormItem label="所属模型" prop="moduModel">
+					 <Select v-model="addModel.moduModel" @on-change="moduModelChange()">
+						<Option v-for="item in modList" :value="item.value" :key="item.value">
+							{{ item.label }}
+						</Option>
+					 </Select>
+				 </FormItem>
+				 <FormItem label="关联表" prop="relTables">
+					 <Select v-model="addModel.relTables" ref="addSelect" clearable>
+						<Option v-for="item in tabList" :value="item.value" :key="item.value">
+							{{ item.label }}
+						</Option>
+					 </Select>
+				 </FormItem>
+				 <FormItem label="关联关系" prop="relInfo">
+					 <Input v-model="addModel.relInfo" icon="ios-search" @on-click="chooseRelInfo('A')" ref="addRelInfo"/>
+				 </FormItem>
+			 </Form>    	
+		</Modal>
+		
+		<!-- 修改页面 -->
+		<Modal width="700" v-model="viewModal" title="模块信息" ok-text="保存" cancel-text="关闭" :mask-closable="false" :loading="loading"
+			@on-ok="update('updFormRef')" @on-cancel="reseting('updFormRef')">
+			<Form ref="updFormRef" :model="viewOrUpdateModel" :label-width="100" :rules="modelUpdRules">
+				<FormItem label="模块代码" prop="moduCode">
+					 <Input v-model="viewOrUpdateModel.moduCode" disabled/>
+				 </FormItem>
+				 <FormItem label="中文名称" prop="moduCName">
+					 <Input v-model="viewOrUpdateModel.moduCName" />
+				 </FormItem>
+				 <FormItem label="模块交易号" prop="moduTC">
+					 <Input v-model="viewOrUpdateModel.moduTC" />
+				 </FormItem>
+				 <FormItem label="所属模型" prop="moduModel">
+					 <Select v-model="viewOrUpdateModel.moduModel" @on-change="moduModelChange()">
+						<Option v-for="item in modList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+					</Select>
+				 </FormItem>
+				 <FormItem label="关联表" prop="relTables">
+					 <Select v-model="viewOrUpdateModel.relTables" ref="updSelect" clearable>
+						<Option v-for="item in tabList" :value="item.value" :key="item.value">
+							{{ item.label }}
+						</Option>
+					 </Select>
+				 </FormItem>
+				 <FormItem label="关联关系" prop="relInfo">
+					 <Input v-model="viewOrUpdateModel.relInfo" icon="ios-search" @on-click="chooseRelInfo('U')" ref="updRelInfo"/>
+				 </FormItem>
+			</Form>    	
+		</Modal>
+		
+		<!-- 关联信息 多表、主从模型-->
+		<Modal v-model="relModal" width="700" @on-ok="submitRelInfo">
+			<div class="modaltyle">
+				<template v-for="item in selectList">
+					<Col span="6" style="text-align:center">
+						{{ item.code }}
+						<br/>
+						<Select ref="item" :name="item.code" style="width: 80px" filterable clearable>
+							<Option v-for="child in item.list" :value="child.value" :key="child.value">{{ child.label }}</Option>
 						</Select>
-					 </FormItem>
-					 <FormItem label="关联表" prop="relTables">
-						 <Select v-model="viewOrUpdateModel.relTables" ref="updSelect" clearable>
-							<Option v-for="item in tabList" :value="item.value" :key="item.value">
-								{{ item.label }}
-							</Option>
-						 </Select>
-					 </FormItem>
-					 <FormItem label="关联关系" prop="relInfo">
-						 <Input v-model="viewOrUpdateModel.relInfo" icon="ios-search" @on-click="chooseRelInfo('U')" ref="updRelInfo"/>
-					 </FormItem>
-				</Form>    	
-			</Modal>
-			
-			<!-- 关联信息 多表、主从模型-->
-			<Modal v-model="relModal" width="700" @on-ok="submitRelInfo">
-				<div class="modaltyle">
-					<template v-for="item in selectList">
-						<Col span="6" style="text-align:center">
-							{{ item.code }}
-							<br/>
-							<Select ref="item" :name="item.code" style="width: 80px" filterable clearable>
-								<Option v-for="child in item.list" :value="child.value" :key="child.value">{{ child.label }}</Option>
-							</Select>
-						</Col>
-					 </template>
-				</div>
-			</Modal>
-			
-			<!-- 关联信息 树模型-->
-			<Modal v-model="treeModal" width="700">
-				<div class="modaltyle1">
-					<Col span="8">
-						<div class="treestyle1">
-							<Tree :data="treeData" @on-select-change="selectNode" ref="tree"></Tree>
-						</div>
-						<div class="buttonstyle">
-							<Button type="primary" size="small" @click="nodeInsert()">新增</Button>
-							<Button type="success" size="small" @click="nodeUpdate()">修改</Button>
-							<Button type="info" size="small" @click="nodeDelete()">删除</Button>
-						</div>
 					</Col>
-					<Col span="16">
-						<!-- 新增 -->
-						<div v-show="insertInfo">
-							<div>
-								<br/>
-								<Form ref="addRef" :model="insertModel" :rules="addRules" :label-width="200" :inline="true">
-									<FormItem label="节点名称" prop="nodName">
-										<Input v-model="insertModel.nodName" placeholder="请输入节点名称" style="width: auto"/>
-									</FormItem>
-									<FormItem label="上级节点名称" prop="upNodName">
-										<Input v-model="nodName" style="width: auto" disabled/>
-									</FormItem>
-									<FormItem label="交易号(根节点编号)" prop="tranCode">
-										<Cascader :data="tCodeData" v-model="insertModel.tranCode" style="width: auto"/>
-									</FormItem>
-									<FormItem label="显示条件" prop="showCond">
-										<Input v-model="insertModel.showCond" style="width: auto"/>
-									</FormItem>
-									<FormItem label="传递参数" prop="showParam">
-										<Input v-model="insertModel.showParam" style="width: auto"/>
-									</FormItem>
-								</Form>
-							</div>
-							<div class="buttonstyle2">
-								<br/>
-								<br/>
-								<br/>
-								<Button type="primary" size="small" @click="addCansel()">取消</Button>
-								<Button type="info" size="small" @click="addSubmit()">提交</Button>
-							</div>
-						</div>
-						
-						<!-- 浏览 -->
-						<div v-show="scanInfo">
+				 </template>
+			</div>
+		</Modal>
+		
+		<!-- 关联信息 树模型-->
+		<Modal v-model="treeModal" width="700">
+			<div class="modaltyle1">
+				<Col span="8">
+					<div class="treestyle1">
+						<Tree :data="treeData" @on-select-change="selectNode" ref="tree"></Tree>
+					</div>
+					<div class="buttonstyle">
+						<Button type="primary" size="small" @click="nodeInsert()">新增</Button>
+						<Button type="success" size="small" @click="nodeUpdate()">修改</Button>
+						<Button type="info" size="small" @click="nodeDelete()">删除</Button>
+					</div>
+				</Col>
+				<Col span="16">
+					<!-- 新增 -->
+					<div v-show="insertInfo">
+						<div>
 							<br/>
-							<Form ref="scanRef" :model="scanModel" :label-width="200" :inline="true">
+							<Form ref="addRef" :model="insertModel" :rules="addRules" :label-width="200" :inline="true">
 								<FormItem label="节点名称" prop="nodName">
-									<Input v-model="scanModel.nodName" placeholder="请输入节点名称" style="width: auto" readonly/>
+									<Input v-model="insertModel.nodName" placeholder="请输入节点名称" style="width: auto"/>
 								</FormItem>
 								<FormItem label="上级节点名称" prop="upNodName">
-									<Input v-model="scanModel.upNodName" style="width: auto" readonly/>
+									<Input v-model="nodName" style="width: auto" disabled/>
 								</FormItem>
 								<FormItem label="交易号(根节点编号)" prop="tranCode">
-									<Input v-model="scanModel.tranCode" style="width: auto" readonly/>
+									<Cascader :data="tCodeData" v-model="insertModel.tranCode" style="width: auto"/>
 								</FormItem>
 								<FormItem label="显示条件" prop="showCond">
-									<Input v-model="scanModel.showCond" style="width: auto" readonly/>
+									<Input v-model="insertModel.showCond" style="width: auto"/>
 								</FormItem>
 								<FormItem label="传递参数" prop="showParam">
-									<Input v-model="scanModel.showParam" style="width: auto" readonly/>
+									<Input v-model="insertModel.showParam" style="width: auto"/>
 								</FormItem>
 							</Form>
 						</div>
-						
-						<!-- 修改 -->
-						<div v-show="updInfo">
-							<div>
-								<br/>
-								<Form ref="updRef" :model="updModel" :rules="addRules" :label-width="200" :inline="true">
-									<FormItem label="节点名称" prop="nodName">
-										<Input v-model="updModel.nodName" placeholder="请输入节点名称" style="width: auto" disabled/>
-									</FormItem>
-									<FormItem label="上级节点名称" prop="upNodName">
-										<Input v-model="updModel.upNodName" style="width: auto" disabled/>
-									</FormItem>
-									<FormItem label="交易号(根节点编号)" prop="tranCode">
-										<Cascader :data="tCodeData" v-model="updModel.tranCode" style="width: auto"/>
-									</FormItem>
-									<FormItem label="显示条件" prop="showCond">
-										<Input v-model="updModel.showCond" style="width: auto"/>
-									</FormItem>
-									<FormItem label="传递参数" prop="showParam">
-										<Input v-model="updModel.showParam" style="width: auto"/>
-									</FormItem>
-								</Form>
-							</div>
-							<div class="buttonstyle2">
-								<br/>
-								<br/>
-								<br/>
-								<Button type="primary" size="small" @click="updCansel()">取消</Button>
-								<Button type="info" size="small" @click="updSubmit()">提交</Button>
-							</div>
+						<div class="buttonstyle2">
+							<br/>
+							<br/>
+							<br/>
+							<Button type="primary" size="small" @click="addCansel()">取消</Button>
+							<Button type="info" size="small" @click="addSubmit()">提交</Button>
 						</div>
-					</Col>
-				</div>
-			</Modal>
-		</Split>
+					</div>
+					
+					<!-- 浏览 -->
+					<div v-show="scanInfo">
+						<br/>
+						<Form ref="scanRef" :model="scanModel" :label-width="200" :inline="true">
+							<FormItem label="节点名称" prop="nodName">
+								<Input v-model="scanModel.nodName" placeholder="请输入节点名称" style="width: auto" readonly/>
+							</FormItem>
+							<FormItem label="上级节点名称" prop="upNodName">
+								<Input v-model="scanModel.upNodName" style="width: auto" readonly/>
+							</FormItem>
+							<FormItem label="交易号(根节点编号)" prop="tranCode">
+								<Input v-model="scanModel.tranCode" style="width: auto" readonly/>
+							</FormItem>
+							<FormItem label="显示条件" prop="showCond">
+								<Input v-model="scanModel.showCond" style="width: auto" readonly/>
+							</FormItem>
+							<FormItem label="传递参数" prop="showParam">
+								<Input v-model="scanModel.showParam" style="width: auto" readonly/>
+							</FormItem>
+						</Form>
+					</div>
+					
+					<!-- 修改 -->
+					<div v-show="updInfo">
+						<div>
+							<br/>
+							<Form ref="updRef" :model="updModel" :rules="addRules" :label-width="200" :inline="true">
+								<FormItem label="节点名称" prop="nodName">
+									<Input v-model="updModel.nodName" placeholder="请输入节点名称" style="width: auto" disabled/>
+								</FormItem>
+								<FormItem label="上级节点名称" prop="upNodName">
+									<Input v-model="updModel.upNodName" style="width: auto" disabled/>
+								</FormItem>
+								<FormItem label="交易号(根节点编号)" prop="tranCode">
+									<Cascader :data="tCodeData" v-model="updModel.tranCode" style="width: auto"/>
+								</FormItem>
+								<FormItem label="显示条件" prop="showCond">
+									<Input v-model="updModel.showCond" style="width: auto"/>
+								</FormItem>
+								<FormItem label="传递参数" prop="showParam">
+									<Input v-model="updModel.showParam" style="width: auto"/>
+								</FormItem>
+							</Form>
+						</div>
+						<div class="buttonstyle2">
+							<br/>
+							<br/>
+							<br/>
+							<Button type="primary" size="small" @click="updCansel()">取消</Button>
+							<Button type="info" size="small" @click="updSubmit()">提交</Button>
+						</div>
+					</div>
+				</Col>
+			</div>
+		</Modal>
     </div>
 
 </template>
@@ -728,6 +728,7 @@ export default {
 	
 	mounted() {
 		this.tableHeight = window.innerHeight - this.$refs.dataList.$el.offsetTop - 280
+		document.getElementById("div1").style.height = this.tableHeight + 'px'
 	},
 };
 </script>

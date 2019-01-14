@@ -28,22 +28,22 @@
 		<Modal v-model="viewModal" title="信息查看" width="700">
 			<Form ref="viewFormRef" :model="viewForm" :label-width="100" inline>
 				<FormItem label="英文名称" prop="ename">
-					<Input :readonly="true" v-model="viewForm.ename"/>
+					<Input :readonly="true" v-model="viewForm.ename" style="width:170px"/>
 				</FormItem>
 				<FormItem label="中文名称" prop="cname">
-					<Input :readonly="true" v-model="viewForm.cname"/>
+					<Input :readonly="true" v-model="viewForm.cname" style="width:170px"/>
 				</FormItem>
 				<FormItem label="数据类型" prop="dataType">
-					<Input :readonly="true" v-model="viewForm.dataType"/>
+					<Input :readonly="true" v-model="viewForm.dataType" style="width:170px"/>
 				</FormItem>
 				<FormItem label="长度" prop="dataLen">
-					<Input :readonly="true" v-model="viewForm.dataLen"/>
+					<Input :readonly="true" v-model="viewForm.dataLen" style="width:170px"/>
 				</FormItem>
 			</Form>
 		</Modal>  
 			
 		<Modal v-model="addModal" title="信息新增" width="700" ok-text="保存" cancel-text="关闭" :loading="addloading" :mask-closable="false"  @on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
-			<Form ref="addFormRef" :model="addForm" :rules="formRules" :label-width="100" inline>
+			<Form ref="addFormRef" :model="addForm" :rules="addRules" :label-width="100" inline>
 				<FormItem label="英文名称" prop="ename">
 					<Input v-model="addForm.ename" placeholder="英文名称"/>
 				</FormItem>
@@ -58,13 +58,13 @@
 					</Select>
 				</FormItem>
 				<FormItem label="字段长度" prop="dataLen">
-					<Input v-model="addForm.dataLen" style="width: auto"/>
+					<Input v-model="addForm.dataLen" style="width:170px"/>
 				</FormItem>
 			</Form>
 		</Modal> 
 			
 		<Modal v-model="updModal" title="信息修改" width="700" ok-text="保存" cancel-text="关闭" :loading="updloading" :mask-closable="false"  @on-ok="saving('updFormRef')" @on-cancel="reseting('updFormRef')">
-			<Form ref="updFormRef" :model="updForm" :rules="formRules" :label-width="100" inline>
+			<Form ref="updFormRef" :model="updForm" :rules="updRules" :label-width="100" inline>
 				<FormItem label="英文名称" prop="ename">
 					<Input v-model="updForm.ename" placeholder="英文名称" disabled/>
 				</FormItem>
@@ -79,7 +79,7 @@
 					</Select>
 				</FormItem>
 				<FormItem label="字段长度" prop="dataLen">
-					<Input v-model="updForm.dataLen" style="width: auto"/>
+					<Input v-model="updForm.dataLen" style="width:170px"/>
 				</FormItem>
 		   </Form>
 		</Modal>  
@@ -178,7 +178,12 @@ export default {
         		} 	   
         	],          
         	columns:[],
-        	formRules: {
+        	addRules: {
+				ename : [{required: true, message: '英文名称不能为空！', trigger: 'blur'}],
+				dataType : [{validator: validateDataType, message: '字段类型不能为空！', trigger: 'change'}],
+				dataLen : [{validator: validateDataLen, trigger: 'blur'}]
+			},
+			updRules: {
 				ename : [{required: true, message: '英文名称不能为空！', trigger: 'blur'}],
 				dataType : [{validator: validateDataType, message: '字段类型不能为空！', trigger: 'change'}],
 				dataLen : [{validator: validateDataLen, trigger: 'blur'}]
