@@ -17,18 +17,12 @@
 							&nbsp;
 							<Button type="success" size="small" @click="handleUpdate()">修改</Button>
 						</p>
-					</Row>						
+					</Row>
 					<Row>
 						<Table highlight-row border ref="peList" :height="tableHeight"
 							:columns="columns" :data="page_list_data" :stripe="true" :size="getFont"
 							@on-row-click="singleclick">
 						</Table>
-						<div style="float: right;">
-							<Page :total="totalCount" :current="1" :page-size="pageSize" 
-							:transfer="true" size="small"
-							@on-change="changePage" @on-page-size-change="changePageSize" 
-							show-total show-elevator show-sizer></Page>
-						</div>
 					</Row>
 				</Card>
 				
@@ -87,10 +81,6 @@ import Cookies from 'js-cookie';
 				taginfourl: '/business/TK0003L1.do',
 				page_list_data: [],
 				columns: [],
-				pageSize: 10,
-				currentPage: 1,
-				totalCount: 0,
-				totalPage: 0,
 				sEleCName: '',
 				sEleEName: '',
 				selectedLines: 0,
@@ -102,7 +92,7 @@ import Cookies from 'js-cookie';
 				tagInfo: false,
 				tagDatas: [],
 				tagColumns: [],
-				crtdate: '',
+				createdate: '',
 				tableHeight: 200,
 				padding: 2,
 				unitCode: '',
@@ -112,7 +102,7 @@ import Cookies from 'js-cookie';
 		},
 		methods: {
 			getSearchCond() {
-				return {'menuCode': '', 'pageSize': this.pageSize, 'currentPage': this.currentPage, 
+				return {
 					'valObj': {'unitCode': this.unitCode, 'eleCName': this.sEleCName, 'eleEName': this.sEleEName}
 				};
 			},
@@ -128,18 +118,7 @@ import Cookies from 'js-cookie';
 				pageElement.setPage(this);
 				this.columns = pageElement.getColumns();
 			},
-			
-			changePage(page) {
-				let cond = this.getSearchCond();
-				cond.currentPage = page;
-				pageElement.page(cond);
-			},
-			
-			changePageSize(_pageSize) {
-				let cond = this.getSearchCond();
-				cond.pageSize = _pageSize;
-				pageElement.page(cond);
-			},
+
 			searching() {
 				pageElement.page(this.getSearchCond());
 			},
@@ -155,7 +134,7 @@ import Cookies from 'js-cookie';
 					return;
 				};
 				
-				this.viewOrUpdateModel.crtDate = this.crtdate;
+				this.viewOrUpdateModel.crtDate = this.createdate;
 				this.viewModal = true;
 			},
 			
@@ -192,7 +171,7 @@ import Cookies from 'js-cookie';
 			
 			handleEdit (row) {
 				this.$set(row, '$isEdit', true);
-			}, 
+			},
 			
 			handleSave (row) {
 				row.eleCode = this.viewOrUpdateModel.eleCode;
@@ -213,6 +192,7 @@ import Cookies from 'js-cookie';
 			singleclick(row, index){
 				this.index = index;
 				this.viewOrUpdateModel = row;
+				this.createdate = row.crtDate;
 			}
 		},
 		created () {
@@ -231,7 +211,7 @@ import Cookies from 'js-cookie';
 			}
 		},
 		mounted() {
-			this.tableHeight = (window.innerHeight - this.$refs.peList.$el.offsetTop - 280)/2
+			this.tableHeight = (window.innerHeight - this.$refs.peList.$el.offsetTop - 235)/2
 		},
 	};
 </script>

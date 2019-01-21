@@ -19,16 +19,10 @@
 						</p>
 					</Row>						
 					<Row>
-						<Table highlight-row border ref="dataList" :size="getFont" :height="tableHeight" 
+						<Table highlight-row border ref="dataList" :size="getFont" :height="tableHeight"
 							:columns="columns" :data="unit_list_data" :stripe="true" 
 							@on-row-click="singleclick">
 						</Table>
-						<div style="float: right;">
-							<Page :total="totalCount" :current="1" :page-size="pageSize" 
-							:transfer="true" size="small"
-							@on-change="changePage" @on-page-size-change="changePageSize" 
-							show-total show-elevator show-sizer></Page>
-						</div>
 					</Row>
 				</Card>
 				
@@ -90,11 +84,6 @@ import pageElement from '../element/pageElement-manage.vue';
 				updateurl: '/business/TK0005U.do',
 				selecturl: '/business/TK0005S.do', 	
 				collisturl: '/business/TK0005S1.do',
-				pageSize: 10,
-				currentPage: 1,
-				totalCount: 0,
-				totalPage: 0,
-				orderFileds: [],
 				sUnitCode: '',
 				sModuCode: '',
 				sUnitName: '',
@@ -120,7 +109,7 @@ import pageElement from '../element/pageElement-manage.vue';
 		methods: {
 		
 			getSearchCond() {
-				return {'menuCode': '', 'pageSize': this.pageSize, 'currentPage': this.currentPage, 
+				return {
 					'valObj': {'unitCode': this.sUnitCode, 'unitName': this.sUnitName, 'moduCode': this.sModuCode}
 				};
 			},
@@ -142,17 +131,6 @@ import pageElement from '../element/pageElement-manage.vue';
 				this.$refs.bElement.getElementDataList('-1');
 			},
 			
-			changePage(page) {
-				let cond = this.getSearchCond();
-				cond.currentPage = page;
-				businessUnit.page(cond);
-			},
-			
-			changePageSize(_pageSize) {
-				let cond = this.getSearchCond();
-				cond.pageSize = _pageSize;
-				businessUnit.page(cond);        	
-			},
 			searching() {
 				businessUnit.page(this.getSearchCond());
 			},
@@ -215,7 +193,7 @@ import pageElement from '../element/pageElement-manage.vue';
 		},
 		
 		mounted() {
-			this.tableHeight = (window.innerHeight - this.$refs.dataList.$el.offsetTop - 280)/2
+			this.tableHeight = (window.innerHeight - this.$refs.dataList.$el.offsetTop - 235)/2
 		},
 	};
 </script>

@@ -58,23 +58,9 @@ pageElement.getColumns = function() {
 
 pageElement.page = function (data) {
     util.ajax.post(this.spa.listurl, data, header).then((rres) => { 
-    	if(rres && rres.data && !rres.data.pageSize) {
-    		this.spa.$Modal.error({
-                title: '提示',
-                content: rres.data.msg
-            });
-    		//this.spa.$router.push({name: 'home_index'});
-    		return;
-		}
-    	if(rres.data.pageSize) {
-    		this.spa.page_list_data = rres.data.rows;
-    		this.spa.totalPage = rres.data.totalPage;
-    		this.spa.totalCount = rres.data.totalCount;
-    		this.spa.pageSize = rres.data.pageSize;
-			
-			this.spa.deletedPks = [];
-			this.spa.selectedLines = 0;
-    	}else{
+    	if(rres.data) {
+    		this.spa.page_list_data = rres.data;
+		}else{
     		this.err(rres.data);
 		}
 	}).catch((err) => {                   		
@@ -83,39 +69,6 @@ pageElement.page = function (data) {
             content: err
         });
 	});
-};
-
-pageElement.delete = function(delurl) {
-	if(this.spa.selectedLines < 1) {
-		this.spa.$Modal.warning({
-            title: '提示信息',
-            content: '必须选中一条记录！'
-        });
-	} else {
-		this.spa.$Modal.confirm({
-            title: '提示信息',
-            content: '确认要删除选中的记录吗！',
-            onOk: () => {
-            	//console.log(this.viewOrUpdateModel);
-            	//console.log('userId='+this.viewOrUpdateModel.userId);
-                
-                util.ajax.delete(delurl, header).then((rres) => {
-            		if(rres.data.code===DEL_SUC) {
-            			this.spa.$Message.success('删除成功!');
-            			this.spa.deletedPks = [];
-            			this.spa.selectedLines = 0;
-            			this.spa.viewOrUpdateModel= {};
-						this.page(this.spa.getSearchCond());
-            		}else{
-            			this.err(rres.data);
-            		}
-    			});
-            },
-            onCancel: () => {
-            	
-            }
-        }); 
-	}
 };
 
 pageElement.update = function(name) {

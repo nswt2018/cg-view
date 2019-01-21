@@ -138,25 +138,11 @@ businessUnit.update = function(name) {
 };
 
 businessUnit.page = function (data) {
-    util.ajax.post(this.spa.listurl, data, header).then((rres) => { 
-    	if(rres && rres.data && !rres.data.pageSize) {
-    		this.spa.$Modal.error({
-                title: '提示',
-                content: rres.data.msg
-            });
-    		//this.spa.$router.push({name: 'home_index'});
-    		return;
-		}
-    	if(rres.data.pageSize) {
-    		this.spa.unit_list_data = rres.data.rows;
-    		this.spa.totalPage = rres.data.totalPage;
-    		this.spa.totalCount = rres.data.totalCount;
-    		this.spa.pageSize = rres.data.pageSize;
-			
-			this.spa.deletedPks = '';
-			this.spa.selectedLines = 0;
-    	}else{
-    		this.err(rres.data);
+    util.ajax.post(this.spa.listurl, data, header).then((rres) => {
+    	if(rres.data) {
+    		this.spa.unit_list_data = rres.data;
+		}else{
+			this.err(rres.data);
 		}
 	}).catch((err) => {                   		
 		this.spa.$Modal.error({
