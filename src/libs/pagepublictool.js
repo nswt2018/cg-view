@@ -338,7 +338,10 @@ pagepublictool.getSelectList = function(obj) {
 		    result.push(item);
 		});
 	}).catch((err) => {                    		
-		pagepublictool.err(err);
+		this.spa.$Modal.error({
+	        title: '字典查询失败 ！',
+	        content: err
+	    });
 	});
 	return result;
 };
