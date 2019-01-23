@@ -351,5 +351,19 @@ pagepublictool.err=function(err){
         title: '出错啦',
         content: err
     });
-}
+};
+
+pagepublictool.check=function(){
+	var res = '';
+	if(this.spa.selectedLines!=1){
+		this.spa.$Modal.warning({
+			title:'提示信息',
+			content:'只能选中一条记录！'
+		});
+		res = '0';
+	}else {
+		res = '1';
+	}
+	return res;
+};
 export default pagepublictool;
