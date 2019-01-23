@@ -47,8 +47,8 @@
 							<br/>
 							<div>
 								<Form ref="addFormRef" :model="addModel" :rules="addRules" :label-width="200" :inline="true">
-									<FormItem label="系统二位简码" prop="sysCode">
-										<Input v-model="addModel.sysCode" placeholder="请输入系统二位简码" style="width: auto"/>
+									<FormItem label="编码" prop="sysCode">
+										<Input v-model="addModel.sysCode" placeholder="请输入系统二位简码或模块编码" style="width: auto"/>
 									</FormItem>
 									<FormItem label="系统名称" prop="sysName">
 										<Input v-model="addModel.sysName" placeholder="请输入系统名称" style="width: auto"/>
@@ -88,8 +88,8 @@
 						<Row v-show="checkForm">
 							<div>
 								<Form ref="checkFormRef" :model="checkModel" :label-width="200" :inline="true">
-									<FormItem label="系统二位简码" prop="sysCode">
-										<Input v-model="checkModel.sysCode" placeholder="请输入系统二位简码" style="width: auto" readonly disabled/>
+									<FormItem label="编码" prop="sysCode">
+										<Input v-model="checkModel.sysCode" placeholder="请输入系统二位简码或模块编码" style="width: auto" readonly disabled/>
 									</FormItem>
 									<FormItem label="系统名称" prop="sysName">
 										<Input v-model="checkModel.sysName" placeholder="请输入系统名称" style="width: auto" readonly disabled/>
@@ -122,8 +122,8 @@
 							<br/>
 							<div>
 								<Form ref="updFormRef" :model="updModel" :rules="updRules" :label-width="200" :inline="true">
-									<FormItem label="系统二位简码" prop="sysCode">
-										<Input v-model="updModel.sysCode" placeholder="请输入系统二位简码" style="width: auto"/>
+									<FormItem label="编码" prop="sysCode">
+										<Input v-model="updModel.sysCode" placeholder="请输入系统二位简码或模块编码" style="width: auto"/>
 									</FormItem>
 									<FormItem label="系统名称" prop="sysName">
 										<Input v-model="updModel.sysName" placeholder="请输入系统名称" style="width: auto"/>
@@ -223,14 +223,14 @@ import Cookies from 'js-cookie';
 				isRoot: '',
 				sysModCode: '',
 				addRules: {
-					sysCode : [{required: true, message: '系统二位简码不能为空！'}],
+					sysCode : [{required: true, message: '编码不能为空！'}],
 					sysName : [{required: true, message: '系统名称不能为空！'}],
 					vuePath : [{validator: validateAddData, message: '视图组件路径不能为空！'}],
 					javaPath : [{validator: validateAddData, message: '业务逻辑组件路径不能为空！'}],
 					packName : [{validator: validateAddData, message: '包名不能为空！'}]
 				},
 				updRules: {
-					sysCode : [{required: true, message: '系统二位简码不能为空！'}],
+					sysCode : [{required: true, message: '编码不能为空！'}],
 					sysName : [{required: true, message: '系统名称+不能为空！'}],
 					vuePath : [{validator: validateUpdData, message: '视图组件路径不能为空！'}],
 					javaPath : [{validator: validateUpdData, message: '业务逻辑组件路径不能为空！'}],

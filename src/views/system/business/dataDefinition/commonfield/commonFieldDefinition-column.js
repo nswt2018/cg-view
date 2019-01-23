@@ -41,7 +41,18 @@ commonfield.getColumns = function() {
 		{
 			title: '展现形式',
 			key: 'uiType',
-			align: 'center'
+			align: 'center',
+			render: (h, params) => {
+				let uiType = params.row.uiType;
+				let lable = '';
+				this.spa.utList.forEach(d => {
+					if(uiType === d.value){
+						lable = d.label;
+						return false;
+					}
+				});
+				return h('div',lable);
+			},
 		},
 		{
 			title: '关联表',

@@ -292,8 +292,8 @@ export default {
 					label: 'datetime'
 				},
 				{
-				value: 'decimal',
-				label: 'decimal'
+					value: 'decimal',
+					label: 'decimal'
 				},
 				{
 					value: 'int',

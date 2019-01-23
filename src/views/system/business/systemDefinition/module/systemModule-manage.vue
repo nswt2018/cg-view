@@ -56,7 +56,7 @@
 			@on-ok="saving('addFormRef')" @on-cancel="reseting('addFormRef')">
 			<Form ref="addFormRef" :model="addModel" :rules="modelAddRules" :label-width="100">
 				<FormItem label="模块代码" prop="moduCode">
-					 <Input v-model="addModel.moduCode" placeholder="请输入4位模块代码" />
+					 <Input v-model="addModel.moduCode" placeholder="请输入模块代码" />
 				 </FormItem>
 				 <FormItem label="中文名称" prop="moduCName">
 					 <Input v-model="addModel.moduCName" placeholder="请输入模块中文名称" />
