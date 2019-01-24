@@ -21,10 +21,8 @@
 							<Input v-model="sModuCName" placeholder="请输入模块中文名称搜索" icon="search" 
 								style="width: 150px" @on-change="searching"></Input>
 							<Select v-model="sModCode" placeholder="请选择所属模型" clearable
-								style="width: 150px" @on-change="searching">
-								<Option v-for="item in modList" :value="item.value" :key="item.value">
-									{{ item.label }}
-								</Option>
+								style="width: 150px" @on-change="searching" filterable>
+								<Option v-for="item in modList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 							</Select>
 							&nbsp;
 							<Button type="primary" @click="handleInsert()">新增</Button>

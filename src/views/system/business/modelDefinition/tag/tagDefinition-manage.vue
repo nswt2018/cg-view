@@ -27,9 +27,7 @@
 									style="width: 200px" @on-change="searching" clearable></Input>
 								<Select v-model="sPropType" placeholder="请选择属性类型" clearable
 									style="width: 200px" @on-change="searching">
-									<Option v-for="item in propTypeList" :value="item.value" :key="item.value">
-										{{ item.label }}
-									</Option>
+									<Option v-for="item in propTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 								</Select>
 								&nbsp;
 								<Button type="primary" @click="handleInsert()">新增</Button>
@@ -62,10 +60,8 @@
 									<Input v-model="addModel.tagProp"/>
 								</FormItem>
 								<FormItem label="属性类别" prop="propType">
-									 <Select v-model="addModel.propType">
-										<Option v-for="item in propTypeList" :value="item.value" :key="item.value">
-											{{ item.label }}
-										</Option>
+									 <Select v-model="addModel.propType" filterable>
+										<Option v-for="item in propTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 									</Select>
 								</FormItem>
 								<FormItem label="属性值" prop="propVal">
@@ -91,10 +87,8 @@
 									<Input v-model="viewOrUpdateModel.tagProp"/>
 								</FormItem>
 								<FormItem label="属性类别" prop="propType">
-									<Select v-model="viewOrUpdateModel.propType">
-										<Option v-for="item in propTypeList" :value="item.value" :key="item.value">
-											{{ item.label }}
-										</Option>
+									<Select v-model="viewOrUpdateModel.propType" filterable>
+										<Option v-for="item in propTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 									</Select>
 								</FormItem>
 								<FormItem label="属性值" prop="propVal">

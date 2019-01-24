@@ -49,10 +49,8 @@
 							<Input v-model="viewOrUpdateModel.relTable" disabled/>
 						</FormItem>
 						<FormItem label="关联字段" prop="relColumn">
-							<Select v-model="viewOrUpdateModel.relColumn" multiple>
-								<Option v-for="item in colList" :value="item.value" :key="item.value">
-									{{ item.label }}
-								</Option>
+							<Select v-model="viewOrUpdateModel.relColumn" multiple filterable>
+								<Option v-for="item in colList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 							</Select>
 						</FormItem>
 						<FormItem label="其他信息" prop="relInfo">

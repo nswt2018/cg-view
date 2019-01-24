@@ -51,10 +51,8 @@
 					<Input v-model="addForm.cname" placeholder="中文名称"/>
 				</FormItem>
 				<FormItem label="字段类型" prop="dataType">
-					<Select v-model="addForm.dataType" style="width:170px" @on-change="dataTypeChage('A')" clearable>
-						<Option v-for="item in dtList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select v-model="addForm.dataType" style="width:170px" @on-change="dataTypeChage('A')" clearable filterable>
+						<Option v-for="item in dtList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="字段长度" prop="dataLen">
@@ -72,10 +70,8 @@
 					<Input v-model="updForm.cname" placeholder="中文名称"/>
 				</FormItem>
 				<FormItem label="字段类型" prop="dataType">
-					<Select v-model="updForm.dataType" style="width:170px" @on-change="dataTypeChage('U')" clearable>
-						<Option v-for="item in dtList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select v-model="updForm.dataType" style="width:170px" @on-change="dataTypeChage('U')" clearable filterable>
+						<Option v-for="item in dtList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="字段长度" prop="dataLen">

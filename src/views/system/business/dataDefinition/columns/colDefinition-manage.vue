@@ -42,24 +42,18 @@
 					<Input v-model="addModel.colName" placeholder="请输入字段中文名称" style="width:170px"/>
 				</FormItem>
 				<FormItem label="主键策略" prop="pkGen">
-					<Select v-model="addModel.pkGen" style="width:170px" clearable ref="select2">
-						<Option v-for="item in pkList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select v-model="addModel.pkGen" style="width:170px" clearable ref="select2" filterable>
+						<Option v-for="item in pkList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="域类型" prop="doMainType">
-					<Select v-model="addModel.doMainType" style="width:170px" clearable @on-change="doMainTypeChage('A', $event)">
-						<Option v-for="item in dmList" :value="item.value" :key="item.label">
-							{{ item.label }}
-						</Option>
+					<Select v-model="addModel.doMainType" style="width:170px" clearable @on-change="doMainTypeChage('A', $event)" filterable>
+						<Option v-for="item in dmList" :value="item.value" :key="item.label">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="字段类型" prop="dataType">
-					<Select v-model="addModel.dataType" style="width:170px" clearable ref="select1" @on-change="dataTypeChage('A')">
-						<Option v-for="item in dtList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select v-model="addModel.dataType" style="width:170px" clearable ref="select1" @on-change="dataTypeChage('A')" filterable>
+						<Option v-for="item in dtList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="字段长度" prop="dataLen">
@@ -69,24 +63,18 @@
 					<Input v-model="addModel.uiOrder" style="width:170px"/>
 				</FormItem>
 				<FormItem label="显示类型" prop="uiType">
-					<Select v-model="addModel.uiType" style="width:170px">
-						<Option v-for="item in utList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select v-model="addModel.uiType" style="width:170px" filterable>
+						<Option v-for="item in utList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="关联表" prop="joinTabCode">
-					<Select v-model="addModel.joinTabCode" style="width:455px" @on-change="tabCodeChage('A')" clearable>
-						<Option v-for="item in tabList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select v-model="addModel.joinTabCode" style="width:455px" @on-change="tabCodeChage('A')" clearable filterable>
+						<Option v-for="item in tabList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="关联字段" prop="joinColCode">
-					<Select :multiple="true" v-model="addModel.joinColCodes" style="width:455px" ref="addFormColList" clearable>
-						<Option v-for="item in colList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select :multiple="true" v-model="addModel.joinColCodes" style="width:455px" ref="addFormColList" clearable filterable>
+						<Option v-for="item in colList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="传递参数" prop="joinWhere">
@@ -109,24 +97,18 @@
 					<Input v-model="viewOrUpdateModel.colName" placeholder="请输入字段中文名称" style="width:170px"/>
 				</FormItem>
 				<FormItem label="主键策略" prop="pkGen">
-					<Select v-model="viewOrUpdateModel.pkGen" style="width:170px" clearable ref="select2">
-						<Option v-for="item in pkList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select v-model="viewOrUpdateModel.pkGen" style="width:170px" clearable ref="select2" filterable>
+						<Option v-for="item in pkList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="域类型" prop="doMainType">
-					<Select disabled v-model="viewOrUpdateModel.doMainType" style="width:170px">
-						<Option v-for="item in dmList" :value="item.value" :key="item.label">
-							{{ item.label }}
-						</Option>
+					<Select disabled v-model="viewOrUpdateModel.doMainType" style="width:170px" filterable>
+						<Option v-for="item in dmList" :value="item.value" :key="item.label">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="字段类型" prop="dataType">
-					<Select disabled v-model="viewOrUpdateModel.dataType" style="width:170px">
-						<Option v-for="item in dtList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select disabled v-model="viewOrUpdateModel.dataType" style="width:170px" filterable>
+						<Option v-for="item in dtList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="字段长度" prop="dataLen">
@@ -136,24 +118,18 @@
 					<Input v-model="viewOrUpdateModel.uiOrder" style="width:170px"/>
 				</FormItem>
 				<FormItem label="显示类型" prop="uiType">
-					<Select v-model="viewOrUpdateModel.uiType" style="width:170px">
-						<Option v-for="item in utList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select v-model="viewOrUpdateModel.uiType" style="width:170px" filterable>
+						<Option v-for="item in utList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="关联表" prop="joinTabCode">
-					<Select v-model="viewOrUpdateModel.joinTabCode" style="width:455px" @on-change="tabCodeChage('U')" clearable>
-						<Option v-for="item in tabList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select v-model="viewOrUpdateModel.joinTabCode" style="width:455px" @on-change="tabCodeChage('U')" clearable filterable>
+						<Option v-for="item in tabList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="关联字段" prop="joinColCode">
-					<Select :multiple="true" v-model="viewOrUpdateModel.joinColCodes" style="width:455px" ref="updFormColList" clearable>
-						<Option v-for="item in colList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					<Select :multiple="true" v-model="viewOrUpdateModel.joinColCodes" style="width:455px" ref="updFormColList" clearable filterable>
+						<Option v-for="item in colList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				</FormItem>
 				<FormItem label="传递参数" prop="joinWhere">
