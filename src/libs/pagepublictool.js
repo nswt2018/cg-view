@@ -330,13 +330,20 @@ pagepublictool.doButtonExt = function(thisMenuButtons) {
 pagepublictool.getSelectList = function(obj) {
 	const result = [];
 	util.ajax.post(this.spa.selecturl,obj,header).then((rres) => { 
-		rres.data.forEach(d => {
-			let item = {
-				value: d.optCode,
-				label: d.optText
-			};
-		    result.push(item);
-		});
+		if(rres && rres.data.length!=0){
+			rres.data.forEach(d => {
+				let item = {
+					value: d.optCode,
+					label: d.optText
+				};
+			    result.push(item);
+			});
+		}else{
+			this.spa.$Modal.error({
+		        title: '字典查询为空 ！',
+		        content: err
+		    });
+		}
 	}).catch((err) => {                    		
 		this.spa.$Modal.error({
 	        title: '字典查询失败 ！',
