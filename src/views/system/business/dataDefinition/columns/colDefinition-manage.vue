@@ -267,7 +267,6 @@ import Cookies from 'js-cookie';
 					dataLen : [{validator: validateDataLen, trigger: 'blur'}]
 				},
 				updRules: {
-					colName : [{required: true, message: '中文名称不能为空！', trigger: 'blur'}],
 					uiOrder : [{validator: validateUiOrder, trigger: 'blur'}],
 					dataLen : [{validator: validateDataLen1, trigger: 'blur'}]
 				},

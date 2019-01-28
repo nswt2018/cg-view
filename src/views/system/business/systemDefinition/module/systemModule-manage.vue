@@ -63,17 +63,13 @@
 					 <Input v-model="addModel.moduTC" />
 				 </FormItem>
 				 <FormItem label="所属模型" prop="moduModel">
-					 <Select v-model="addModel.moduModel" @on-change="moduModelChange()">
-						<Option v-for="item in modList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					 <Select v-model="addModel.moduModel" @on-change="moduModelChange()" filterable>
+						<Option v-for="item in modList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					 </Select>
 				 </FormItem>
 				 <FormItem label="关联表" prop="relTables">
-					 <Select v-model="addModel.relTables" ref="addSelect" clearable>
-						<Option v-for="item in tabList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					 <Select v-model="addModel.relTables" ref="addSelect" clearable filterable>
+						<Option v-for="item in tabList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					 </Select>
 				 </FormItem>
 				 <FormItem label="关联关系" prop="relInfo">
@@ -96,15 +92,13 @@
 					 <Input v-model="viewOrUpdateModel.moduTC" />
 				 </FormItem>
 				 <FormItem label="所属模型" prop="moduModel">
-					 <Select v-model="viewOrUpdateModel.moduModel" @on-change="moduModelChange()">
+					 <Select v-model="viewOrUpdateModel.moduModel" @on-change="moduModelChange()" filterable>
 						<Option v-for="item in modList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					</Select>
 				 </FormItem>
 				 <FormItem label="关联表" prop="relTables">
-					 <Select v-model="viewOrUpdateModel.relTables" ref="updSelect" clearable>
-						<Option v-for="item in tabList" :value="item.value" :key="item.value">
-							{{ item.label }}
-						</Option>
+					 <Select v-model="viewOrUpdateModel.relTables" ref="updSelect" clearable filterable>
+						<Option v-for="item in tabList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 					 </Select>
 				 </FormItem>
 				 <FormItem label="关联关系" prop="relInfo">
