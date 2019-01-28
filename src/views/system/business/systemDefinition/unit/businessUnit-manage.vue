@@ -31,7 +31,7 @@
 				
 				<!-- 修改页面 -->
 				<Modal width="700" v-model="viewModal" title="组件信息"  ok-text="保存" cancel-text="关闭" :mask-closable="false"
-					@on-ok="update('updFormRef')">
+					@on-ok="update('updFormRef')" @on-cancel="updCancel('updFormRef')">
 					<Form ref="updFormRef" :model="viewOrUpdateModel" :rules="modelAddRules" :label-width="100">
 						<FormItem label="单元编号" prop="unitCode">
 							<Input v-model="viewOrUpdateModel.unitCode" placeholder="请输入5位单元代码" disabled/>
@@ -49,7 +49,7 @@
 							<Input v-model="viewOrUpdateModel.relTable" disabled/>
 						</FormItem>
 						<FormItem label="关联字段" prop="relColumn">
-							<Select v-model="viewOrUpdateModel.relColumn" multiple filterable>
+							<Select v-model="viewOrUpdateModel.relColumn" multiple filterable ref="select1">
 								<Option v-for="item in colList" :value="item.value" :key="item.value">{{ item.label }}</Option>
 							</Select>
 						</FormItem>
@@ -89,7 +89,7 @@ import pageElement from '../element/pageElement-manage.vue';
 					unitCode : [{required: true}],
 					unitName : [{required: true}],
 					relTable : [{required: true}],
-					relColumn : [{required: true}]
+					relColumn: [{required: true}]
 				},
 				deletedPks: '',
 				selectedLines: 0,
@@ -163,6 +163,14 @@ import pageElement from '../element/pageElement-manage.vue';
 				//将Array数组转换为","隔开的字符串
 				this.viewOrUpdateModel.relColumn = this.viewOrUpdateModel.relColumn.join(',');
 				businessUnit.update(name);
+			},
+			
+			//修改关闭
+			updCancel (name) {
+				this.index = -1;
+				this.viewOrUpdateModel = {};
+				this.$refs.select1.clearSingleSelect();
+				this.viewModal = false;
 			},
 			
 			singleclick(row, index){

@@ -85,12 +85,12 @@ export const appRouter = [
     //业务平台
 	{
         path: '/business',
-        icon: 'android-checkbox',
+        icon: 'md-arrow-dropright',
         name: 'business',
         title: '业务平台',
         component: Main,
         children: [
-			{ 
+			{
 				path: 'dataDefinition', title: '数据定义', name: 'data_definition', icon: 'ios-list',component: () => import('@/views/system/business/artical-publish-center.vue'),
 				children: [
 					{ path: 'tabDefinition', title: '表定义', name: 'tabDefinition', icon: 'ios-list',component: () => import('@/views/system/business/dataDefinition/table/tabDefinition-manage.vue') },
@@ -99,7 +99,7 @@ export const appRouter = [
 					{ path: 'domain', title: '域定义', name: 'domain', icon: 'ios-list',component: () => import('@/views/system/business/dataDefinition/domain/domain.vue') },
 				]
 			},
-			{ 
+			{
 				path: 'modelDefinition', title: '模型定义', name: 'model_definition', icon: 'ios-list',component: () => import('@/views/system/business/artical-publish-center.vue'),
 				children: [
 					{ path: 'modelDefinition', title: '模型定义', name: 'modelDefinition', icon: 'ios-list',component: () => import('@/views/system/business/modelDefinition/model/modelDefinition-manage.vue') },
@@ -107,7 +107,7 @@ export const appRouter = [
 					{ path: 'tagDefinition', title: '标签定义', name: 'tagDefinition', icon: 'ios-list',component: () => import('@/views/system/business/modelDefinition/tag/tagDefinition-manage.vue') }
 				]
 			},
-			{ 
+			{
 				path: 'systemDefinition', title: '模块定义', name: 'system_definition', icon: 'ios-list',component: () => import('@/views/system/business/artical-publish-center.vue'),
 				children: [
 					{ path: 'systemModule', title: '公共模块', name: 'systemModule', icon: 'ios-list',component: () => import('@/views/system/business/systemDefinition/module/systemModule-manage.vue') },
@@ -121,12 +121,12 @@ export const appRouter = [
 	 //应用工厂
 	{
         path: '/appFactory',
-        icon: 'android-checkbox',
+        icon: 'md-arrow-dropright',
         name: 'factory',
         title: '应用工厂',
 		component: Main,
 		children: [
-            { 
+            {
 				path: 'sysDefinition', 
 				title: '系统定义', 
 				name: 'sysDefinition', 
@@ -134,7 +134,7 @@ export const appRouter = [
 				component: () => import('@/views/system/factory/sysDefinition-manage.vue') 
 			},
 			
-			{ 
+			{
 				path: 'demo', 
 				title: '树预览演示', 
 				name: 'demo', 

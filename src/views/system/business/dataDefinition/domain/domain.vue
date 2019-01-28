@@ -236,7 +236,7 @@ export default {
 		
         onClicking(type){
          	if(type==='VIEW' || type==='view') pagepublictool.view();
-        	else if(type==='ADD'  || type==='add') this.add();
+        	else if(type==='ADD' || type==='add') this.add();
         	else if(type==='UPD' || type==='upd') pagepublictool.update();
         	else if(type==='DEL' || type==='del') pagepublictool.delete(this.deleteurl+"?delKeys="+this.deleteKey.join(','));
         },
